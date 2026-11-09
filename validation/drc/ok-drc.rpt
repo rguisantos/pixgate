@@ -1,0 +1,30 @@
+** Drc report for ok.kicad_pcb **
+** Created on 2026-11-09T03:09:46+0000 **
+
+** Found 3 DRC violations **
+[shorting_items]: Items shorting two nets (nets GND and )
+    Local override; error
+    @(61.0000 mm, 42.0000 mm): Via [GND] on top_cu - bottom_cu
+    @(61.0000 mm, 42.1100 mm): Pad 7 [<no net>] of U1 on bottom_cu
+[hole_clearance]: Hole clearance violation (board setup constraints hole clearance 0.2500 mm; actual 0.0000 mm)
+    Rule: board setup constraints hole; error
+    @(61.0000 mm, 42.1100 mm): Pad 7 [<no net>] of U1 on bottom_cu
+    @(61.0000 mm, 42.0000 mm): Via [GND] on top_cu - bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(61.0000 mm, 42.0000 mm): Via [GND] on top_cu - bottom_cu
+    @(61.0000 mm, 42.1100 mm): Pad 7 [<no net>] of U1 on bottom_cu
+
+** Found 2 unconnected pads **
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(61.0000 mm, 34.4900 mm): Pad 1 [GND] of U1 on bottom_cu
+    @(61.0000 mm, 34.4900 mm): Track [GND] on top_cu, length 5.5100 mm
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(61.0000 mm, 34.4900 mm): Track [GND] on top_cu, length 5.5100 mm
+    @(61.0000 mm, 42.0000 mm): Via [GND] on top_cu - bottom_cu
+
+** Found 0 Footprint errors **
+
+** End of Report **

@@ -1,0 +1,374 @@
+** Drc report for rot_test.kicad_pcb **
+** Created on 2026-11-09T03:36:50+0000 **
+
+** Found 90 DRC violations **
+[shorting_items]: Items shorting two nets (nets  and TEST)
+    Local override; error
+    @(34.3450 mm, 75.1500 mm): Pad A1 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 72.1500 mm): Track [TEST] on bottom_cu, length 3.8500 mm
+[hole_clearance]: Hole clearance violation (board setup constraints hole clearance 0.2500 mm; actual 0.2023 mm)
+    Rule: board setup constraints hole; error
+    @(32.9000 mm, 74.7900 mm): NPTH pad of J6
+    @(33.4300 mm, 76.2200 mm): PTH pad S1 [<no net>] of J6
+[hole_clearance]: Hole clearance violation (board setup constraints hole clearance 0.2500 mm; actual 0.2023 mm)
+    Rule: board setup constraints hole; error
+    @(32.9000 mm, 69.0100 mm): NPTH pad of J6
+    @(33.4300 mm, 67.5800 mm): PTH pad S1 [<no net>] of J6
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 75.1500 mm): Pad A1 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 74.3500 mm): Pad B9 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 75.1500 mm): Pad A1 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 75.1500 mm): Pad B12 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1150 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 75.1500 mm): Pad A1 [<no net>] of J6 on bottom_cu
+    @(33.4300 mm, 76.2200 mm): PTH pad S1 [<no net>] of J6
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 75.1500 mm): Pad A1 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 74.3500 mm): Pad A4 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0500 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 75.1500 mm): Pad A1 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 73.6500 mm): Pad B8 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 74.3500 mm): Pad A4 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 74.3500 mm): Pad B9 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 74.3500 mm): Pad A4 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 75.1500 mm): Pad B12 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 74.3500 mm): Pad A4 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 73.1500 mm): Pad A5 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 74.3500 mm): Pad A4 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 73.6500 mm): Pad B8 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 73.1500 mm): Pad A5 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 74.3500 mm): Pad B9 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 73.1500 mm): Pad A5 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 72.1500 mm): Pad A6 [TEST] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0500 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 73.1500 mm): Pad A5 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 71.6500 mm): Pad A7 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 73.1500 mm): Pad A5 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 72.6500 mm): Pad B7 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 73.1500 mm): Pad A5 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 73.6500 mm): Pad B8 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 72.1500 mm): Pad A6 [TEST] of J6 on bottom_cu
+    @(34.3450 mm, 71.6500 mm): Pad A7 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0500 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 72.1500 mm): Pad A6 [TEST] of J6 on bottom_cu
+    @(34.3450 mm, 70.6500 mm): Pad A8 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 72.1500 mm): Pad A6 [TEST] of J6 on bottom_cu
+    @(34.3450 mm, 71.1500 mm): Pad B6 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 72.1500 mm): Pad A6 [TEST] of J6 on bottom_cu
+    @(34.3450 mm, 72.6500 mm): Pad B7 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0500 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 72.1500 mm): Pad A6 [TEST] of J6 on bottom_cu
+    @(34.3450 mm, 73.6500 mm): Pad B8 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 71.6500 mm): Pad A7 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 70.6500 mm): Pad A8 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0500 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 71.6500 mm): Pad A7 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 70.1500 mm): Pad B5 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 71.6500 mm): Pad A7 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 71.1500 mm): Pad B6 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 71.6500 mm): Pad A7 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 72.6500 mm): Pad B7 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 70.6500 mm): Pad A8 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 70.1500 mm): Pad B5 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 70.6500 mm): Pad A8 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 71.1500 mm): Pad B6 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 70.6500 mm): Pad A8 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 69.4500 mm): Pad A9 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 70.6500 mm): Pad A8 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 69.4500 mm): Pad B4 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 69.4500 mm): Pad A9 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 70.1500 mm): Pad B5 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 69.4500 mm): Pad A9 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 68.6500 mm): Pad A12 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 69.4500 mm): Pad A9 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 68.6500 mm): Pad B1 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 69.4500 mm): Pad A9 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 69.4500 mm): Pad B4 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0500 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 68.6500 mm): Pad A12 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 70.1500 mm): Pad B5 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 68.6500 mm): Pad A12 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 68.6500 mm): Pad B1 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 68.6500 mm): Pad A12 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 69.4500 mm): Pad B4 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1150 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 68.6500 mm): Pad A12 [<no net>] of J6 on bottom_cu
+    @(33.4300 mm, 67.5800 mm): PTH pad S1 [<no net>] of J6
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0500 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 68.6500 mm): Pad B1 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 70.1500 mm): Pad B5 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 68.6500 mm): Pad B1 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 69.4500 mm): Pad B4 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1150 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 68.6500 mm): Pad B1 [<no net>] of J6 on bottom_cu
+    @(33.4300 mm, 67.5800 mm): PTH pad S1 [<no net>] of J6
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 69.4500 mm): Pad B4 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 70.1500 mm): Pad B5 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 70.1500 mm): Pad B5 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 71.1500 mm): Pad B6 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0500 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 71.1500 mm): Pad B6 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 72.6500 mm): Pad B7 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 72.6500 mm): Pad B7 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 73.6500 mm): Pad B8 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 73.6500 mm): Pad B8 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 74.3500 mm): Pad B9 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0500 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 73.6500 mm): Pad B8 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 75.1500 mm): Pad B12 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.0000 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 74.3500 mm): Pad B9 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 75.1500 mm): Pad B12 [<no net>] of J6 on bottom_cu
+[clearance]: Clearance violation (netclass 'Default' clearance 0.2000 mm; actual 0.1150 mm)
+    Rule: netclass 'Default'; error
+    @(34.3450 mm, 75.1500 mm): Pad B12 [<no net>] of J6 on bottom_cu
+    @(33.4300 mm, 76.2200 mm): PTH pad S1 [<no net>] of J6
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 72.1500 mm): Track [TEST] on bottom_cu, length 3.8500 mm
+    @(34.3450 mm, 71.6500 mm): Pad A7 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 72.1500 mm): Track [TEST] on bottom_cu, length 3.8500 mm
+    @(34.3450 mm, 73.1500 mm): Pad A5 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 72.1500 mm): Track [TEST] on bottom_cu, length 3.8500 mm
+    @(34.3450 mm, 72.6500 mm): Pad B7 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 72.1500 mm): Track [TEST] on bottom_cu, length 3.8500 mm
+    @(34.3450 mm, 73.6500 mm): Pad B8 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 72.1500 mm): Track [TEST] on bottom_cu, length 3.8500 mm
+    @(34.3450 mm, 74.3500 mm): Pad B9 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 72.1500 mm): Track [TEST] on bottom_cu, length 3.8500 mm
+    @(34.3450 mm, 75.1500 mm): Pad A1 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 72.1500 mm): Track [TEST] on bottom_cu, length 3.8500 mm
+    @(34.3450 mm, 74.3500 mm): Pad A4 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 72.1500 mm): Track [TEST] on bottom_cu, length 3.8500 mm
+    @(34.3450 mm, 75.1500 mm): Pad B12 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 75.1500 mm): Pad A1 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 74.3500 mm): Pad B9 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 75.1500 mm): Pad A1 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 74.3500 mm): Pad A4 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 75.1500 mm): Pad A1 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 75.1500 mm): Pad B12 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 74.3500 mm): Pad A4 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 73.1500 mm): Pad A5 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 74.3500 mm): Pad A4 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 73.6500 mm): Pad B8 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 74.3500 mm): Pad A4 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 74.3500 mm): Pad B9 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 74.3500 mm): Pad A4 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 75.1500 mm): Pad B12 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 73.1500 mm): Pad A5 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 72.1500 mm): Pad A6 [TEST] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 73.1500 mm): Pad A5 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 72.6500 mm): Pad B7 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 73.1500 mm): Pad A5 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 73.6500 mm): Pad B8 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 73.1500 mm): Pad A5 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 74.3500 mm): Pad B9 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 72.1500 mm): Pad A6 [TEST] of J6 on bottom_cu
+    @(34.3450 mm, 71.6500 mm): Pad A7 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 72.1500 mm): Pad A6 [TEST] of J6 on bottom_cu
+    @(34.3450 mm, 71.1500 mm): Pad B6 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 72.1500 mm): Pad A6 [TEST] of J6 on bottom_cu
+    @(34.3450 mm, 72.6500 mm): Pad B7 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 71.6500 mm): Pad A7 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 70.6500 mm): Pad A8 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 71.6500 mm): Pad A7 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 71.1500 mm): Pad B6 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 71.6500 mm): Pad A7 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 72.6500 mm): Pad B7 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 70.6500 mm): Pad A8 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 69.4500 mm): Pad B4 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 70.6500 mm): Pad A8 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 70.1500 mm): Pad B5 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 70.6500 mm): Pad A8 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 71.1500 mm): Pad B6 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 70.6500 mm): Pad A8 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 69.4500 mm): Pad A9 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 69.4500 mm): Pad A9 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 69.4500 mm): Pad B4 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 69.4500 mm): Pad A9 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 70.1500 mm): Pad B5 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 69.4500 mm): Pad A9 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 68.6500 mm): Pad A12 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 69.4500 mm): Pad A9 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 68.6500 mm): Pad B1 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 68.6500 mm): Pad A12 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 69.4500 mm): Pad B4 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 68.6500 mm): Pad A12 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 68.6500 mm): Pad B1 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 68.6500 mm): Pad B1 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 69.4500 mm): Pad B4 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 69.4500 mm): Pad B4 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 70.1500 mm): Pad B5 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 70.1500 mm): Pad B5 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 71.1500 mm): Pad B6 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 72.6500 mm): Pad B7 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 73.6500 mm): Pad B8 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 73.6500 mm): Pad B8 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 74.3500 mm): Pad B9 [<no net>] of J6 on bottom_cu
+[solder_mask_bridge]: Rear solder mask aperture bridges items with different nets
+    Rule: board setup solder mask min width; error
+    @(34.3450 mm, 74.3500 mm): Pad B9 [<no net>] of J6 on bottom_cu
+    @(34.3450 mm, 75.1500 mm): Pad B12 [<no net>] of J6 on bottom_cu
+
+** Found 1 unconnected pads **
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(34.3450 mm, 72.1500 mm): Pad A6 [TEST] of J6 on bottom_cu
+    @(26.2550 mm, 71.6500 mm): Track [TEST] on bottom_cu, length 3.6500 mm
+
+** Found 0 Footprint errors **
+
+** End of Report **

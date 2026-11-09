@@ -1,0 +1,13 @@
+** Drc report for bx_gr.kicad_pcb **
+** Created on 2026-11-09T03:09:11+0000 **
+
+** Found 1 DRC violations **
+[invalid_outline]: Board has malformed outline (not a closed shape)
+    Local override; error
+    @(25.0000 mm, 25.0000 mm): Segment on Edge.Cuts
+
+** Found 0 unconnected pads **
+
+** Found 0 Footprint errors **
+
+** End of Report **

@@ -1,0 +1,23 @@
+# Segredos / ambiente
+.env
+*.key
+*.token
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Saídas geradas localmente (regenere com hardware/gen_board.py)
+out/
+*.rpt
+!validation/drc/*.rpt
+
+# Não versionar bibliotecas de terceiros (clonar conforme docs/references.md)
+refs/
+kicad-root/
+kicad-libs/
+
+# Diversos
+.DS_Store
+tool-results/
