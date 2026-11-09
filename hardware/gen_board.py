@@ -50,6 +50,9 @@ class Part:
         self.netmap = {}
         if flip and side == 'B':
             flip_footprint(fp)
+        # KiCad 9: at.rot moves pad positions only; pad shapes need the total
+        # rotation on each pad's own (at x y rot).
+        apply_pad_rotation(fp, rot)
         # placement
         lay = getlist(fp, 'layer')[0]
         li = fp.index(lay)
@@ -90,7 +93,7 @@ PARTS = []
 # ============================================================
 def fp_display_socket():
     """1x08 P2.54 socket/holes for TFT display, front side. Pin1 at TOP (min Y)."""
-    fp = mkfootprint('PIX:DisplaySocket_1x08_P2.54mm', 'F.Cu')
+    fp = mkfootprint('DisplaySocket_1x08_P2.54mm', 'F.Cu')
     # 8 pads from top (pin1) to bottom (pin8); local origin at center of row
     names = ['GND', '3V3', 'SCL', 'SDA', 'RST', 'DC', 'CS', 'BL']
     for i, nm in enumerate(names):
@@ -114,7 +117,7 @@ def fp_display_socket():
 def fp_relay_srd():
     """Songle SRD-12VDC-SL-C, THT. Pads per standard land pattern (library/front view).
     A1(-6.1,-6.0) COM(-8.1,0) A2(-6.1,6.0) NC(6.1,-6.0) NO(6.1,6.0)"""
-    fp = mkfootprint('PIX:Relay_SPDT_Songle_SRD', 'F.Cu')
+    fp = mkfootprint('Relay_SPDT_Songle_SRD', 'F.Cu')
     pads = [('A1', -6.1, -6.0), ('COM', -8.1, 0.0), ('A2', -6.1, 6.0),
             ('NC', 6.1, -6.0), ('NO', 6.1, 6.0)]
     for nm, x, y in pads:
@@ -138,14 +141,14 @@ def fp_relay_srd():
 
 def fp_kf301():
     """KF301 2P 5.08mm screw terminal, THT, wire entry at -Y."""
-    fp = mkfootprint('PIX:TerminalBlock_KF301-2P-5.08mm', 'F.Cu')
+    fp = mkfootprint('TerminalBlock_KF301-2P-5.08mm', 'F.Cu')
     fp.append(mkpad(1, 'thru_hole', 'rect', -2.54, 0, 2.6, 2.6, ['*.Cu', '*.Mask'], drill=1.7))
     fp.append(mkpad(2, 'thru_hole', 'circle', 2.54, 0, 2.6, 2.6, ['*.Cu', '*.Mask'], drill=1.7))
     fp.append(mkline('F.Fab', -5.1, -5.1, 5.1, -5.1, 0.1))
     fp.append(mkline('F.Fab', 5.1, -5.1, 5.1, 5.1, 0.1))
     fp.append(mkline('F.Fab', 5.1, 5.1, -5.1, 5.1, 0.1))
     fp.append(mkline('F.Fab', -5.1, 5.1, -5.1, -5.1, 0.1))
-    for l, m in (('F.SilkS', 5.35), ('F.CrtYd', 5.6)):
+    for l, m in (('F.SilkS', 5.15), ('F.CrtYd', 5.2)):
         fp.append(mkline(l, -m, -m, m, -m, 0.05))
         fp.append(mkline(l, m, -m, m, m, 0.05))
         fp.append(mkline(l, m, m, -m, m, 0.05))
@@ -163,14 +166,14 @@ def fp_soic8_ep():
     return fp
 
 def fp_testpad(name):
-    fp = mkfootprint(f'PIX:TestPad_{name}', 'F.Cu')
+    fp = mkfootprint(f'TestPad_{name}', 'F.Cu')
     fp.append(mkpad(1, 'smd', 'circle', 0, 0, 1.6, 1.6, ['F.Cu', 'F.Mask', 'F.Paste']))
     fp.append(mktext('fp_text', name, 0, 1.6, 'F.SilkS', size=0.8, thickness=0.12))
     fp.append(['attr', 'smd'])
     return fp
 
 def fp_mount_hole():
-    fp = mkfootprint('PIX:MountingHole_3.2mm_M3', 'F.Cu')
+    fp = mkfootprint('MountingHole_3.2mm_M3', 'F.Cu')
     fp.append(['pad', '""', 'np_thru_hole', 'circle', ['at', '0', '0'],
                ['size', '3.2', '3.2'], ['drill', '3.2'], ['layers', '*.Cu', '*.Mask'],
                ['uuid', new_uuid()]])
@@ -222,66 +225,66 @@ for padn, nname in U1_NETS.items():
     u1.pin(padn, nname)
 
 # --- U2: TPS54331DDA buck (back) ---
-u2 = P('U2', 'TPS54331DDA', fp_soic8_ep(), 69.5, 45, 0)
+u2 = P('U2', 'TPS54331DDA', ('Package_SO', 'SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.41x3.3mm'), 69.5, 45, 0)
 u2.pin(1, 'BOOT_C').pin(2, '+12V').pin(3, 'EN_BK').pin(4, 'SS_C')
 u2.pin(5, 'FB').pin(6, 'COMP_X').pin(7, 'GND').pin(8, 'SW').pin(9, 'GND')
 
 # --- U3: AMS1117-3.3 (back) ---
-u3 = P('U3', 'AMS1117-3.3', ('Package_TO_SOT_SMD', 'SOT-223-3_TabPin2'), 73, 66, 0)
+u3 = P('U3', 'AMS1117-3.3', ('Package_TO_SOT_SMD', 'SOT-223-3_TabPin2'), 72, 59.6, 0)
 u3.pin(1, 'GND').pin(2, '+3V3').pin(3, '+5V')
 
 # --- U4: USBLC6-2SC6 (back) ---
-u4 = P('U4', 'USBLC6-2SC6', ('Package_TO_SOT_SMD', 'SOT-23-6'), 29.5, 71.9, 0)
+u4 = P('U4', 'USBLC6-2SC6', ('Package_TO_SOT_SMD', 'SOT-23-6'), 39.5, 70, 0)
 u4.pin(1, 'USB_DP').pin(2, 'GND').pin(3, 'USB_DN').pin(4, 'USB_DN').pin(5, 'USB_VBUS').pin(6, 'USB_DP')
 
 # --- Q1: AO3400A relay driver (back) ---
-q1 = P('Q1', 'AO3400A', ('Package_TO_SOT_SMD', 'SOT-23'), 73.5, 85, 0)
+q1 = P('Q1', 'AO3400A', ('Package_TO_SOT_SMD', 'SOT-23'), 77, 80.5, 0)
 q1.pin(1, 'RLY_GATE').pin(2, 'GND').pin(3, 'RELAY_COIL')
 
 # --- Optocouplers (back) ---
-opt1 = P('OPT1', 'PC817', ('Package_DIP', 'DIP-4_W7.62mm'), 33.73, 76.69, 90)
+opt1 = P('OPT1', 'PC817', ('Package_DIP', 'DIP-4_W7.62mm'), 38, 74.5, 90)
 opt1.pin(1, 'NOTE_A').pin(2, 'NOTE_SIG').pin(3, 'GND').pin(4, 'IN_NOTE')
-opt2 = P('OPT2', 'PC817', ('Package_DIP', 'DIP-4_W7.62mm'), 40.73, 76.69, 90)
+opt2 = P('OPT2', 'PC817', ('Package_DIP', 'DIP-4_W7.62mm'), 45.5, 74.5, 90)
 opt2.pin(1, 'COIN_A').pin(2, 'COIN_SIG').pin(3, 'GND').pin(4, 'IN_COIN')
-opt3 = P('OPT3', 'PC817', ('Package_DIP', 'DIP-4_W7.62mm'), 47.73, 76.69, 90)
+opt3 = P('OPT3', 'PC817', ('Package_DIP', 'DIP-4_W7.62mm'), 52, 74.5, 90)
 opt3.pin(1, 'BTN_A').pin(2, 'GND').pin(3, 'GND').pin(4, 'IN_BTN')
 
 # --- K1: relay SRD-12VDC-SL-C (back) ---
-k1 = P('K1', 'SRD-12VDC-SL-C', fp_relay_srd(), 62, 80, 0)
+k1 = P('K1', 'SRD-12VDC-SL-C', fp_relay_srd(), 64.5, 73.5, 0)
 k1.pin('A1', '+12V').pin('A2', 'RELAY_COIL').pin('COM', '+12V').pin('NC', '').pin('NO', 'TRAVA_NO')
 
 # --- Diodes (back) ---
-d1 = P('D1', 'SS54', ('Diode_SMD', 'D_SMA'), 48.5, 91.5, 0).pin(1, 'F12V').pin(2, '+12V')
-d2 = P('D2', 'SS14', ('Diode_SMD', 'D_SMA'), 44.5, 71, 0).pin(1, 'USB_5V_F').pin(2, '+5V')
-d3 = P('D3', 'SS14', ('Diode_SMD', 'D_SMA'), 72.5, 88.5, 0).pin(1, 'RELAY_COIL').pin(2, '+12V')
-d4 = P('D4', 'SMBJ18A', ('Diode_SMD', 'D_SMB'), 52.5, 91.5, 0).pin(1, '+12V').pin(2, 'GND')
-d5 = P('D5', 'SS54', ('Diode_SMD', 'D_SMA'), 74.5, 46, 90).pin(1, 'SW').pin(2, 'GND')
-d6 = P('D6', 'SMBJ16A', ('Diode_SMD', 'D_SMB'), 74.5, 93, 90).pin(1, 'TRAVA_NO').pin(2, 'GND')
-d7 = P('D7', 'M7', ('Diode_SMD', 'D_SMA'), 74.5, 96.5, 90).pin(1, 'GND').pin(2, 'TRAVA_NO')
+d1 = P('D1', 'SS54', ('Diode_SMD', 'D_SMA'), 47.5, 84.5, 0).pin(1, 'F12V').pin(2, '+12V')
+d2 = P('D2', 'SS14', ('Diode_SMD', 'D_SMA'), 49, 70, 0).pin(1, 'USB_5V_F').pin(2, '+5V')
+d3 = P('D3', 'SS14', ('Diode_SMD', 'D_SMA'), 69.5, 85.4, 0).pin(1, 'RELAY_COIL').pin(2, '+12V')
+d4 = P('D4', 'SMBJ18A', ('Diode_SMD', 'D_SMB'), 54, 84.5, 0).pin(1, '+12V').pin(2, 'GND')
+d5 = P('D5', 'SS54', ('Diode_SMD', 'D_SMA'), 75.5, 44.5, 90).pin(1, 'SW').pin(2, 'GND')
+d6 = P('D6', 'SMBJ16A', ('Diode_SMD', 'D_SMB'), 76.1, 87, 0).pin(1, 'TRAVA_NO').pin(2, 'GND')
+d7 = P('D7', 'M7', ('Diode_SMD', 'D_SMA'), 66, 91, 0).pin(1, 'GND').pin(2, 'TRAVA_NO')
 
 # --- Fuses (back) ---
-f1 = P('F1', '1206L050/24', ('Fuse', 'Fuse_1206_3216Metric'), 44.5, 91.5 - 6, 0).pin(1, '+12V_IN').pin(2, 'F12V')
-f2 = P('F2', '1206L050/24', ('Fuse', 'Fuse_1206_3216Metric'), 40.5, 71, 0).pin(1, 'USB_VBUS').pin(2, 'USB_5V_F')
+f1 = P('F1', '1206L050/24', ('Fuse', 'Fuse_1206_3216Metric'), 41.5, 84, 0).pin(1, '+12V_IN').pin(2, 'F12V')
+f2 = P('F2', '1206L050/24', ('Fuse', 'Fuse_1206_3216Metric'), 43.5, 71, 0).pin(1, 'USB_VBUS').pin(2, 'USB_5V_F')
 
 # --- L1 buck inductor (back) ---
 l1 = P('L1', '6.8uH', ('Inductor_SMD', 'L_7.3x7.3_H3.5'), 73, 52, 180).pin(1, 'SW').pin(2, '+5V')
 
 # --- Buttons (back, mid board) ---
-sw1 = P('SW1', 'RST', ('Button_Switch_SMD', 'SW_SPST_PTS645'), 45, 61.5, 0).pin(1, 'EN').pin(2, 'GND')
-sw2 = P('SW2', 'BOOT', ('Button_Switch_SMD', 'SW_SPST_PTS645'), 53, 61.5, 0).pin(1, 'BTN1').pin(2, 'GND')
-sw3 = P('SW3', 'CFG', ('Button_Switch_SMD', 'SW_SPST_PTS645'), 61, 61.5, 0).pin(1, 'BTN2').pin(2, 'GND')
+sw1 = P('SW1', 'RST', ('Button_Switch_SMD', 'SW_SPST_PTS645'), 39.3, 58, 0).pin(1, 'EN').pin(2, 'GND')
+sw2 = P('SW2', 'BOOT', ('Button_Switch_SMD', 'SW_SPST_PTS645'), 50, 58, 0).pin(1, 'BTN1').pin(2, 'GND')
+sw3 = P('SW3', 'CFG', ('Button_Switch_SMD', 'SW_SPST_PTS645'), 61, 58, 0).pin(1, 'BTN2').pin(2, 'GND')
 
 # --- Connectors (back) ---
-j1 = P('J1', 'DC-005 12V', ('Connector_BarrelJack', 'BarrelJack_Horizontal'), 40, 92, 180)
+j1 = P('J1', 'DC-005 12V', ('Connector_BarrelJack', 'BarrelJack_Horizontal'), 32, 85, 270)
 j1.pin(1, '+12V_IN').pin(2, '').pin(3, 'GND')
-j2 = P('J2', 'KF301 TRAVA', fp_kf301(), 63, 92.5, 0).pin(1, 'TRAVA_NO').pin(2, 'GND')
-j3 = P('J3', 'JST-XH NOTEIRO', ('Connector_JST', 'JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal'), 34.5, 90, 0)
+j2 = P('J2', 'KF301 TRAVA', fp_kf301(), 74.8, 94.6, 90).pin(1, 'TRAVA_NO').pin(2, 'GND')
+j3 = P('J3', 'JST-XH NOTEIRO', ('Connector_JST', 'JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal'), 43.5, 89.5, 0)
 j3.pin(1, 'NOTE_SIG').pin(2, 'GND')
-j4 = P('J4', 'JST-XH MOEDEIRO', ('Connector_JST', 'JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal'), 43, 90, 0)
+j4 = P('J4', 'JST-XH MOEDEIRO', ('Connector_JST', 'JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal'), 51.5, 89.5, 0)
 j4.pin(1, 'COIN_SIG').pin(2, 'GND')
-j5 = P('J5', 'JST-XH BOTAO', ('Connector_JST', 'JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal'), 51.5, 90, 0)
+j5 = P('J5', 'JST-XH BOTAO', ('Connector_JST', 'JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal'), 60, 89.5, 0)
 j5.pin(1, 'BTN_SIG').pin(2, '+12V')
-j6 = P('J6', 'USB-C', ('Connector_USB', 'USB_C_Receptacle_HRO_TYPE-C-31-M-12'), 30.3, 71.9, 90)
+j6 = P('J6', 'USB-C', ('Connector_USB', 'USB_C_Receptacle_HRO_TYPE-C-31-M-12'), 30.4, 71.9, 90)
 for pn in ('A1','B1','A12','B12'): j6.pin(pn, 'GND')
 for pn in ('A4','A9','B4','B9'): j6.pin(pn, 'USB_VBUS')
 j6.pin('A5', 'CC1').pin('B5', 'CC2')
@@ -289,7 +292,7 @@ j6.pin('A6', 'USB_DP').pin('B6', 'USB_DP').pin('A7', 'USB_DN').pin('B7', 'USB_DN
 j6.pin('A8', '').pin('B8', '')
 
 # --- J7: display socket (FRONT) ---
-j7 = P('J7', 'TFT 1.54', fp_display_socket(), 32.6, 56, 0, side='F')
+j7 = P('J7', 'TFT 1.54', fp_display_socket(), 31, 56, 0, side='F')
 j7.pin(1, 'GND').pin(2, '+3V3').pin(3, 'SCK_D').pin(4, 'MOSI_D')
 j7.pin(5, 'DISP_RST').pin(6, 'DISP_DC').pin(7, 'DISP_CS').pin(8, 'DISP_BL')
 
@@ -305,65 +308,65 @@ tp2 = P('TP2', 'RX0', fp_testpad('RX0'), 40.5, 33.5, 0).pin(1, 'RX0')
 tp3 = P('TP3', 'GND', fp_testpad('GND'), 37.5, 36.5, 0).pin(1, 'GND')
 
 # --- Mounting holes ---
-for i, (hx, hy) in enumerate([(30.5, 30.5), (74.5, 30.5), (30.5, 94.5), (74.5, 94.5)], 1):
+for i, (hx, hy) in enumerate([(30.5, 30.5), (74.5, 30.5), (30.5, 94.5), (66, 98)], 1):
     P(f'H{i}', 'M3', fp_mount_hole(), hx, hy, 0, side='B')
 
 # --- Resistors (back) ---
 def RR(ref, val, x, y, rot, n1, n2, pkg='R_0603_1608Metric'):
     return P(ref, val, ('Resistor_SMD', pkg), x, y, rot).pin(1, n1).pin(2, n2)
 
-RR('R1', '5.1k', 31, 66.5, 0, 'CC1', 'GND')
-RR('R2', '5.1k', 31, 69.5, 0, 'CC2', 'GND')
-RR('R3', '100R', 70.5, 83, 0, 'RLY_DRV', 'RLY_GATE')
-RR('R4', '10k', 70.5, 85.8, 0, 'RLY_GATE', 'GND')
+RR('R1', '5.1k', 38, 66, 0, 'CC1', 'GND')
+RR('R2', '5.1k', 41, 66.5, 0, 'CC2', 'GND')
+RR('R3', '100R', 78.5, 82.5, 0, 'RLY_DRV', 'RLY_GATE')
+RR('R4', '10k', 76.5, 76.8, 0, 'RLY_GATE', 'GND')
 RR('R5', '33R', 38.5, 44.6, 0, 'SCK_D', 'SCK_M')
 RR('R6', '33R', 38.5, 46.4, 0, 'MOSI_D', 'MOSI_M')
 RR('R7', '10k', 64.8, 38.5, 0, '+3V3', 'EN')
-RR('R8', '10k', 47.5, 67, 0, '+3V3', 'BTN1')
-RR('R9', '10k', 55.5, 67, 0, '+3V3', 'BTN2')
+RR('R8', '10k', 46.2, 66.2, 0, '+3V3', 'BTN1')
+RR('R9', '10k', 41.5, 73, 0, '+3V3', 'BTN2')
 RR('R10', '10k', 63.5, 51, 0, '+3V3', 'IO7_PU')
-RR('R11', '10k', 38.5, 50.5, 0, '+3V3', 'IO26_PU')
-RR('R12', '10k', 38.5, 53, 0, '+3V3', 'IO27_PU')
-RR('R13', '10k', 35, 87, 90, 'IN_NOTE', '+3V3')
-RR('R14', '10k', 42, 87, 90, 'IN_COIN', '+3V3')
-RR('R15', '10k', 49, 87, 90, 'IN_BTN', '+3V3')
-RR('R16', '2.2k', 36.27, 74.5, 90, 'NOTE_A', '+12V')
-RR('R17', '2.2k', 43.27, 74.5, 90, 'COIN_A', '+12V')
-RR('R18', '2.2k', 50.27, 74.5, 90, 'BTN_A', '+12V')
-RR('R20', '10k', 76.5, 46.905, 0, 'FB', '+5V')
-RR('R21', '1.91k', 76.5, 49.5, 0, 'FB', 'GND')
-RR('R22', '49.9k', 71.5, 49, 90, 'COMP_X', 'COMP_Y')
-RR('R23', '100R', 70.5, 90, 0, 'TRAVA_NO', 'TRAVA_NO2', pkg='R_1206_3216Metric')
-RR('R26', '100k', 66.5, 50.5, 0, '+12V', 'EN_BK')
+RR('R11', '10k', 41, 50.5, 0, '+3V3', 'IO26_PU')
+RR('R12', '10k', 45.6, 55.5, 0, '+3V3', 'IO27_PU')
+RR('R13', '10k', 28, 58, 90, 'IN_NOTE', '+3V3')
+RR('R14', '10k', 28, 61, 90, 'IN_COIN', '+3V3')
+RR('R15', '10k', 28, 64, 90, 'IN_BTN', '+3V3')
+RR('R16', '2.2k', 36.5, 68.5, 90, 'NOTE_A', '+12V')
+RR('R17', '2.2k', 49, 66.8, 90, 'COIN_A', '+12V')
+RR('R18', '2.2k', 52.7, 67.6, 90, 'BTN_A', '+12V')
+RR('R20', '10k', 78, 46.905, 0, 'FB', '+5V')
+RR('R21', '1.91k', 78.2, 51.2, 0, 'FB', 'GND')
+RR('R22', '49.9k', 67.5, 52, 90, 'COMP_X', 'COMP_Y')
+RR('R23', '100R', 66.5, 87.5, 0, 'TRAVA_NO', 'TRAVA_NO2', pkg='R_1206_3216Metric')
+RR('R26', '100k', 66.2, 50.2, 0, '+12V', 'EN_BK')
 
 # --- Capacitors (back) ---
 def CC(ref, val, x, y, rot, n1, n2, pkg='C_0603_1608Metric'):
     return P(ref, val, ('Capacitor_SMD', pkg), x, y, rot).pin(1, n1).pin(2, n2)
 
-CC('C1', '10uF/25V', 66.8, 39.5, 90, '+12V', 'GND', 'C_1206_3216Metric')
+CC('C1', '10uF/25V', 67.5, 39.5, 90, '+12V', 'GND', 'C_1206_3216Metric')
 CC('C2', '10uF/25V', 70.5, 39.5, 90, '+12V', 'GND', 'C_1206_3216Metric')
-CC('C3', '100nF', 64.8, 42.2, 90, '+12V', 'GND')
-CC('C4', '100nF', 74.5, 41.5, 90, 'BOOT_C', 'SW')
-CC('C5', '33uF/10V', 77, 56.5, 0, 'GND', '+5V', 'C_1206_3216Metric')
-CC('C6', '33uF/10V', 77, 59, 0, 'GND', '+5V', 'C_1206_3216Metric')
-CC('C7', '4.7nF', 76.5, 52.5, 0, 'COMP_Y', 'GND')
-CC('C8', '39pF', 78.8, 49.5, 90, 'COMP_X', 'GND')
-CC('C9', '100nF', 67.8, 47.5, 0, 'SS_C', 'GND')
-CC('C10', '22uF', 69, 61, 90, '+5V', 'GND', 'C_1206_3216Metric')
-CC('C11', '10uF', 66, 63, 90, 'GND', '+3V3', 'C_0805_2012Metric')
-CC('C12', '22uF', 66, 66, 90, 'GND', '+3V3', 'C_1206_3216Metric')
-CC('C13', '100nF', 69, 63, 0, '+3V3', 'GND')
-CC('C14', '10uF', 34.5, 51.5, 90, '+3V3', 'GND', 'C_0805_2012Metric')
-CC('C15', '100nF', 34.5, 54.5, 90, '+3V3', 'GND')
-CC('C16', '10uF', 30, 66, 0, 'USB_VBUS', 'GND', 'C_0805_2012Metric')
-CC('C17', '100nF', 33.5, 74.5, 0, 'USB_VBUS', 'GND')
-CC('C18', '10uF', 59.5, 36.5, 0, '+3V3', 'GND', 'C_0805_2012Metric')
-CC('C19', '100nF', 63.5, 36.5, 0, '+3V3', 'GND')
-CC('C20', '100nF', 57, 39.5, 0, 'EN', 'GND')
-CC('C21', '100nF', 57, 67, 0, 'BTN1', 'GND')
-CC('C22', '100nF', 65, 67, 0, 'BTN2', 'GND')
-CC('C23', '1uF', 55, 74.5, 90, '+3V3', 'GND')
-CC('C24', '100nF', 70.5, 92.5, 0, 'TRAVA_NO2', 'TRAVA_NO3', 'C_1206_3216Metric')
+CC('C3', '100nF', 64.2, 42.4, 90, '+12V', 'GND')
+CC('C4', '100nF', 73.8, 41.3, 90, 'BOOT_C', 'SW')
+CC('C5', '33uF/10V', 78.5, 55.5, 90, 'GND', '+5V', 'C_1206_3216Metric')
+CC('C6', '33uF/10V', 77.5, 61.5, 90, 'GND', '+5V', 'C_1206_3216Metric')
+CC('C7', '4.7nF', 67, 54.5, 0, 'COMP_Y', 'GND')
+CC('C8', '39pF', 78.8, 49, 90, 'COMP_X', 'GND')
+CC('C9', '100nF', 67, 48.9, 0, 'SS_C', 'GND')
+CC('C10', '22uF', 77.8, 67, 90, '+5V', 'GND', 'C_1206_3216Metric')
+CC('C11', '10uF', 66.2, 61.5, 90, 'GND', '+3V3', 'C_0805_2012Metric')
+CC('C12', '22uF', 43.5, 67.5, 90, 'GND', '+3V3', 'C_1206_3216Metric')
+CC('C13', '100nF', 75.5, 66, 0, '+3V3', 'GND')
+CC('C14', '10uF', 37.5, 51.5, 90, '+3V3', 'GND', 'C_0805_2012Metric')
+CC('C15', '100nF', 35, 52.5, 90, '+3V3', 'GND')
+CC('C16', '10uF', 36.1, 71.2, 0, 'USB_VBUS', 'GND', 'C_0805_2012Metric')
+CC('C17', '100nF', 33.5, 79.5, 0, 'USB_VBUS', 'GND')
+CC('C18', '10uF', 64.5, 34.2, 0, '+3V3', 'GND', 'C_0805_2012Metric')
+CC('C19', '100nF', 64.5, 36.5, 0, '+3V3', 'GND')
+CC('C20', '100nF', 63.5, 44, 0, 'EN', 'GND')
+CC('C21', '100nF', 52, 71.5, 0, 'BTN1', 'GND')
+CC('C22', '100nF', 63.5, 62.2, 0, 'BTN2', 'GND')
+CC('C23', '1uF', 69.3, 88.3, 90, '+3V3', 'GND')
+CC('C24', '100nF', 66.5, 94.5, 0, 'TRAVA_NO2', 'TRAVA_NO3', 'C_1206_3216Metric')
 
 # fix net aliases: snubber chain TRAVA_NO -> R23 -> C24 -> TRAVA_NO3 -> same node as TRAVA_NO? unify:
 # (we keep separate net names and will bridge them in routing)

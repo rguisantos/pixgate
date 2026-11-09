@@ -120,8 +120,8 @@ def flip_footprint_pads(fp, pinmap=None):
     return fp
 
 def embed_footprint(fp, ref, value, pos, rot, netmap, side='B'):
-    """Prepare a library footprint for embedding in a board.
-    netmap: {pad_number_str: (net_idx, net_name)}
+    """Prepare a library footprint for embedding in a board (idempotent).
+    netmap: {pad_number_str: (net_idx, net_name)}; net 0 is skipped (no net).
     pos: (x, y). Returns modified fp (list)."""
     # strip version/generator nodes
     for key in ('version', 'generator', 'generator_version'):
@@ -131,7 +131,10 @@ def embed_footprint(fp, ref, value, pos, rot, netmap, side='B'):
     lay = getlist(fp, 'layer')[0]
     li = fp.index(lay)
     fp[li] = ['layer', side + '.Cu']
-    # uuid + at right after layer
+    # idempotent placement: drop stale uuid/at right after layer, re-insert
+    while (li + 1 < len(fp) and isinstance(fp[li + 1], list)
+           and fp[li + 1] and fp[li + 1][0] in ('uuid', 'at')):
+        fp.pop(li + 1)
     fp.insert(li + 1, ['uuid', new_uuid()])
     ats = f'{rot:g}' if rot else '0'
     fp.insert(li + 2, ['at', f'{pos[0]:g}', f'{pos[1]:g}', ats])
@@ -144,11 +147,15 @@ def embed_footprint(fp, ref, value, pos, rot, netmap, side='B'):
     # pads: assign nets after (layers ...) node
     for pad in getlist(fp, 'pad'):
         num = pad[1]
+        # idempotent: drop stale net/uuid on the pad
+        for n in getlist(pad, 'net') + getlist(pad, 'uuid'):
+            pad.remove(n)
         lays = getlist(pad, 'layers')
         insert_at = pad.index(lays[0]) + 1 if lays else len(pad)
         if num in netmap:
             ni, nn = netmap[num]
-            pad.insert(insert_at, ['net', str(ni), nn])
+            if ni != 0:
+                pad.insert(insert_at, ['net', str(ni), nn])
         pad.append(['uuid', new_uuid()])
     return fp
 
@@ -172,7 +179,9 @@ def _flip_text_rot(node):
                 pass
 
 def flip_footprint(fp):
-    """Full flip to back side: pads, graphics, texts, zone polygons."""
+    """Full flip to back side: pads, graphics, texts, zone polygons.
+    KiCad 9 convention (validated empirically vs pcbnew API): mirror X on
+    positions; texts that land on B.* layers get (justify mirror)."""
     # footprint layer
     lay = getlist(fp, 'layer')[0]
     fp[fp.index(lay)] = ['layer', 'B.Cu']
@@ -207,12 +216,45 @@ def flip_footprint(fp):
             for lnode in getlist(item, 'layer'):
                 if len(lnode) > 1:
                     lnode[1] = flip_layer_token(lnode[1])
+            _mirror_text_if_back(item)
         elif item[0] == 'zone':
             for p in getlist(item, 'polygon'):
                 for xy in getlist(p, 'xy'):
                     if isinstance(xy[1], str):
                         try: xy[1] = f'{-float(xy[1]):.6f}'.rstrip('0').rstrip('.')
                         except ValueError: pass
+    return fp
+
+def _mirror_text_if_back(node):
+    """Add (justify mirror) to a text item whose layer is on the back side."""
+    lay = getlist(node, 'layer')
+    if not lay or not str(lay[0][1]).startswith('B.'):
+        return
+    eff = getlist(node, 'effects')
+    if not eff:
+        return
+    e = eff[0]
+    if not getlist(e, 'justify'):
+        e.append(['justify', 'mirror'])
+
+def apply_pad_rotation(fp, theta):
+    """Add footprint rotation theta to every pad's own rotation.
+    KiCad 9 file convention: footprint at.rot moves pad POSITIONS only; the
+    pad SHAPE rotates by the pad's own at angle, which must carry the total
+    rotation (validated empirically against pcbnew's serializer)."""
+    if not theta:
+        return fp
+    for pad in getlist(fp, 'pad'):
+        at = getlist(pad, 'at')[0]
+        cur = 0.0
+        if len(at) > 3 and isinstance(at[3], str):
+            try:
+                cur = float(at[3])
+            except ValueError:
+                cur = 0.0
+            at[3] = f'{(cur + theta) % 360:g}'
+        else:
+            at.append(f'{theta % 360:g}')
     return fp
 
 # ---------- custom footprint builder ----------
@@ -246,13 +288,29 @@ def mkfootprint(name, layer='F.Cu'):
     return ['footprint', name, ['layer', layer], ['uuid', new_uuid()]]
 
 def set_fp_texts(fp, ref, value, descr=''):
-    fp.append(['descr', descr])
-    fp.append(['tags', 'custom'])
-    for k, v in (('Reference', ref), ('Value', value), ('Description', descr)):
-        t = ['property', k, v, ['at', '0', '0'], ['layer', 'F.Fab'], ['uuid', new_uuid()],
+    """Set Reference/Value properties (upsert: updates existing, creates if
+    missing) and ensure descr/tags exist without clobbering library texts."""
+    # descr/tags: keep library texts if present
+    if not getlist(fp, 'descr'):
+        fp.append(['descr', descr])
+    if not getlist(fp, 'tags'):
+        fp.append(['tags', 'custom'])
+
+    def upsert(key, val):
+        for n in getlist(fp, 'property'):
+            if len(n) > 2 and n[1] == key:
+                n[2] = val
+                return
+        t = ['property', key, val, ['at', '0', '0'], ['layer', 'F.Fab'],
+             ['uuid', new_uuid()],
              ['effects', ['font', ['size', '1', '1'], ['thickness', '0.15']]]]
-        if k == 'Description':
+        if key == 'Description':
             t.append(['hide', 'yes'])
         fp.append(t)
-    fp.append(['property', 'ki_fp_filters', '*'])
+
+    upsert('Reference', ref)
+    upsert('Value', value)
+    upsert('Description', descr)
+    if not any(len(n) > 1 and n[1] == 'ki_fp_filters' for n in getlist(fp, 'property')):
+        fp.append(['property', 'ki_fp_filters', '*'])
     return fp

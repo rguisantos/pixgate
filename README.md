@@ -79,21 +79,21 @@ Requisitos:
 
 - Python 3.8+
 - KiCad 9 (`kicad-cli` no PATH) — usado para validar o arquivo gerado
-- Biblioteca oficial de footprints [KiCad/kicad-footprints](https://github.com/KiCad/kicad-footprints)
+- Biblioteca oficial de footprints [KiCad/kicad-footprints](https://github.com/KiCad/kicad-footprints) **em formato 9.x** (a versão de 2020 @7ebfa6b usa formato legado `module`/`fp_arc` que o KiCad 9 não carrega; o pacote Debian `kicad-footprints` 9.0.2 funciona)
 - Footprints Espressif [espressif/kicad-libraries](https://github.com/espressif/kicad-libraries)
 
 Os caminhos das bibliotecas estão no topo de `hardware/gen_board.py`:
 
 ```python
-FPDIR = os.path.expanduser('~/kicad-root/root/usr/share/kicad/footprints')   # kicad-footprints
+FPDIR = os.path.expanduser('~/kfp-9/usr/share/kicad/footprints')          # kicad-footprints 9.0.2
 ESPDIR = os.path.expanduser('~/kicad-libs/kicad-libraries/footprints/Espressif.pretty')
 ```
 
 Ajuste `FPDIR`/`ESPDIR` para o seu layout (ex.: `/usr/share/kicad/footprints` numa instalação normal de Linux) e rode:
 
 ```bash
-python3 hardware/gen_board.py          # imprime nets, componentes e posições de pads
-DUMP_PADS=1 python3 hardware/gen_board.py   # dump completo de pads (insumo do roteamento)
+python3 hardware/serialize.py           # gera hardware/pixgate.kicad_pcb (board completo)
+python3 hardware/place_check.py         # conflitos de colocação (cobre/courtyard) instantâneos
 ```
 
 ## Validação (DRC)
@@ -101,7 +101,7 @@ DUMP_PADS=1 python3 hardware/gen_board.py   # dump completo de pads (insumo do r
 O arquivo `.kicad_pcb` gerado é validado com o DRC oficial:
 
 ```bash
-kicad-cli pcb drc --output-report report.rpt board.kicad_pcb
+kicad-cli pcb drc --severity-all --output report.rpt hardware/pixgate.kicad_pcb
 ```
 
 A pasta `validation/drc/` guarda a trilha de evidências do desenvolvimento: um board mínimo com DRC 100% limpo (`test3`), a bisection que isolou a causa de erros de outline (`bisect_*`), o caso com outline fechado e nets controladas (`ok`) e o teste de rotação de footprint a 90° (`rot_test`). Detalhes no [WORKLOG](WORKLOG.md).
@@ -112,10 +112,11 @@ A pasta `validation/drc/` guarda a trilha de evidências do desenvolvimento: um 
 - [x] Biblioteca Python de manipulação de `.kicad_pcb` (`pcb_lib.py`), com semântica de flip para o verso validada
 - [x] Footprints custom: soquete do display, relé SRD, KF301, SOIC-8 com EP, pads de teste, furos M3
 - [x] Netlist completa (51 redes nomeadas) e colocação dos 85 itens (componentes, pads de teste e furos M3)
-- [x] Formato de arquivo validado no DRC do KiCad 9 (`kicad-cli`)
-- [ ] Serialização final do board completo a partir de `gen_board.py`
+- [x] Formato de arquivo validado no DRC do KiCad 9 (`kicad-cli`), incluindo a convenção de rotação de pads do formato 9
+- [x] Serialização do board completo (`hardware/pixgate.kicad_pcb` carrega no pcbnew)
+- [ ] Zerar os últimos conflitos de colocação (4 shorts, ~6 clearances, ~48 courtyards)
 - [ ] Roteamento (frente: display/USB; verso: potência)
-- [ ] Zonas de cobre (GND)
+- [ ] Zonas de cobre (GND) + vias térmicas do U2
 - [ ] DRC limpo de ponta a ponta
 - [ ] Exportação de Gerbers e fabricação
 - [ ] Firmware (fora do escopo deste repositório por enquanto)

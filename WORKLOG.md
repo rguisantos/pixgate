@@ -100,4 +100,30 @@ Board de teste com o conector USB-C rotacionado a 90°, usando o DRC como orácu
 
 ---
 
+## 2026-11-09 (noite) — Serialização do board completo + descoberta crítica de formato KiCad 9
+
+**Objetivo:** serializar o `.kicad_pcb` completo (todos os footprints embedados com nets) e validar com o DRC oficial.
+
+### Ambiente restaurado
+O binário KiCad foi reciclado pelo sandbox. Restaurado via Debian trixie: `kicad` 9.0.2 + `kicad-footprints` 9.0.2 extraídos (sem root) em `~/kicad-root` + `~/kfp-9`, com o shim `LD_PRELOAD` (`tools/redirect.c`) e o wrapper `scripts/kicad.sh`. Validado reproduzindo o DRC limpo do `test3`.
+
+### Descoberta crítica: convenção de rotação de pads no formato KiCad 9
+1. O clone `refs/kfp` (@7ebfa6b, 2020) usa formato **legado** (`module`, `fp_arc` com `angle`) que o KiCad 9 **não carrega** dentro de board. Solução: footprints 9.0.2 do pacote Debian (mesma versão do binário).
+2. **Experimento decisivo** (flip + `SetOrientation` via API pcbnew, comparando os arquivos gerados): no formato KiCad 9, o `at.θ` do footprint gira apenas as **posições** dos itens; o **shape** de cada pad gira somente pela rotação no `at` do **próprio pad** — que deve carregar a rotação total. Meu gerador omisso essa rotação → shapes não girados → 90 violações falsas num board com um único conector USB-C rotacionado, incluindo shorts GND↔VBUS que não existem.
+3. Correção: `pcb_lib.apply_pad_rotation()` soma θ à rotação de cada pad no placement; textos no verso ganham `(justify mirror)`; `embed_footprint` e `set_fp_texts` tornaram-se idempotentes. Resultado: 660 → ~65 violações nas iterações seguintes.
+4. Outras descobertas de footprint: o USB-C HRO tem pads **concêntricos compartilhados** (A1≡B12, A4≡B9 — por isso precisam da mesma net); o PTS645 tem **pads duplicados por número** (4 pés diagonais ±3.98 mm → botões exigem ≥10.4 mm de espaçamento); o DIP-4 do KiCad 9 tem pin 1 na origem (geometria 2.54×7.62 após rot 90).
+
+### Serialização e re-layout
+- `hardware/serialize.py`: escreve o board completo — 51 nets, 85 footprints embedados, Edge.Cuts, textos de identificação. **O board carrega no KiCad 9** (`pcbnew.LoadBoard` OK, DRC roda).
+- `hardware/place_check.py`: verificador de colocação instantâneo (bboxes de cobre e courtyard por part, com flip+rotação corretos) — oráculo para iterar o layout sem rodar o DRC a cada ajuste.
+- `hardware/bisect_load.py`: bisection de carregamento por footprint (isolou os footprints legados).
+- 8 rodadas de re-layout: 660 → 65 violações de erro (4 shorts de colocação, ~6 clearances, 48 courtyards, 4 mask bridges) + 179 unconnected (esperado — sem roteamento). U2 trocado pelo footprint oficial SOIC-8 EP 2.41×3.3 (vias térmicas do lib têm furos 0.2 mm < mínimo 0.3; vias próprias serão adicionadas no roteamento). H4 movido para (66,98) para desobstruir o canto do bornier J2 (rotacionado a 90°).
+
+### Estado ao fim da sessão
+- Board completo `hardware/pixgate.kicad_pcb` gerado e carregável; colocação essencialmente saneada na zona USB/optos/12V/relé/saída.
+- Pendências de colocação (documentadas para a próxima sessão): 4 shorts finais, ~6 clearances < 0.2 mm e 48 courtyard overlaps (maioria com gaps sub-milimétricos entre courtyards).
+- Roteamento, zonas de GND e vias térmicas do U2: não iniciados.
+
+---
+
 *Worklog mantido à mão a partir dos artefatos e timestamps do ambiente de desenvolvimento. Cada bloco acima é verificável pelos arquivos correspondentes no repositório.*
