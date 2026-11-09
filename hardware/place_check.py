@@ -48,20 +48,46 @@ def part_boxes(p):
         cy0 = y0 if cy0 is None else min(cy0, y0)
         cx1 = x1 if cx1 is None else max(cx1, x1)
         cy1 = y1 if cy1 is None else max(cy1, y1)
-    # fp_lines CrtYd: courtyard
-    for line in getlist(p.fp, 'fp_line'):
-        lay = getlist(line, 'layer')
-        if not lay or 'CrtYd' not in str(lay[0][1]):
+    # CrtYd: fp_line/fp_rect (start/end), fp_circle (center/end->raio), fp_poly (pts)
+    # (bug historico: so fp_line era lido; footprints KiCad 9 novos usam fp_rect
+    #  — os optos PC817/DIP-4 estavam invisiveis ao verificador)
+    cyd_pts = []
+
+    def acc(px, py):
+        bx, by = rot_pt(px, py, p.rot)
+        bx, by = p.x + bx, p.y + by
+        cyd_pts.append((bx, by))
+
+    def on_crtyd(item):
+        lay = getlist(item, 'layer')
+        return bool(lay) and 'CrtYd' in str(lay[0][1])
+
+    for kind in ('fp_line', 'fp_rect'):
+        for item in getlist(p.fp, kind):
+            if not on_crtyd(item):
+                continue
+            for key in ('start', 'end'):
+                n = getlist(item, key)[0]
+                acc(float(n[1]), float(n[2]))
+    for circ in getlist(p.fp, 'fp_circle'):
+        if not on_crtyd(circ):
             continue
-        for key in ('start', 'end'):
-            n = getlist(line, key)[0]
-            px, py = float(n[1]), float(n[2])
-            bx, by = rot_pt(px, py, p.rot)
-            bx, by = p.x + bx, p.y + by
-            dx0 = bx if dx0 is None else min(dx0, bx)
-            dy0 = by if dy0 is None else min(dy0, by)
-            dx1 = bx if dx1 is None else max(dx1, bx)
-            dy1 = by if dy1 is None else max(dy1, by)
+        c = getlist(circ, 'center')[0]
+        e = getlist(circ, 'end')[0]
+        ccx, ccy = float(c[1]), float(c[2])
+        r = math.hypot(float(e[1]) - ccx, float(e[2]) - ccy)
+        acc(ccx - r, ccy - r)
+        acc(ccx + r, ccy + r)
+    for poly in getlist(p.fp, 'fp_poly'):
+        if not on_crtyd(poly):
+            continue
+        for pt in getlist(poly, 'pts')[0][1:]:
+            acc(float(pt[1]), float(pt[2]))
+    for bx, by in cyd_pts:
+        dx0 = bx if dx0 is None else min(dx0, bx)
+        dy0 = by if dy0 is None else min(dy0, by)
+        dx1 = bx if dx1 is None else max(dx1, bx)
+        dy1 = by if dy1 is None else max(dy1, by)
     d = (dx0, dy0, dx1, dy1) if dx0 is not None else None
     return (cx0, cy0, cx1, cy1), d
 

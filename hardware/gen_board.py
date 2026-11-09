@@ -128,13 +128,16 @@ def fp_relay_srd():
     fp.append(mkline('F.Fab', 9.55, -7.75, 9.55, 7.75, 0.1))
     fp.append(mkline('F.Fab', 9.55, 7.75, -9.55, 7.75, 0.1))
     fp.append(mkline('F.Fab', -9.55, 7.75, -9.55, -7.75, 0.1))
-    for l, m in (('F.SilkS', 9.8), ('F.CrtYd', 10.3)):
-        fp.append(mkline(l, -m, -(m - 0.3), -m, 0.05))
-        fp.append(mkline(l, m - 0.3, -m, m, -m, 0.05))
-        fp.append(mkline(l, m, -m, m, m, 0.05))
-        fp.append(mkline(l, m, m, -m, m, 0.05))
-        fp.append(mkline(l, -m, m, -m, -m, 0.05))
-        fp.append(mkline(l, -m, -m, -m, -(m - 0.3), 0.05))
+    # contorno fechado e PROPORCIONAL ao corpo (19.1 x 15.5): silk +0.15, CrtYd +0.25
+    # (o antigo era um quadrado ±10.3 aberto: malformado p/ o DRC e 2.5mm largo em Y,
+    #  escondia os overlaps reais do K1 e invadia a faixa y 81.8..83.8 do snubber)
+    for l, mx, my in (('F.SilkS', 9.7, 7.9), ('F.CrtYd', 9.8, 8.0)):
+        fp.append(mkline(l, -mx, -my, mx, -my, 0.05))   # topo
+        fp.append(mkline(l, mx, -my, mx, my, 0.05))     # direita
+        fp.append(mkline(l, mx, my, -mx, my, 0.05))     # baixo
+        fp.append(mkline(l, -mx, my, -mx, -my, 0.05))   # esquerda
+    # marcador de pino 1: tick no silk junto ao A1 (fora do cobre do pad)
+    fp.append(mkline('F.SilkS', -7.3, -7.4, -6.3, -7.4, 0.3))
     fp.append(mktext('fp_text', 'TRAVA 12V 10A', 0, 0, 'F.SilkS', size=1.0, thickness=0.15))
     fp.append(['attr', 'through_hole'])
     return fp
@@ -238,19 +241,19 @@ u4 = P('U4', 'USBLC6-2SC6', ('Package_TO_SOT_SMD', 'SOT-23-6'), 39.4, 69.0, 0)  
 u4.pin(1, 'USB_DP').pin(2, 'GND').pin(3, 'USB_DN').pin(4, 'USB_DN').pin(5, 'USB_VBUS').pin(6, 'USB_DP')
 
 # --- Q1: AO3400A relay driver (back) ---
-q1 = P('Q1', 'AO3400A', ('Package_TO_SOT_SMD', 'SOT-23'), 77, 80.5, 0)
+q1 = P('Q1', 'AO3400A', ('Package_TO_SOT_SMD', 'SOT-23'), 77.2, 80.5, 0)  # x+0.2: folga do courtyard do K1 (0.37mm)
 q1.pin(1, 'RLY_GATE').pin(2, 'GND').pin(3, 'RELAY_COIL')
 
 # --- Optocouplers (back) ---
-opt1 = P('OPT1', 'PC817', ('Package_DIP', 'DIP-4_W7.62mm'), 38, 74.5, 90)
+opt1 = P('OPT1', 'PC817', ('Package_DIP', 'DIP-4_W7.62mm'), 36.65, 74.5, 90)  # fileira -1.35 (colisao de corpo com K1; pinos 4 alinhados)
 opt1.pin(1, 'NOTE_A').pin(2, 'NOTE_SIG').pin(3, 'GND').pin(4, 'IN_NOTE')
-opt2 = P('OPT2', 'PC817', ('Package_DIP', 'DIP-4_W7.62mm'), 45.5, 74.5, 90)
+opt2 = P('OPT2', 'PC817', ('Package_DIP', 'DIP-4_W7.62mm'), 44.15, 74.5, 90)
 opt2.pin(1, 'COIN_A').pin(2, 'COIN_SIG').pin(3, 'GND').pin(4, 'IN_COIN')
-opt3 = P('OPT3', 'PC817', ('Package_DIP', 'DIP-4_W7.62mm'), 52, 74.5, 90)
+opt3 = P('OPT3', 'PC817', ('Package_DIP', 'DIP-4_W7.62mm'), 50.65, 74.5, 90)
 opt3.pin(1, 'BTN_A').pin(2, 'GND').pin(3, 'GND').pin(4, 'IN_BTN')
 
 # --- K1: relay SRD-12VDC-SL-C (back) ---
-k1 = P('K1', 'SRD-12VDC-SL-C', fp_relay_srd(), 64.5, 73.5, 0)
+k1 = P('K1', 'SRD-12VDC-SL-C', fp_relay_srd(), 65.1, 73.5, 0)  # x+0.6 + fileira -1.35: resolve colisao FISICA OPT3/K1 (0.86mm) com folga ~0.6mm dos 2 lados
 k1.pin('A1', '+12V').pin('A2', 'RELAY_COIL').pin('COM', '+12V').pin('NC', '').pin('NO', 'TRAVA_NO')
 
 # --- Diodes (back) ---
@@ -318,7 +321,7 @@ def RR(ref, val, x, y, rot, n1, n2, pkg='R_0603_1608Metric'):
 RR('R1', '5.1k', 38, 66, 0, 'CC1', 'GND')
 RR('R2', '5.1k', 41, 66.5, 0, 'CC2', 'GND')
 RR('R3', '100R', 78.15, 83.0, 0, 'RLY_DRV', 'RLY_GATE')  # resolve Q1<->R3; pad 1 a 0.55mm da borda (regra KiCad: 0.5mm)
-RR('R4', '10k', 76.5, 76.8, 0, 'RLY_GATE', 'GND')
+RR('R4', '10k', 77.5, 76.8, 0, 'RLY_GATE', 'GND')  # x+1.0: sai do courtyard do K1 deslocado
 RR('R5', '33R', 38.5, 44.6, 0, 'SCK_D', 'SCK_M')
 RR('R6', '33R', 38.5, 46.4, 0, 'MOSI_D', 'MOSI_M')
 RR('R7', '10k', 64.8, 38.5, 0, '+3V3', 'EN')
@@ -355,7 +358,7 @@ CC('C9', '100nF', 67, 48.9, 0, 'SS_C', 'GND')
 CC('C10', '22uF', 77.8, 67, 90, '+5V', 'GND', 'C_1206_3216Metric')
 CC('C11', '10uF', 66.8, 61.5, 90, 'GND', '+3V3', 'C_0805_2012Metric')  # x+0.6: resolve cobre SW3<->C11 (courtyard ainda sobrepoe)
 CC('C12', '22uF', 43.5, 67.5, 90, 'GND', '+3V3', 'C_1206_3216Metric')
-CC('C13', '100nF', 76.3, 70.1, 0, '+3V3', 'GND')  # resolve C10<->C13; +4.2mm de U3 (ver WORKLOG: cap de rail, desacoplamento do U1 fica em C18/C19)
+CC('C13', '100nF', 76.7, 70.45, 0, '+3V3', 'GND')  # sai do courtyard do K1 deslocado; cap de rail (ver WORKLOG)
 CC('C14', '10uF', 37.5, 51.5, 90, '+3V3', 'GND', 'C_0805_2012Metric')
 CC('C15', '100nF', 35, 52.5, 90, '+3V3', 'GND')
 CC('C16', '10uF', 36.1, 71.2, 0, 'USB_VBUS', 'GND', 'C_0805_2012Metric')

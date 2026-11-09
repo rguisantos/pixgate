@@ -214,4 +214,35 @@ O U4 (TVS do USB) sobe 1.0 mm — menor deslocamento que resolve ambos; segue co
 
 ---
 
+## 2026-11-10 (5) — Colisão física OPT3↔K1: descoberta, correção do verificador e do cluster do relé
+
+**Duas descobertas de ferramenta antes de qualquer movimento:**
+
+1. **Bug no `place_check.py`**: só `fp_line` era lido como courtyard; footprints KiCad 9 gerados recentemente usam `fp_rect` — **os 3 optos (DIP-4) estavam invisíveis ao verificador** (5 pares ocultos). Corrigido: agora lê `fp_line`/`fp_rect`/`fp_circle`/`fp_poly`. place_check: 39→46 pares (44 reais + 2 então ocultos de K1).
+2. **Courtyard do K1 malformado e quadrado**: o `fp_relay_srd()` desenhava um quadrado ±10.3 **aberto** (6 segmentos com gap no topo — bug de argumento) para um corpo 19.1×15.5. O DRC o ignorava nas checagens de overlap e acusava `malformed_courtyard`. Refeito: retângulo fechado proporcional (silk ±9.7×±7.9, CrtYd ±9.8×±8.0) + tick de pino 1 no silk.
+
+**Descoberta crítica — colisão FÍSICA (verificada por código, `scripts/body_collision.py`):** corpo do OPT3 (plástico DIP-4) x 50.73..55.81 intersecta corpo do K1 (plástico do relé) x 54.95..74.05 → **0.86 × 6.11 mm de interferência de plástico**. Não era um warning de courtyard: as peças não montam. O par "OPT3↔K1 −1.90" do mapeamento era real.
+
+**Decisão de layout (pacote repartido, verificado contra cobre/courtyard/borda):**
+
+| Part | Antes | Depois | Motivo |
+| --- | --- | --- | --- |
+| K1 | (64.5, 73.5) | **(65.1, 73.5)** | +0.6 em direção a OPT3 (com fileira recuando, divide o fardo) |
+| OPT1/2/3 | x 38 / 45.5 / 52 | **36.65 / 44.15 / 50.65** | fileira −1.35; pinos 4 seguem alinhados em y=82.12 (barramento paralelo preservado) |
+| Q1 | (77, 80.5) | **(77.2, 80.5)** | mantém 0.37 mm de courtyard do K1 |
+| C13 | (76.3, 70.1) | **(76.7, 70.45)** | sai do courtyard do K1 deslocado |
+
+Resultado: corpos OPT3↔K1 com ~0.6 mm de folga dos dois lados; courtyards limpos.
+
+**Alternativas rejeitadas (documentadas):** deslocar só a fileira (janela útil de 60 µm entre J6 e K1; R9 no caminho); deslocar só o K1 +1.65 (deadlock: courtyard do Q1 ±1.93 exige Q1x≥77.88, regra de borda 0.5 mm limita Q1x≤77.82 — janela de 60 µm de novo, e ainda empurraria R4/C13); Q1 abaixo do K1 (faixa y 81.5–83.65 tem só 2.15 mm < 3.4 mm do courtyard SOT-23).
+
+**Validação:**
+- place_check: 45 pares — OPT3↔K1, K1↔D4, K1↔D3 e Q1↔K1 eliminados; surgem OPT2↔F1 (−0.30) e OPT2↔R9 (−0.29) **na mesma zona F1/R9/D1/D4 que já era pendência** (OPT1↔F1/R9 pré-existentes). Cobre: só C3↔C20 (0.200, limite).
+- DRC KiCad 9: **`shorting_items`=0, `clearance`=0, `copper_edge`=0, `malformed_courtyard`=0, K1 em zero pares**. Total 191→186; courtyards_overlap 40→41 (7 pares de OPT × {F1, R9, D1, D4}).
+- Artefatos de bbox conhecidos (DRC não vê): J1↔OPT1, J7↔R13/R14/R15 — geometrias reais não se tocam.
+
+**Pendências para o próximo lote (busca de coordenadas):** os 7 pares OPT↔{F1, R9, D1, D4} + L1↔R21 (−1.46) + demais menores. R9 está espremido entre OPT1 e OPT2 (gap de courtyard de 0.56 mm) — precisa de nova casa; F1/D1/D4 na faixa y 82–87 entre a fileira e J3/J4/J5.
+
+---
+
 *Worklog mantido à mão a partir dos artefatos e timestamps do ambiente de desenvolvimento. Cada bloco acima é verificável pelos arquivos correspondentes no repositório.*
