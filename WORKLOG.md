@@ -126,4 +126,25 @@ O binário KiCad foi reciclado pelo sandbox. Restaurado via Debian trixie: `kica
 
 ---
 
+## 2026-11-10 — Eliminação dos 4 shorts de colocação
+
+**Correções (todas em `hardware/gen_board.py`, base 80b40b3):**
+
+| Part | Antes | Depois | Motivo |
+| --- | --- | --- | --- |
+| D4 | (54.0, 84.5) | (54.35, 84.5) | short com D1 (cobre sobrepunha 0.15 mm) |
+| D6 | (76.1, 87.0) | (76.35, 87.0) | short com D3 (sobreposição 0.05 mm) |
+| C20 | (63.5, 44.0) | (63.5, 44.3) | short com C3 (sobreposição 0.1 mm) |
+| R12 | (45.6, 55.5) | (40.7, 53.6) | short com SW2 (0.875 mm); PTS645 exige ≥10.4 mm de espaçamento e a folga SW1↔SW2 é de 1.2 mm < largura do R12 — ponto livre mais próximo, sem conflito de cobre/courtyard e fora do U1 |
+
+**Validação:**
+- `place_check.py`: COPRE 12→10 — D1↔D4 e SW2↔R12 eliminados; D3↔D6 e C3↔C20 em exatos 0.200 mm (no limite, como previsto).
+- DRC KiCad 9.0.2: **0 `shorting_items` e 0 `solder_mask_bridge`** (eram 4+4 — os bridges eram consequência dos shorts). Total 217→211 violações; courtyards 48→45; clearances 7→6.
+
+**Efeito colateral novo (a tratar no próximo lote):** o deslocamento do D6 (+0.25 mm para a direita) deixou o pad 1 [TRAVA_NO] a 0.25 mm da borda direita do board (`copper_edge_clearance`, erro — mínimo 0.5 mm) e o silk do D_SMB corta a borda em x=80 (3 avisos `silk_edge_clearance`). Reposicionar D6 (deslocamento em Y ou ponto alternativo via busca com place_check) resolve sem recriar o short com D3.
+
+**Pendências restantes de colocação:** 6 clearances < 0.2 mm (L1↔R21 0.025, R22↔R26 0.10, D2↔C21 0.125, U4↔C16 0.15, U4↔F2 0.175, C10↔C13 0.175), 45 courtyards, 1 texto não-espelhado no verso, 1 courtyard malformado e a nova borda do D6.
+
+---
+
 *Worklog mantido à mão a partir dos artefatos e timestamps do ambiente de desenvolvimento. Cada bloco acima é verificável pelos arquivos correspondentes no repositório.*
