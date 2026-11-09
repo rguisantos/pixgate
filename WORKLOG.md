@@ -166,4 +166,33 @@ Escolha do 69.2 em vez do 69.25: 0.250 mm de folga em vez de 0.200 mm exatos no 
 
 ---
 
+## 2026-11-10 (3) — Lote 2: clearances de cobre e borda do R3
+
+**Ajustes aplicados (`hardware/gen_board.py`, base 14810dc):**
+
+| Part | Antes | Depois | Resolve |
+| --- | --- | --- | --- |
+| R3 | (78.5, 82.5) | **(78.15, 83.0)** | courtyard Q1↔R3 e copper_edge do pad 1 |
+| C21 | (52, 71.5) | **(52.0, 72.5)** | cobre D2↔C21 (0.125) |
+| C7 | (67, 54.5) | **(65.2, 53.8)** | cobre SW3↔C7 (0.127) |
+| R26 | (66.2, 50.2) | **(64.0, 49.5)** | cobre R22↔R26 (0.10) |
+| C11 | (66.2, 61.5) | **(66.8, 61.5)** | cobre SW3↔C11 (−0.28) |
+| R21 | (78.2, 51.2) | **(76.8, 50.1)** | cobre L1↔R21 (0.025) |
+| C13 | (75.5, 66) | **(76.3, 70.1)** | cobre C10↔C13 (0.175) |
+
+**Desvio da receita original e por quê:** o lote previa R3 em (78.4, 83.0) com copper_edge resolvido — mas o critério da busca (cobre ≥ 0.35 mm da borda) ficava aquém da regra do KiCad (0.5 mm): o DRC acusava 0.375 mm. Ajustado para **x=78.15** (cobre do pad 1 termina em x=79.45, folga 0.55 mm), sem recriar nenhum conflito de cobre ou courtyard com Q1.
+
+**Decisão de projeto sobre o C13 (movido 4.2 mm de U3):** aceito. O desacoplamento crítico das cargas fica intacto — U1 tem C18/C19 (10uF+100nF) junto aos seus pinos de +3V3, e o display J7 tem C14/C15; C11 (10uF) + C12 (22uF) cuidam da estabilidade da saída do LDO. C13 é capacitor suplementar de rail (100nF), cuja posição não é crítica para o loop de alta frequência.
+
+**Não aplicado (pendente de decisão):** U4↔C16 (0.150) e U4↔F2 (0.175) — os pontos livres achados pela busca a 7 mm afastariam o VBUS decoupling e o PTC do circuito de proteção USB. Alternativa proposta: deslocar o U4 em ~0.1–0.3 mm.
+
+**Validação:**
+- `place_check.py`: COPRE 9→3 — sobram só U4↔C16 (0.150), U4↔F2 (0.175) e C3↔C20 (0.200, no limite). Courtyards 45→39.
+- DRC KiCad 9.0.2: **`shorting_items`=0, `copper_edge_clearance`=0, `clearance`=2** (os dois pares do U4, ≤3 previsto). Total 207→193.
+- Courtyards residuais novos pequenos: U3↔C11 (−0.18) e R21↔C8 (−0.21); L1↔R21 e SW3↔C11 permanecem (como previsto — só o cobre foi resolvido; fechar os courtyards exige mover SW3 ou L1).
+
+**Pendências de colocação:** 39 courtyards, 2 clearances do U4, 1 texto não-espelhado no verso, 1 courtyard malformado. Depois: roteamento.
+
+---
+
 *Worklog mantido à mão a partir dos artefatos e timestamps do ambiente de desenvolvimento. Cada bloco acima é verificável pelos arquivos correspondentes no repositório.*
