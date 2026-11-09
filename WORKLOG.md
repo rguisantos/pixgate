@@ -195,4 +195,23 @@ Escolha do 69.2 em vez do 69.25: 0.250 mm de folga em vez de 0.200 mm exatos no 
 
 ---
 
+## 2026-11-10 (4) — Lote 3: últimos clearances (U4↔C16, U4↔F2) — cobre 100% limpo
+
+| Part | Antes | Depois | Resolve |
+| --- | --- | --- | --- |
+| U4 | (39.5, 70.0) | **(39.4, 69.0)** | cobre U4↔C16 (0.150) e U4↔F2 (0.175) |
+
+O U4 (TVS do USB) sobe 1.0 mm — menor deslocamento que resolve ambos; segue colado em J6/F2/C16, com o circuito de proteção intacto. Correção do lote 2 registrada: a recomendação anterior de "0.1–0.3 mm" estava errada; a busca correta mostrou ~1 mm necessário.
+
+**Validação:**
+- `place_check.py`: COPRE 3→**1** — só C3↔C20 (0.200, no limite do netclass, não é violação para o DRC).
+- Courtyards: 39 (igual). U4↔F2 melhora (−0.33→−0.23); U4↔C16 piora (−0.35→−0.45); agregado inalterado — mantida a posição, sem necessidade do fallback x=39.1.
+- DRC KiCad 9.0.2: **`shorting_items`=0, `copper_edge_clearance`=0, `clearance`=0, `solder_mask_bridge`=0** — todos os erros de cobre zerados. Total 193→192 (só courtyards/silk/1 texto/1 courtyard malformado + 180 unconnected do roteamento pendente).
+
+**Nota de fabricação (H4):** o furo M3 H4 (66, 98) está a 0.40 mm da borda inferior — o DRC só acusa o silk (B.Silkscreen em y=99.9), não o cobre. Antes de fabricar, afastar para ≥0.5 mm da borda.
+
+**Próximo bloco:** os 39 courtyards, na ordem do `place_check.py`, começando por K1 (presente nos 2 maiores da zona: K1↔D4 −1.55) e L1 (L1↔R21 −1.46, que exige mover L1 ou SW3).
+
+---
+
 *Worklog mantido à mão a partir dos artefatos e timestamps do ambiente de desenvolvimento. Cada bloco acima é verificável pelos arquivos correspondentes no repositório.*

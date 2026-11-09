@@ -234,7 +234,7 @@ u3 = P('U3', 'AMS1117-3.3', ('Package_TO_SOT_SMD', 'SOT-223-3_TabPin2'), 72, 59.
 u3.pin(1, 'GND').pin(2, '+3V3').pin(3, '+5V')
 
 # --- U4: USBLC6-2SC6 (back) ---
-u4 = P('U4', 'USBLC6-2SC6', ('Package_TO_SOT_SMD', 'SOT-23-6'), 39.5, 70, 0)
+u4 = P('U4', 'USBLC6-2SC6', ('Package_TO_SOT_SMD', 'SOT-23-6'), 39.4, 69.0, 0)  # y-1.0: tira cobre de C16/F2; TVS segue colado em J6/F2/C16
 u4.pin(1, 'USB_DP').pin(2, 'GND').pin(3, 'USB_DN').pin(4, 'USB_DN').pin(5, 'USB_VBUS').pin(6, 'USB_DP')
 
 # --- Q1: AO3400A relay driver (back) ---
