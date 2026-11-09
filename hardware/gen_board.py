@@ -257,16 +257,16 @@ k1 = P('K1', 'SRD-12VDC-SL-C', fp_relay_srd(), 65.1, 73.5, 0)  # x+0.6 + fileira
 k1.pin('A1', '+12V').pin('A2', 'RELAY_COIL').pin('COM', '+12V').pin('NC', '').pin('NO', 'TRAVA_NO')
 
 # --- Diodes (back) ---
-d1 = P('D1', 'SS54', ('Diode_SMD', 'D_SMA'), 47.5, 84.5, 0).pin(1, 'F12V').pin(2, '+12V')
+d1 = P('D1', 'SS54', ('Diode_SMD', 'D_SMA'), 47.5, 84.93, 0).pin(1, 'F12V').pin(2, '+12V')  # lote 4: encaixe na faixa livre real [83.17..86.69] (3.52mm); y=84.95 invadiria J3/J4 em 0.01
 d2 = P('D2', 'SS14', ('Diode_SMD', 'D_SMA'), 49, 70, 0).pin(1, 'USB_5V_F').pin(2, '+5V')
 d3 = P('D3', 'SS14', ('Diode_SMD', 'D_SMA'), 69.2, 85.4, 0).pin(1, 'RELAY_COIL').pin(2, '+12V')  # x-0.3: separa de D6 com margem (gap 0.25mm > limite 0.2)
-d4 = P('D4', 'SMBJ18A', ('Diode_SMD', 'D_SMB'), 54.35, 84.5, 0).pin(1, '+12V').pin(2, 'GND')  # x+0.35: separa de D1 (short 0.15mm)
+d4 = P('D4', 'SMBJ18A', ('Diode_SMD', 'D_SMB'), 58.55, 84.3, 0).pin(1, '+12V').pin(2, 'GND')  # lote 4: courtyard 4.5mm nao cabe na faixa; frente do J5 (gap 0.14) e abaixo do K1 (gap 0.55); no caminho natural do +12V rumo a D3/J5
 d5 = P('D5', 'SS54', ('Diode_SMD', 'D_SMA'), 75.5, 44.5, 90).pin(1, 'SW').pin(2, 'GND')
 d6 = P('D6', 'SMBJ16A', ('Diode_SMD', 'D_SMB'), 76.1, 87, 0).pin(1, 'TRAVA_NO').pin(2, 'GND')  # original: cobre ate x=79.5, a 0.5mm da borda
 d7 = P('D7', 'M7', ('Diode_SMD', 'D_SMA'), 66, 91, 0).pin(1, 'GND').pin(2, 'TRAVA_NO')
 
 # --- Fuses (back) ---
-f1 = P('F1', '1206L050/24', ('Fuse', 'Fuse_1206_3216Metric'), 41.5, 84, 0).pin(1, '+12V_IN').pin(2, 'F12V')
+f1 = P('F1', '1206L050/24', ('Fuse', 'Fuse_1206_3216Metric'), 41.5, 84.4, 0).pin(1, '+12V_IN').pin(2, 'F12V')  # lote 4: y+0.4 libera OPT1/OPT2 (gap 0.10)
 f2 = P('F2', '1206L050/24', ('Fuse', 'Fuse_1206_3216Metric'), 43.5, 71, 0).pin(1, 'USB_VBUS').pin(2, 'USB_5V_F')
 
 # --- L1 buck inductor (back) ---
@@ -326,7 +326,7 @@ RR('R5', '33R', 38.5, 44.6, 0, 'SCK_D', 'SCK_M')
 RR('R6', '33R', 38.5, 46.4, 0, 'MOSI_D', 'MOSI_M')
 RR('R7', '10k', 64.8, 38.5, 0, '+3V3', 'EN')
 RR('R8', '10k', 46.2, 66.2, 0, '+3V3', 'BTN1')
-RR('R9', '10k', 41.5, 73, 0, '+3V3', 'BTN2')
+RR('R9', '10k', 41.7, 73.8, 90, '+3V3', 'BTN2')  # lote 4: muda p/ o vão OPT1/OPT2 (1.91mm) girado 90, gap 0.25/0.20 dos courtyards
 RR('R10', '10k', 63.5, 51, 0, '+3V3', 'IO7_PU')
 RR('R11', '10k', 41, 50.5, 0, '+3V3', 'IO26_PU')
 RR('R12', '10k', 40.7, 53.6, 0, '+3V3', 'IO27_PU')  # fora do corredor SW1-SW2 (SW2 exigia >=10.4mm do PTS645)

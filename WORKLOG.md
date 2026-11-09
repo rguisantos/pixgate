@@ -245,4 +245,30 @@ Resultado: corpos OPT3↔K1 com ~0.6 mm de folga dos dois lados; courtyards limp
 
 ---
 
+## 2026-11-10 (6) — Lote 4: zona F1/R9/D1/D4 contra a fileira de optos
+
+Base: `1265ea1`. Faixa livre real entre a fileira de optos (courtyard até y=83.17) e J3/J4/J5 (courtyard a partir de y=86.69): **3.52 mm**. D1 (courtyard 3.50 de altura) é o único dos quatro que cabe na faixa; D4 (4.50) sai para a direita, na frente do J5.
+
+| Part | Antes | Depois | Resolve |
+| --- | --- | --- | --- |
+| D1 | (47.5, 84.5) | **(47.5, 84.93)** | OPT2↔D1, OPT3↔D1 (−0.42), D1↔D4 (−0.30) |
+| D4 | (54.35, 84.5) | **(58.55, 84.3)** | OPT3↔D4 (−0.92), D4↔J4, D4↔J5 (−0.06) |
+| F1 | (41.5, 84.0) | **(41.5, 84.4)** | OPT1↔F1, OPT2↔F1 (−0.30) |
+| R9 | (41.5, 73.0, rot 0) | **(41.7, 73.8, rot 90)** | OPT1↔R9, OPT2↔R9 (−0.29) |
+
+Gaps resultantes: D1 +0.01 dos dois lados (83.18..86.68 na faixa 83.17..86.69); D4 0.55 abaixo do K1 (82.05 vs 81.50) e 0.14 acima do J5 (86.55 vs 86.69); F1 0.10 abaixo dos optos e 1.16 acima do J3; R9 no vão OPT1/OPT2 (1.91 mm) com 0.25/0.20 de courtyard e cobre ≥1.18.
+
+**Desvio do lote (documentado):** o lote pedia D1 em y=84.95 ("encaixe exato", gaps 0.00), assumindo faixa [83.20..86.70]. A faixa real é [83.17..86.69]: em 84.95 o D1 invadia J3/J4 em 0.01 mm (2 pares novos — place_check 45→37 em vez de 35). Corrigido para **y=84.93**, centro exato da faixa, folga +0.01 dos dois lados, sem tocar a fileira de optos. A alternativa prevista no lote (recuar a fileira 0.1–0.2 mm) não foi necessária.
+
+**TVS D4 — veredito sobre a proximidade da entrada 12V (questão do lote):** a entrada de 12V é o **J1** (DC-005, pad +12V_IN em (32.0, 85.0)) — o J2 é o borne KF301 da TRAVA (saída da trava, no canto inferior direito). D4 é um clamp do trilho **+12V pós-diodo** (pad 1 +12V, pad 2 GND): o trecho não-clampado (J1→F1→D1, ~13.5 mm) existe em qualquer posição e não mudou. Distância do pad +12V do D4 à entrada: 24.5 → 28.7 mm (+4.2). O acréscimo (~2–4 nH de trilho) soma <0.25 V ao clamp mesmo sob dI/dt agressivo de surto 8/20 µs — irrelevante contra os ~29 V de clamp do SMBJ18A e os 40 V do SS54 a montante. O D4 novo fica **sobre a espinha do +12V** (D1 pad 2 x=45.5 → D4 pad 1 x=60.7 → D3 pad 2 x=67.2 → K1/J5), então o stub do TVS continua curto. **Movimento aceito.** Condições para o roteamento: via de GND colada no pad 2 (56.4, 84.3) — há cobre livre abaixo até o courtyard do J5 (86.69) — e stub +12V curto/largo. (Clamp de entrada de verdade = TVS adicional em +12V_IN/F12V perto do J1; decisão de esquemático, fora do escopo da colocação.)
+
+**Validação:**
+- `place_check.py`: COURTYARD 45→**35** — somem exatamente os 7 pares OPT↔{F1, R9, D1, D4} + D1↔D4, D4↔J4, D4↔J5; nenhum par novo (o "J1↔OPT2" citado no lote nunca existiu; o artefato de bbox que resta é OPT1↔J1 −0.17, invisível ao DRC). COPRE: só C3↔C20 (0.200, no limite do netclass) — nenhum conflito novo de cobre.
+- DRC KiCad 9.0.2: total **186→173**; courtyards_overlap **41→31** (exatamente os 10 pares; o D1 em 84.93 não toca em ninguém); shorting/clearance/copper_edge/solder_mask/malformed = 0; unconnected 180 (roteamento pendente, inalterado). Relatórios: `validation/drc/lote4-base-drc.rpt` (baseline reproduzido) e `lote4-drc.rpt`.
+- Silk (cosmético, warning): +1 silk_overlap (texto do ref do J3 × segmento do silk do F1 — efeito do F1 subir 0.4) e −4 silk_over_copper (itens do D6 que trocaram de âncora; os avisos "D6 × J5/K1" são pré-existentes do footprint custom com contorno de silk no tamanho do courtyard).
+
+**Pendências para o próximo lote:** D2↔R18, D5↔C4/R20, D3↔R23, D7↔C23/J5, J3↔J4, U4↔C16 — todos fora desta zona — mais L1↔R21 (−1.46, o maior) e L1↔SW3/R21↔C8/U3↔C11/U1↔SWx e demais menores.
+
+---
+
 *Worklog mantido à mão a partir dos artefatos e timestamps do ambiente de desenvolvimento. Cada bloco acima é verificável pelos arquivos correspondentes no repositório.*
