@@ -141,9 +141,28 @@ O binário KiCad foi reciclado pelo sandbox. Restaurado via Debian trixie: `kica
 - `place_check.py`: COPRE 12→10 — D1↔D4 e SW2↔R12 eliminados; D3↔D6 e C3↔C20 em exatos 0.200 mm (no limite, como previsto).
 - DRC KiCad 9.0.2: **0 `shorting_items` e 0 `solder_mask_bridge`** (eram 4+4 — os bridges eram consequência dos shorts). Total 217→211 violações; courtyards 48→45; clearances 7→6.
 
-**Efeito colateral novo (a tratar no próximo lote):** o deslocamento do D6 (+0.25 mm para a direita) deixou o pad 1 [TRAVA_NO] a 0.25 mm da borda direita do board (`copper_edge_clearance`, erro — mínimo 0.5 mm) e o silk do D_SMB corta a borda em x=80 (3 avisos `silk_edge_clearance`). Reposicionar D6 (deslocamento em Y ou ponto alternativo via busca com place_check) resolve sem recriar o short com D3.
+**Efeito colateral (na época):** o deslocamento do D6 (+0.25 mm para a direita) deixou o pad 1 [TRAVA_NO] a 0.25 mm da borda direita (`copper_edge_clearance`) e o silk do D_SMB cortava a borda em x=80 (3 avisos `silk_edge_clearance`). → Resolvido no bloco seguinte revertendo o D6 e afastando o D3.
 
-**Pendências restantes de colocação:** 6 clearances < 0.2 mm (L1↔R21 0.025, R22↔R26 0.10, D2↔C21 0.125, U4↔C16 0.15, U4↔F2 0.175, C10↔C13 0.175), 45 courtyards, 1 texto não-espelhado no verso, 1 courtyard malformado e a nova borda do D6.
+**Pendências restantes de colocação:** 6 clearances < 0.2 mm (L1↔R21 0.025, R22↔R26 0.10, D2↔C21 0.125, U4↔C16 0.15, U4↔F2 0.175, C10↔C13 0.175), 45 courtyards, 1 texto não-espelhado no verso, 1 courtyard malformado.
+
+---
+
+## 2026-11-10 (2) — Refinamento D3/D6: borda limpa com margem no gap
+
+Em vez de empurrar o D6 para a direita (que o encostava na borda do board), a separação do par foi feita afastando o **D3 para a esquerda** e revertendo o D6 ao original:
+
+| Part | Antes | Depois | Motivo |
+| --- | --- | --- | --- |
+| D6 | (76.35, 87.0) | **(76.1, 87.0)** | reverte ao original — cobre termina em x=79.5, a 0.5 mm da borda |
+| D3 | (69.5, 85.4) | **(69.2, 85.4)** | x−0.3: gap de cobre D3↔D6 = 0.250 mm (acima do limite 0.2 com margem contra arredondamento) |
+
+Escolha do 69.2 em vez do 69.25: 0.250 mm de folga em vez de 0.200 mm exatos no limite do netclass.
+
+**Validação:**
+- `place_check.py`: COPRE 10→9 (D3↔D6 sai da lista); nenhum conflito novo de cobre; courtyards do D3 com R23/C23/K1 inalterados (sobreposição no eixo Y, que não mudou); courtyard D3↔D6 melhora de −0.550 (original) para −0.250.
+- DRC KiCad 9.0.2: `shorting_items`=0, `copper_edge_clearance`=1 (volta ao pré-existente: pad 1 do R3 a 0.275 mm da borda), `silk_edge_clearance`=2 (U1 ref + H4). Total 211→207.
+
+**Estado consolidado da colocação:** sem shorts, sem mask bridges, sem problemas de borda. Pendências: 6 clearances, 45 courtyards, 1 texto não-espelhado no verso, 1 courtyard malformado — depois disso, roteamento.
 
 ---
 

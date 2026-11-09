@@ -256,10 +256,10 @@ k1.pin('A1', '+12V').pin('A2', 'RELAY_COIL').pin('COM', '+12V').pin('NC', '').pi
 # --- Diodes (back) ---
 d1 = P('D1', 'SS54', ('Diode_SMD', 'D_SMA'), 47.5, 84.5, 0).pin(1, 'F12V').pin(2, '+12V')
 d2 = P('D2', 'SS14', ('Diode_SMD', 'D_SMA'), 49, 70, 0).pin(1, 'USB_5V_F').pin(2, '+5V')
-d3 = P('D3', 'SS14', ('Diode_SMD', 'D_SMA'), 69.5, 85.4, 0).pin(1, 'RELAY_COIL').pin(2, '+12V')
+d3 = P('D3', 'SS14', ('Diode_SMD', 'D_SMA'), 69.2, 85.4, 0).pin(1, 'RELAY_COIL').pin(2, '+12V')  # x-0.3: separa de D6 com margem (gap 0.25mm > limite 0.2)
 d4 = P('D4', 'SMBJ18A', ('Diode_SMD', 'D_SMB'), 54.35, 84.5, 0).pin(1, '+12V').pin(2, 'GND')  # x+0.35: separa de D1 (short 0.15mm)
 d5 = P('D5', 'SS54', ('Diode_SMD', 'D_SMA'), 75.5, 44.5, 90).pin(1, 'SW').pin(2, 'GND')
-d6 = P('D6', 'SMBJ16A', ('Diode_SMD', 'D_SMB'), 76.35, 87, 0).pin(1, 'TRAVA_NO').pin(2, 'GND')  # x+0.25: separa de D3 (short 0.05mm)
+d6 = P('D6', 'SMBJ16A', ('Diode_SMD', 'D_SMB'), 76.1, 87, 0).pin(1, 'TRAVA_NO').pin(2, 'GND')  # original: cobre ate x=79.5, a 0.5mm da borda
 d7 = P('D7', 'M7', ('Diode_SMD', 'D_SMA'), 66, 91, 0).pin(1, 'GND').pin(2, 'TRAVA_NO')
 
 # --- Fuses (back) ---
