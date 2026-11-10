@@ -271,4 +271,72 @@ Gaps resultantes: D1 +0.01 dos dois lados (83.18..86.68 na faixa 83.17..86.69); 
 
 ---
 
+## 2026-11-10 (7) — Lote 5: passivos — courtyards 35→9, cobre 100% (até o par-limite)
+
+Base: `729c262` (lote 4 aplicado, D1=84.93). Receita do agente par, aplicada sem desvios:
+
+| Part | Antes | Depois | Resolve |
+| --- | --- | --- | --- |
+| R18 | (52.7, 67.6, 90) | **(52.7, 67.4, 180)** | D2↔R18 (−0.53) |
+| R17 | (49.0, 66.8, 90) | **(49.0, 66.6, 90)** | D2↔R17 (−0.03) |
+| R20 | (78.0, 46.905, 0) | **(78.2, 45.91, 90)** | D5↔R20 (−0.73), R20↔C8 |
+| C4 | (73.8, 41.3, 90) | **(72.8, 40.7, 90)** | D5↔C4 (−0.78), U2↔C4 |
+| R23 | (66.5, 87.5, 0) | **(64.5, 86.9, 90)** | D3↔R23 (−0.78) |
+| C23 | (69.3, 88.3, 90) | **(69.3, 88.3, 180)** | só gira: D7/J2/D3/R23↔C23 |
+| C16 | (36.1, 71.2, 0) | **(36.3, 71.8, 0)** | U4↔C16, J6↔C16 |
+| C20 | (63.5, 44.3, 0) | **(63.7, 44.7, 0)** | C3↔C20, U1↔C20 |
+| C11 | (66.8, 61.5, 90) | **(66.4, 63.3, 90)** | SW3↔C11, U3↔C11 |
+| C12 | (43.5, 67.5, 90) | **(42.3, 64.5, 180)** | R2↔C12 |
+| C6 | (77.5, 61.5, 90) | **(77.7, 61.5, 90)** | U3↔C6 |
+| R10 | (63.5, 51.0, 0) | **(63.7, 51.0, 0)** | U1↔R10 |
+| R11 | (41.0, 50.5, 0) | **(41.0, 50.5, 90)** | só gira: U1↔R11 |
+| R13/14/15 | (28, 58/61/64, 90) | **(27.4, idem, 90)** | J7↔R13/R14/R15 (−0.43 cada) |
+| R21 | (76.8, 50.1, 0) | **(78.2, 42.9, 90)** | L1↔R21 (−1.46), R21↔C8 |
+| C8 | sem mudança | — | (R20/R21 movidos resolvem) |
+
+**Validação:**
+- `place_check.py`: COURTYARD **35→9** — 26 pares eliminados, **nenhum par novo**. COPRE **1→0**: o C3↔C20 (0.200, no limite do netclass) também sai — o C20 abre o gap de cobre acima de 0.2.
+- DRC KiCad 9.0.2 (`validation/drc/lote5-drc.rpt`): total **173→147**; `courtyards_overlap` 31→8 (exatamente os 8 pares reais; o 9º do place_check é o artefato OPT1↔J1, invisível ao DRC — bbox do BarrelJack superestima o courtyard real); `silk_over_copper` 57→52; `silk_overlap` 82→81; shorting/clearance/copper_edge/solder_mask/malformed = **0**; unconnected 180 (roteamento pendente).
+- Cosmético novo (warning, aceito): **+3 `silk_edge_clearance`** — os refs de R13/R14/R15 (texto a x=25.97) cortam a borda esquerda. Não corrigido movendo os parts (comeria a folga de 0.4 do J7); fica para o pass de silk pré-fab, junto dos 81 silk_overlap existentes.
+- Divergência vs clone do agente par (37→11): os 2 pares a mais lá são OPT2↔D1/OPT3↔D1 (−0.02, arredondamento) — aqui não existem: D1=84.93 fica no centro exato da faixa (+0.01 dos dois lados).
+
+**Vereditos elétricos (alertas do lote):**
+- **R21/FB — aceito, com condições de roteamento.** O alerta "7.3 mm para longe" superestima: o *centro* andou 7.3 mm, mas o pad de FB só de 11.1→12.2 mm do pino 5 do U2 (a rotação puxa o pad de volta), e o do R20 fica em 11.4 (era 11.8). O divisor já estava a ~11 mm desde o lote 2 — o lote 5 não piora a ordem de grandeza e ainda empilha R20/R21 verticalmente em x=78.2 (divisor compacto, FB pads a 3 mm entre si). Mover o L1 em vez do R21 (sugestão do alerta) alongaria o loop de potência SW→L1 — troca pior. Condições: trilha FB única e reta no verso (≤13 mm, 0.2–0.25 mm), ≥2 mm do nó SW (D5 pad1/C4 pad2/L1 pad1) onde paralela, via de GND colada no pad 2 do R21 (78.2, 43.7), e +5V do R20 vindo do lado de C5/C6 (não do pad do L1).
+- **C12 — papel corrigido, aceito.** O alerta chama o C12 de "cap do LDO", mas ele nunca esteve perto do U3 (29 mm antes, 33 agora): é bulk de +3V3 do lado oeste (display/optos), com C14/C15 na ponta. O cap de estabilidade da saída do AMS1117 é o **C11** (10 µF), que vai de 8.8→9.9 mm do tab do U3 — aceitável (estabilidade do AMS1117 depende do valor/ESR, não da distância); rotear +3V3 largo até o C11 e via de GND no pad 1. Se o roteamento abrir espaço, deslizar o C11 para (70..74, 63) encurta o nó.
+- **C16 (VBUS) — aceitável, como o próprio alerta antecipou.** Fica no segmento J6→F2 (11 mm dos pads VBUS, 7 mm do F2), a 0.6 mm da posição anterior.
+- **Rotações × nets — verificado por dump antes/depois**: nets são ligadas ao *número* do pad (netmap), imutáveis por rotação. Os 17 parts mantiveram pad→net idêntico; só as coordenadas giraram. A auditoria completa de nets está no bloco seguinte — e achou bugs pré-existentes.
+
+**Estado:** 9 pares de courtyard restantes (8 reais + 1 artefato) — todos com parts grandes (U1, SW, JST, diodos de potência, USB). Preparação do lote 6 abaixo.
+
+---
+
+## 2026-11-10 (8) — Preparação do lote 6: geometria dos 9 pares restantes (calculada, NÃO aplicada)
+
+Bboxes reais (`place_check.py --bbox`) revelam três estruturas que travam os pares restantes:
+
+1. **Corredor dos botões (sanduíche exato):** U1 termina em y=54.80; C22/C11 começam em y=61.47/61.60; o courtyard do PTS645 tem 6.80 de altura para uma janela de 6.67. **A row SW não cabe sem mover C11/C22 também.** C11 por sua vez é limitado pelo courtyard do K1 (y0=65.50) → teto útil y≤63.9.
+2. **Fileira JST (span exato):** J1 termina em x=36.75; D7 começa em x=62.50; 3 conectores XH de 8.40 = 25.20 para um vão de 25.75 — sobra 0.55 mm para 4 gaps (~0.14 cada). O courtyard do XH é **assimétrico** (x −5.45/+2.95 do centro). D7 não anda: à direita o J2 (x0=69.60, vão de 6.65 < 7.0 do D_SMA), acima o sanduíche D3/C23/R23, abaixo C24. Só a fileira JST anda (para a esquerda).
+3. **Canto USB (deadlock):** U4 preso entre R16 (esq., folga 0.12), F2 (dir., overlap 0.23), R1/R2 (acima) e C16 (abaixo) — janela y de 0.12 mm. F2 preso entre U4 (esq.), D2 (dir.) e R9 (abaixo) — sem casa. Quebra do deadlock: mover R16 (1.0 mm, folga até o J6) + U4 (1.0 mm, TVS chega mais perto do conector) + D2 (0.4 mm).
+
+**Receita lote 6 (proposta, simulada in-memory — `scripts/lote6_sim.py`):**
+
+| Part | Antes | Depois | Resolve |
+| --- | --- | --- | --- |
+| SW1/SW2/SW3 | y=58 | **y=58.3** | U1↔SW1/2/3 (+0.10) |
+| C11 | (66.4, 63.3) | **(66.4, 63.7)** | teto do corredor SW (+0.30); limite K1 (+0.10) |
+| C22 | (63.5, 62.2) | **(63.5, 63.0)** | teto do corredor SW (+0.57) |
+| J3 | (43.5, 89.5) | **(42.3, 89.5)** | J3↔J4 (+0.15); J1↔J3 (+0.10) |
+| J4 | (51.5, 89.5) | **(50.85, 89.5)** | J4↔J5 (+0.15) |
+| J5 | (60, 89.5) | **(59.4, 89.5)** | J5↔D7 (+0.15) — D7 fica |
+| R23 | (64.5, 86.9) | **(63.9, 86.9)** | abre espaço p/ D3 |
+| D3 | (69.2, 85.4) | **(68.75, 85.4)** | D3↔D6 (+0.20); D3↔R23 (+0.22) — D6 fica |
+| R16 | (36.5, 68.5) | **(35.5, 68.5)** | quebra o deadlock do canto USB |
+| U4 | (39.4, 69.0) | **(38.4, 69.0)** | U4↔F2 (+0.77) — F2 fica |
+| D2 | (49.0, 70.0) | **(49.4, 70.0)** | D2↔F2 (+0.12) |
+
+Simulação: **COPRE 0, COURTYARD 1** (só o artefato OPT1↔J1, invisível ao DRC) — nenhum par novo. Margens: C11↔K1 +0.10, U1↔SW +0.10, J1↔J3 +0.10 (bbox; courtyard real do BarrelJack é menor — o DRC deve ver mais folga), U4↔R16 +0.12, D2↔R18 +0.12, D2↔F2 +0.12; razores pré-existentes mantidos: D2↔C21 +0.02, R23↔D7 +0.07, D1↔J3/J4 +0.01. **Não aplicada** — aguardando o cálculo independente do agente par para cross-check (como no lote 4, D1 84.95×84.93).
+
+---
+
 *Worklog mantido à mão a partir dos artefatos e timestamps do ambiente de desenvolvimento. Cada bloco acima é verificável pelos arquivos correspondentes no repositório.*
+

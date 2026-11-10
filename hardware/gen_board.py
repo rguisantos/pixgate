@@ -327,19 +327,19 @@ RR('R6', '33R', 38.5, 46.4, 0, 'MOSI_D', 'MOSI_M')
 RR('R7', '10k', 64.8, 38.5, 0, '+3V3', 'EN')
 RR('R8', '10k', 46.2, 66.2, 0, '+3V3', 'BTN1')
 RR('R9', '10k', 41.7, 73.8, 90, '+3V3', 'BTN2')  # lote 4: muda p/ o vão OPT1/OPT2 (1.91mm) girado 90, gap 0.25/0.20 dos courtyards
-RR('R10', '10k', 63.5, 51, 0, '+3V3', 'IO7_PU')
-RR('R11', '10k', 41, 50.5, 0, '+3V3', 'IO26_PU')
+RR('R10', '10k', 63.7, 51, 0, '+3V3', 'IO7_PU')  # lote 5: x+0.2 — sai do courtyard do U1
+RR('R11', '10k', 41, 50.5, 90, '+3V3', 'IO26_PU')  # lote 5: so gira — sai do courtyard do U1
 RR('R12', '10k', 40.7, 53.6, 0, '+3V3', 'IO27_PU')  # fora do corredor SW1-SW2 (SW2 exigia >=10.4mm do PTS645)
-RR('R13', '10k', 28, 58, 90, 'IN_NOTE', '+3V3')
-RR('R14', '10k', 28, 61, 90, 'IN_COIN', '+3V3')
-RR('R15', '10k', 28, 64, 90, 'IN_BTN', '+3V3')
+RR('R13', '10k', 27.4, 58, 90, 'IN_NOTE', '+3V3')  # lote 5: x-0.6 — sai do courtyard do J7 (soquete do display, lado oposto)
+RR('R14', '10k', 27.4, 61, 90, 'IN_COIN', '+3V3')  # lote 5: x-0.6 — sai do courtyard do J7
+RR('R15', '10k', 27.4, 64, 90, 'IN_BTN', '+3V3')  # lote 5: x-0.6 — sai do courtyard do J7
 RR('R16', '2.2k', 36.5, 68.5, 90, 'NOTE_A', '+12V')
-RR('R17', '2.2k', 49, 66.8, 90, 'COIN_A', '+12V')
-RR('R18', '2.2k', 52.7, 67.6, 90, 'BTN_A', '+12V')
-RR('R20', '10k', 78, 46.905, 0, 'FB', '+5V')
-RR('R21', '1.91k', 76.8, 50.1, 0, 'FB', 'GND')  # resolve cobre L1<->R21 (courtyard ainda sobrepoe)
+RR('R17', '2.2k', 49, 66.6, 90, 'COIN_A', '+12V')  # lote 5: y-0.2 — sai do courtyard do D2
+RR('R18', '2.2k', 52.7, 67.4, 180, 'BTN_A', '+12V')  # lote 5: gira 180 e sobe 0.2 — sai do courtyard do D2
+RR('R20', '10k', 78.2, 45.91, 90, 'FB', '+5V')  # lote 5: gira e sobe — sai dos courtyards de D5/C8 (FB do buck, ver WORKLOG)
+RR('R21', '1.91k', 78.2, 42.9, 90, 'FB', 'GND')  # lote 5: sai dos courtyards de L1/C8 — divisor FB agora vertical na borda direita (ver WORKLOG: rotear FB curto)
 RR('R22', '49.9k', 67.5, 52, 90, 'COMP_X', 'COMP_Y')
-RR('R23', '100R', 66.5, 87.5, 0, 'TRAVA_NO', 'TRAVA_NO2', pkg='R_1206_3216Metric')
+RR('R23', '100R', 64.5, 86.9, 90, 'TRAVA_NO', 'TRAVA_NO2', pkg='R_1206_3216Metric')  # lote 5: gira e desce — sai do courtyard do D3
 RR('R26', '100k', 64.0, 49.5, 0, '+12V', 'EN_BK')  # resolve R22<->R26
 
 # --- Capacitors (back) ---
@@ -349,26 +349,26 @@ def CC(ref, val, x, y, rot, n1, n2, pkg='C_0603_1608Metric'):
 CC('C1', '10uF/25V', 67.5, 39.5, 90, '+12V', 'GND', 'C_1206_3216Metric')
 CC('C2', '10uF/25V', 70.5, 39.5, 90, '+12V', 'GND', 'C_1206_3216Metric')
 CC('C3', '100nF', 64.2, 42.4, 90, '+12V', 'GND')
-CC('C4', '100nF', 73.8, 41.3, 90, 'BOOT_C', 'SW')
+CC('C4', '100nF', 72.8, 40.7, 90, 'BOOT_C', 'SW')  # lote 5: sai dos courtyards de D5/U2
 CC('C5', '33uF/10V', 78.5, 55.5, 90, 'GND', '+5V', 'C_1206_3216Metric')
-CC('C6', '33uF/10V', 77.5, 61.5, 90, 'GND', '+5V', 'C_1206_3216Metric')
+CC('C6', '33uF/10V', 77.7, 61.5, 90, 'GND', '+5V', 'C_1206_3216Metric')  # lote 5: x+0.2 — sai do courtyard do U3 (cap de entrada do LDO)
 CC('C7', '4.7nF', 65.2, 53.8, 0, 'COMP_Y', 'GND')  # resolve SW3<->C7
 CC('C8', '39pF', 78.8, 49, 90, 'COMP_X', 'GND')
 CC('C9', '100nF', 67, 48.9, 0, 'SS_C', 'GND')
 CC('C10', '22uF', 77.8, 67, 90, '+5V', 'GND', 'C_1206_3216Metric')
-CC('C11', '10uF', 66.8, 61.5, 90, 'GND', '+3V3', 'C_0805_2012Metric')  # x+0.6: resolve cobre SW3<->C11 (courtyard ainda sobrepoe)
-CC('C12', '22uF', 43.5, 67.5, 90, 'GND', '+3V3', 'C_1206_3216Metric')
+CC('C11', '10uF', 66.4, 63.3, 90, 'GND', '+3V3', 'C_0805_2012Metric')  # lote 5: desce 1.8 — sai dos courtyards de SW3/U3 (cap de saida do LDO, ver WORKLOG)
+CC('C12', '22uF', 42.3, 64.5, 180, 'GND', '+3V3', 'C_1206_3216Metric')  # lote 5: sai do courtyard do R2 (bulk +3V3 do lado oeste, ver WORKLOG)
 CC('C13', '100nF', 76.7, 70.45, 0, '+3V3', 'GND')  # sai do courtyard do K1 deslocado; cap de rail (ver WORKLOG)
 CC('C14', '10uF', 37.5, 51.5, 90, '+3V3', 'GND', 'C_0805_2012Metric')
 CC('C15', '100nF', 35, 52.5, 90, '+3V3', 'GND')
-CC('C16', '10uF', 36.1, 71.2, 0, 'USB_VBUS', 'GND', 'C_0805_2012Metric')
+CC('C16', '10uF', 36.3, 71.8, 0, 'USB_VBUS', 'GND', 'C_0805_2012Metric')  # lote 5: +0.2/+0.6 — sai dos courtyards de U4/J6 (segue junto do USB)
 CC('C17', '100nF', 33.5, 79.5, 0, 'USB_VBUS', 'GND')
 CC('C18', '10uF', 64.5, 34.2, 0, '+3V3', 'GND', 'C_0805_2012Metric')
 CC('C19', '100nF', 64.5, 36.5, 0, '+3V3', 'GND')
-CC('C20', '100nF', 63.5, 44.3, 0, 'EN', 'GND')  # y+0.3: separa de C3 (short 0.1mm)
+CC('C20', '100nF', 63.7, 44.7, 0, 'EN', 'GND')  # lote 5: +0.2/+0.4 — sai dos courtyards de C3/U1 (lote 3: era y+0.3 vs short de cobre)
 CC('C21', '100nF', 52.0, 72.5, 0, 'BTN1', 'GND')  # y+1.0: resolve D2<->C21
 CC('C22', '100nF', 63.5, 62.2, 0, 'BTN2', 'GND')
-CC('C23', '1uF', 69.3, 88.3, 90, '+3V3', 'GND')
+CC('C23', '1uF', 69.3, 88.3, 180, '+3V3', 'GND')  # lote 5: so gira (90->180) — sai dos courtyards de D7/J2/D3/R23
 CC('C24', '100nF', 66.5, 94.5, 0, 'TRAVA_NO2', 'TRAVA_NO3', 'C_1206_3216Metric')
 
 # fix net aliases: snubber chain TRAVA_NO -> R23 -> C24 -> TRAVA_NO3 -> same node as TRAVA_NO? unify:
