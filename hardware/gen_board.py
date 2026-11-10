@@ -236,7 +236,7 @@ u3 = P('U3', 'AMS1117-3.3', ('Package_TO_SOT_SMD', 'SOT-223-3_TabPin2'), 72, 59.
 u3.pin(1, 'GND').pin(2, '+3V3').pin(3, '+5V')
 
 # --- U4: USBLC6-2SC6 (back) ---
-u4 = P('U4', 'USBLC6-2SC6', ('Package_TO_SOT_SMD', 'SOT-23-6'), 39.4, 69.0, 0)  # y-1.0: tira cobre de C16/F2; TVS segue colado em J6/F2/C16
+u4 = P('U4', 'USBLC6-2SC6', ('Package_TO_SOT_SMD', 'SOT-23-6'), 38.4, 69.0, 0)  # lote 6: x-1.0 (39.4->38.4) — sai do courtyard do F2 (+0.77), F2 fica | y-1.0: TVS colado em J6/F2/C16
 u4.pin(1, 'USB_DP').pin(2, 'GND').pin(3, 'USB_DN').pin(4, 'USB_DN').pin(5, 'USB_VBUS').pin(6, 'USB_DP')
 
 # --- Q1: AO3400A relay driver (back) ---
@@ -257,8 +257,8 @@ k1.pin('A1', '+12V').pin('A2', 'RELAY_COIL').pin('COM', '+12V').pin('NC', '').pi
 
 # --- Diodes (back) ---
 d1 = P('D1', 'SS54', ('Diode_SMD', 'D_SMA'), 47.5, 84.93, 0).pin(1, '+12V').pin(2, 'F12V')  # lote 4: encaixe na faixa livre real [83.17..86.69] (3.52mm); y=84.95 invadiria J3/J4 em 0.01 — fix netlist: pino 1 = catodo (D_SMA), serie J1->F1->D1->rail: K no rail
-d2 = P('D2', 'SS14', ('Diode_SMD', 'D_SMA'), 49, 70, 0).pin(1, '+5V').pin(2, 'USB_5V_F')  # fix netlist: or-ing USB->+5V estava invertido (pad 1 = catodo)
-d3 = P('D3', 'SS14', ('Diode_SMD', 'D_SMA'), 69.2, 85.4, 0).pin(1, '+12V').pin(2, 'RELAY_COIL')  # fix netlist: flyback da bobina do K1 estava INVERTIDO (pad 1 = catodo, verificado no D_SMA) — como estava, com o Q1 ligado o SS14 conduzia +12V->dreno->GND em paralelo com a bobina (curto no rail) e o turn-off ficava sem clamp; correto: K no +12V (A1 do K1), A no RELAY_COIL (dreno do Q1)
+d2 = P('D2', 'SS14', ('Diode_SMD', 'D_SMA'), 49.4, 70, 0).pin(1, '+5V').pin(2, 'USB_5V_F')  # lote 6: x+0.4 (49->49.4) — sai do courtyard do F2 (+0.12) | fix netlist: or-ing USB->+5V estava invertido (pad 1 = catodo)
+d3 = P('D3', 'SS14', ('Diode_SMD', 'D_SMA'), 68.75, 85.4, 0).pin(1, '+12V').pin(2, 'RELAY_COIL')  # lote 6: x-0.45 (69.2->68.75) — sai dos courtyards de D6 (+0.20) e R23 (+0.22), D6 fica | fix netlist: flyback da bobina do K1 estava INVERTIDO (pad 1 = catodo, verificado no D_SMA) — como estava, com o Q1 ligado o SS14 conduzia +12V->dreno->GND em paralelo com a bobina (curto no rail) e o turn-off ficava sem clamp; correto: K no +12V (A1 do K1), A no RELAY_COIL (dreno do Q1)
 d4 = P('D4', 'SMBJ18A', ('Diode_SMD', 'D_SMB'), 58.55, 84.3, 0).pin(1, '+12V').pin(2, 'GND')  # lote 4: courtyard 4.5mm nao cabe na faixa; frente do J5 (gap 0.14) e abaixo do K1 (gap 0.55); no caminho natural do +12V rumo a D3/J5
 d5 = P('D5', 'SS54', ('Diode_SMD', 'D_SMA'), 75.5, 44.5, 90).pin(1, 'SW').pin(2, 'GND')
 d6 = P('D6', 'SMBJ16A', ('Diode_SMD', 'D_SMB'), 76.1, 87, 0).pin(1, 'TRAVA_NO').pin(2, 'GND')  # original: cobre ate x=79.5, a 0.5mm da borda
@@ -272,19 +272,19 @@ f2 = P('F2', '1206L050/24', ('Fuse', 'Fuse_1206_3216Metric'), 43.5, 71, 0).pin(1
 l1 = P('L1', '6.8uH', ('Inductor_SMD', 'L_7.3x7.3_H3.5'), 73, 52, 180).pin(1, 'SW').pin(2, '+5V')
 
 # --- Buttons (back, mid board) ---
-sw1 = P('SW1', 'RST', ('Button_Switch_SMD', 'SW_SPST_PTS645'), 39.3, 58, 0).pin(1, 'EN').pin(2, 'GND')
-sw2 = P('SW2', 'BOOT', ('Button_Switch_SMD', 'SW_SPST_PTS645'), 50, 58, 0).pin(1, 'BTN1').pin(2, 'GND')
-sw3 = P('SW3', 'CFG', ('Button_Switch_SMD', 'SW_SPST_PTS645'), 61, 58, 0).pin(1, 'BTN2').pin(2, 'GND')
+sw1 = P('SW1', 'RST', ('Button_Switch_SMD', 'SW_SPST_PTS645'), 39.3, 58.3, 0).pin(1, 'EN').pin(2, 'GND')  # lote 6: y+0.3 — sai do courtyard do U1 (corredor dos botoes)
+sw2 = P('SW2', 'BOOT', ('Button_Switch_SMD', 'SW_SPST_PTS645'), 50, 58.3, 0).pin(1, 'BTN1').pin(2, 'GND')  # lote 6: y+0.3 — sai do courtyard do U1
+sw3 = P('SW3', 'CFG', ('Button_Switch_SMD', 'SW_SPST_PTS645'), 61, 58.3, 0).pin(1, 'BTN2').pin(2, 'GND')  # lote 6: y+0.3 — sai do courtyard do U1
 
 # --- Connectors (back) ---
 j1 = P('J1', 'DC-005 12V', ('Connector_BarrelJack', 'BarrelJack_Horizontal'), 32, 85, 270)
 j1.pin(1, '+12V_IN').pin(2, '').pin(3, 'GND')
 j2 = P('J2', 'KF301 TRAVA', fp_kf301(), 74.8, 94.6, 90).pin(1, 'TRAVA_NO').pin(2, 'GND')
-j3 = P('J3', 'JST-XH NOTEIRO', ('Connector_JST', 'JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal'), 43.5, 89.5, 0)
+j3 = P('J3', 'JST-XH NOTEIRO', ('Connector_JST', 'JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal'), 42.3, 89.5, 0)  # lote 6: x-1.2 — fileira JST desloca p/ esquerda (J3<->J4, J1<->J3)
 j3.pin(1, 'NOTE_SIG').pin(2, 'GND')
-j4 = P('J4', 'JST-XH MOEDEIRO', ('Connector_JST', 'JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal'), 51.5, 89.5, 0)
+j4 = P('J4', 'JST-XH MOEDEIRO', ('Connector_JST', 'JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal'), 50.85, 89.5, 0)  # lote 6: x-0.65 — J4<->J5/J3
 j4.pin(1, 'COIN_SIG').pin(2, 'GND')
-j5 = P('J5', 'JST-XH BOTAO', ('Connector_JST', 'JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal'), 60, 89.5, 0)
+j5 = P('J5', 'JST-XH BOTAO', ('Connector_JST', 'JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal'), 59.4, 89.5, 0)  # lote 6: x-0.6 — J5<->D7 (D7 fica preso entre J5 e J2)
 j5.pin(1, 'BTN_SIG').pin(2, 'GND')  # fix netlist: pino 2 era +12V — botao seco fecha BTN_SIG->GND (padrao J3/J4: sinal no 1, GND no 2)
 j6 = P('J6', 'USB-C', ('Connector_USB', 'USB_C_Receptacle_HRO_TYPE-C-31-M-12'), 30.4, 71.9, 90)
 for pn in ('A1','B1','A12','B12'): j6.pin(pn, 'GND')
@@ -332,13 +332,13 @@ RR('R12', '10k', 40.7, 53.6, 0, '+3V3', 'IO27_PU')  # fora do corredor SW1-SW2 (
 RR('R13', '10k', 27.4, 58, 90, 'IN_NOTE', '+3V3')  # lote 5: x-0.6 — sai do courtyard do J7 (soquete do display, lado oposto)
 RR('R14', '10k', 27.4, 61, 90, 'IN_COIN', '+3V3')  # lote 5: x-0.6 — sai do courtyard do J7
 RR('R15', '10k', 27.4, 64, 90, 'IN_BTN', '+3V3')  # lote 5: x-0.6 — sai do courtyard do J7
-RR('R16', '2.2k', 36.5, 68.5, 90, 'NOTE_A', '+12V')
+RR('R16', '2.2k', 35.5, 68.5, 90, 'NOTE_A', '+12V')  # lote 6: x-1.0 (36.5->35.5) — quebra o deadlock do canto USB (abre espaco p/ o U4; folga ate o J6)
 RR('R17', '2.2k', 49, 66.6, 90, 'COIN_A', '+12V')  # lote 5: y-0.2 — sai do courtyard do D2
 RR('R18', '2.2k', 52.7, 67.4, 180, 'BTN_A', '+12V')  # lote 5: gira 180 e sobe 0.2 — sai do courtyard do D2
 RR('R20', '10k', 78.2, 45.91, 90, 'FB', '+5V')  # lote 5: gira e sobe — sai dos courtyards de D5/C8 (FB do buck, ver WORKLOG)
 RR('R21', '1.91k', 78.2, 42.9, 90, 'FB', 'GND')  # lote 5: sai dos courtyards de L1/C8 — divisor FB agora vertical na borda direita (ver WORKLOG: rotear FB curto)
 RR('R22', '49.9k', 67.5, 52, 90, 'COMP_X', 'COMP_Y')
-RR('R23', '100R', 64.5, 86.9, 90, 'TRAVA_NO', 'TRAVA_NO2', pkg='R_1206_3216Metric')  # lote 5: gira e desce — sai do courtyard do D3
+RR('R23', '100R', 63.9, 86.9, 90, 'TRAVA_NO', 'TRAVA_NO2', pkg='R_1206_3216Metric')  # lote 6: x-0.6 (64.5->63.9) — abre espaco p/ o D3 | lote 5: gira e desce
 RR('R26', '100k', 64.0, 49.5, 0, '+12V', 'EN_BK')  # resolve R22<->R26
 
 # --- Capacitors (back) ---
@@ -355,7 +355,7 @@ CC('C7', '4.7nF', 65.2, 53.8, 0, 'COMP_Y', 'GND')  # resolve SW3<->C7
 CC('C8', '39pF', 78.8, 49, 90, 'COMP_X', 'GND')
 CC('C9', '100nF', 67, 48.9, 0, 'SS_C', 'GND')
 CC('C10', '22uF', 77.8, 67, 90, '+5V', 'GND', 'C_1206_3216Metric')
-CC('C11', '10uF', 66.4, 63.3, 90, 'GND', '+3V3', 'C_0805_2012Metric')  # lote 5: desce 1.8 — sai dos courtyards de SW3/U3 (cap de saida do LDO, ver WORKLOG)
+CC('C11', '10uF', 66.4, 63.7, 90, 'GND', '+3V3', 'C_0805_2012Metric')  # lote 6: y+0.4 (63.3->63.7) — abre o teto do corredor SW; limite: courtyard do K1 (+0.10) | lote 5: cap de saida do LDO, ver WORKLOG
 CC('C12', '22uF', 42.3, 64.5, 180, 'GND', '+3V3', 'C_1206_3216Metric')  # lote 5: sai do courtyard do R2 (bulk +3V3 do lado oeste, ver WORKLOG)
 CC('C13', '100nF', 76.7, 70.45, 0, '+3V3', 'GND')  # sai do courtyard do K1 deslocado; cap de rail (ver WORKLOG)
 CC('C14', '10uF', 37.5, 51.5, 90, '+3V3', 'GND', 'C_0805_2012Metric')
@@ -366,7 +366,7 @@ CC('C18', '10uF', 64.5, 34.2, 0, '+3V3', 'GND', 'C_0805_2012Metric')
 CC('C19', '100nF', 64.5, 36.5, 0, '+3V3', 'GND')
 CC('C20', '100nF', 63.7, 44.7, 0, 'EN', 'GND')  # lote 5: +0.2/+0.4 — sai dos courtyards de C3/U1 (lote 3: era y+0.3 vs short de cobre)
 CC('C21', '100nF', 52.0, 72.5, 0, 'BTN1', 'GND')  # y+1.0: resolve D2<->C21
-CC('C22', '100nF', 63.5, 62.2, 0, 'BTN2', 'GND')
+CC('C22', '100nF', 63.5, 63.0, 0, 'BTN2', 'GND')  # lote 6: y+0.8 (62.2->63.0) — abre o teto do corredor SW
 CC('C23', '1uF', 69.3, 88.3, 180, '+3V3', 'GND')  # lote 5: so gira (90->180) — sai dos courtyards de D7/J2/D3/R23
 CC('C24', '100nF', 66.5, 94.5, 0, 'TRAVA_NO2', 'GND', 'C_1206_3216Metric')  # fix netlist: pino 2 era TRAVA_NO3 (net orfa) — snubber RC fecha em GND, junto de D6/D7
 

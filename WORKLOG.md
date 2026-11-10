@@ -75,18 +75,18 @@ Board de teste com o conector USB-C rotacionado a 90°, usando o DRC como orácu
 
 ## Estado atual
 
-- Netlist + colocação: **prontas** (rev 0 do gerador).
-- Ambiente de validação (kicad-cli + DRC): **funcionando**; shim `redirect.c` necessário no ambiente original com KiCad extraído.
-- O board completo (footprints embarcados + roteamento + zonas) **ainda não foi serializado** — `gen_board.py` termina no dump de pads, que é a entrada da próxima etapa.
+- Netlist: **auditada por completo** — polaridade de D1–D7 + LED1 e pinagem de U4/Q1 verificadas (`scripts/net_audit.py`, sai com exit 1 se achar problema); 9 bugs corrigidos no total (D1/D2/D3/D7/LED1, IO7_PU, BTN_SIG, C24).
+- Colocação: **lotes 1–6 aplicados** — courtyard real 0 no DRC (só o artefato OPT1↔J1 no place_check), cobre 100% limpo; DRC 136 (silk + texto) + 182 unconnected.
+- Board serializado sem roteamento (`serialize.py` → `hardware/pixgate.kicad_pcb`).
 
 ## Próximos passos
 
-1. Serializar o board completo a partir de `PARTS` (chamar `finalize()` + escrever nets/segmentos/zonas).
-2. Roteamento: frente = display/USB (digital), verso = potência (12 V/5 V/relé com trilhas largas).
-3. Zonas de GND nos dois lados com vias de costura.
-4. DRC limpo de ponta a ponta + revisão de fabricante (JLCPCB/PCBWay).
+1. Pass de silk pré-Gerbers: 80 silk_overlap, 50 silk_over_copper, 5 silk_edge (refs de R13/R14/R15 em x=25.97).
+2. H4: afastar para ≥ 0,5 mm da borda antes dos Gerbers.
+3. Roteamento dos 182 unconnected: frente digital / verso potência; FB curto e reto (ver lote 5); vias térmicas do U2; zonas de GND com vias de costura.
+4. DRC limpo de ponta a ponta + revisão de fabricação (JLCPCB/PCBWay).
 5. Gerbers, BOM de compra e montagem do protótipo.
-6. Firmware (client Pix + máquina de estados do relé/entradas).
+6. Firmware (client Pix + máquina de estados do relé/entradas; LED: GPIO25 HIGH=off, alta-Z=on — nunca LOW).
 
 ---
 
@@ -394,6 +394,33 @@ O usuário conferiu no gerador e contestou o "D3/D4/D5/D6 estavam certos" do blo
 - `place_check.py`: idêntico ao 09de669 (COPRE 0, COURTYARD 9) — mudança só de nets, zero geometria.
 - DRC (`validation/drc/netfix2-drc.rpt`): **147 violações / 182 unconnected / 0 footprint errors** — perfil idêntico ao netfix (81 silk_overlap + 52 silk_over_copper + 8 courtyards + 5 silk_edge + 1 texto). O grafo de conectividade não muda: D3 e LED1 só trocam pads entre nets já existentes (mesmos membros por net).
 - Correção de ferramenta: o cabeçalho do `scripts/kicad.sh` dizia `--output-report`; a opção do kicad-cli 9.0.2 é `--output`.
+
+---
+
+## 2026-11-10 (11) — Lote 6 aplicado: grandes — courtyards 9→1 (só o artefato), DRC 147→136
+
+Receita da seção (8) aplicada sem desvios, depois dos fixes de D3/LED1 e da auditoria completa (itens 2–4 da resposta do usuário). Todas translações puras — o `scripts/lote6_sim.py` previu exatamente o que o `place_check.py` mediu depois de aplicar:
+
+| Part | Antes | Depois | Resolve |
+| --- | --- | --- | --- |
+| SW1/SW2/SW3 | y=58 | **y=58.3** | U1↔SW1/2/3 (agora +0.10) |
+| C11 | (66.4, 63.3) | **(66.4, 63.7)** | teto do corredor SW (+0.30 vs SW3); limite K1 (+0.10) |
+| C22 | (63.5, 62.2) | **(63.5, 63.0)** | teto do corredor SW (+0.57) |
+| J3 | (43.5, 89.5) | **(42.3, 89.5)** | J3↔J4 (+0.15); J1↔J3 (+0.10) |
+| J4 | (51.5, 89.5) | **(50.85, 89.5)** | J4↔J5 (+0.15) |
+| J5 | (60, 89.5) | **(59.4, 89.5)** | J5↔D7 (+0.15) — D7 fica |
+| R23 | (64.5, 86.9) | **(63.9, 86.9)** | abre espaço p/ D3 (R23↔D3 +0.22) |
+| D3 | (69.2, 85.4) | **(68.75, 85.4)** | D3↔D6 (+0.20); D3↔R23 (+0.22) — D6 fica |
+| R16 | (36.5, 68.5) | **(35.5, 68.5)** | quebra o deadlock do canto USB (U4↔R16 +0.12) |
+| U4 | (39.4, 69.0) | **(38.4, 69.0)** | U4↔F2 (+0.77) — F2 fica |
+| D2 | (49.0, 70.0) | **(49.4, 70.0)** | D2↔F2 (+0.12) |
+
+**Validação:**
+- `place_check.py`: COURTYARD **9→1** — só o artefato OPT1↔J1 (−0.17; bbox do BarrelJack superestima o courtyard real, invisível ao DRC). COPRE **0**.
+- Margens medidas (`scripts/pair_margins.py`) = simulação, sem exceção: mínimas novas C11↔K1 / U1↔SW / J1↔J3 **+0.10**, U4↔R16 / D2↔F2 / D2↔R18 / U4↔C16 **+0.12**, D3↔D6 **+0.20**, U4↔F2 **+0.77**; razores pré-existentes mantidos: D2↔C21 **+0.02**, R23↔D7 **+0.07**, D1↔J3/J4 **+0.01** (pior margem do board). Cobre: pior gap +0.625.
+- DRC (`validation/drc/lote6-drc.rpt`): **147→136** — `courtyards_overlap` **8→0**; silk_overlap 81→80 e silk_over_copper 52→50 (os movimentos da fileira JST/canto USB resolveram 3 silk); silk_edge 5 e texto 1; unconnected 182 (roteamento pendente); 0 footprint errors.
+
+**Estado:** colocação no objetivo do place_check (courtyard real = 0 no board todo). Pendências pré-Gerbers inalteradas: pass de silk (80+50+5), H4 a 0,40 mm da borda (≥ 0,5), roteamento (182), zonas de GND, vias térmicas do U2.
 
 ---
 

@@ -4,7 +4,7 @@
 
 Projeto de hardware **open** desenvolvido de forma programática: toda a placa (netlist, colocação, footprints custom) é descrita em Python e gerada como arquivo `.kicad_pcb` nativo do **KiCad 9**, validado com o DRC oficial via `kicad-cli`.
 
-> **Status: v1.0 em desenvolvimento.** Netlist e colocação completas (85 itens posicionados, 51 redes nomeadas). Roteamento e DRC final ainda em andamento — ver [Estado do desenvolvimento](#estado-do-desenvolvimento) e o [WORKLOG](WORKLOG.md).
+> **Status: v1.0 em desenvolvimento.** Netlist auditada (polaridade de todos os diodos + LED verificada) e colocação concluída — courtyards zerados no DRC. Roteamento e pass de silk em andamento — ver [Estado do desenvolvimento](#estado-do-desenvolvimento) e o [WORKLOG](WORKLOG.md).
 
 ---
 
@@ -85,7 +85,7 @@ Requisitos:
 Os caminhos das bibliotecas estão no topo de `hardware/gen_board.py`:
 
 ```python
-FPDIR = os.path.expanduser('~/kfp-9/usr/share/kicad/footprints')          # kicad-footprints 9.0.2
+FPDIR = os.path.expanduser('~/kicad-root/root/usr/share/kicad/footprints')  # kicad 9.0.2 extraído sem root
 ESPDIR = os.path.expanduser('~/kicad-libs/kicad-libraries/footprints/Espressif.pretty')
 ```
 
@@ -111,10 +111,11 @@ A pasta `validation/drc/` guarda a trilha de evidências do desenvolvimento: um 
 - [x] Arquitetura da placa e seleção de componentes (BOM virtual completa)
 - [x] Biblioteca Python de manipulação de `.kicad_pcb` (`pcb_lib.py`), com semântica de flip para o verso validada
 - [x] Footprints custom: soquete do display, relé SRD, KF301, SOIC-8 com EP, pads de teste, furos M3
-- [x] Netlist completa (51 redes nomeadas) e colocação dos 85 itens (componentes, pads de teste e furos M3)
+- [x] Netlist completa (50 redes nomeadas) e **auditada** — polaridade de D1–D7 + LED1 e pinagem de U4/Q1 verificadas (`scripts/net_audit.py`)
 - [x] Formato de arquivo validado no DRC do KiCad 9 (`kicad-cli`), incluindo a convenção de rotação de pads do formato 9
 - [x] Serialização do board completo (`hardware/pixgate.kicad_pcb` carrega no pcbnew)
-- [ ] Zerar os últimos conflitos de colocação (4 shorts, ~6 clearances, ~48 courtyards)
+- [x] Colocação concluída (lotes 1–6: shorts, clearances e courtyards zerados no DRC; no place_check só resta o artefato de bbox do BarrelJack)
+- [ ] Pass de silk pré-Gerbers (silk_overlap/silk_over_copper/silk_edge) e H4 a ≥ 0,5 mm da borda
 - [ ] Roteamento (frente: display/USB; verso: potência)
 - [ ] Zonas de cobre (GND) + vias térmicas do U2
 - [ ] DRC limpo de ponta a ponta
