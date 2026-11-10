@@ -62,12 +62,25 @@ class Part:
         fp.insert(li + 2, ['at', f'{x:g}', f'{y:g}', rotstr])
         set_fp_texts(fp, ref, value)
         # Force Reference to Fab layer (not SilkS) to avoid silk_over_copper DRC
+        # Also add mirror justify for back-side refs
         fab_layer = 'F.Fab' if side == 'F' else 'B.Fab'
         for prop in getlist(fp, 'property'):
             if len(prop) > 2 and prop[1] == 'Reference':
                 for node in prop:
                     if isinstance(node, list) and node[0] == 'layer':
                         node[1] = fab_layer
+                # Add mirror justify for back side
+                if side == 'B':
+                    eff = getlist(prop, 'effects')
+                    if eff:
+                        e = eff[0]
+                        just = getlist(e, 'justify')
+                        if not just:
+                            e.append(['justify', 'mirror'])
+                        else:
+                            j = just[0]
+                            if 'mirror' not in j[1:]:
+                                j.append('mirror')
                         break
     def pin(self, padnum, netname):
         self.netmap[str(padnum)] = NN(netname)
@@ -266,9 +279,11 @@ def fp_c1206_nosilk():
 
 # board graphics helpers
 def gr_text(text, x, y, layer, size=1.2, thickness=0.18, rot=0):
+    eff = ['effects', ['font', ['size', f'{size:g}', f'{size:g}'], ['thickness', f'{thickness:g}']]]
+    if str(layer).startswith('B.'):
+        eff.append(['justify', 'mirror'])
     return ['gr_text', text, ['at', f'{x:g}', f'{y:g}'] + ([f'{rot:g}'] if rot else []),
-            ['layer', layer], ['uuid', new_uuid()],
-            ['effects', ['font', ['size', f'{size:g}', f'{size:g}'], ['thickness', f'{thickness:g}']]]]
+            ['layer', layer], ['uuid', new_uuid()], eff]
 
 def gr_line(x1, y1, x2, y2, layer='Edge.Cuts', width=0.1):
     return ['gr_line', ['start', f'{x1:g}', f'{y1:g}'], ['end', f'{x2:g}', f'{y2:g}'],
@@ -398,7 +413,7 @@ tp2 = P('TP2', 'RX0', fp_testpad('RX0'), 40.5, 33.5, 0).pin(1, 'RX0')
 tp3 = P('TP3', 'GND', fp_testpad('GND'), 37.5, 36.5, 0).pin(1, 'GND')
 
 # --- Mounting holes ---
-for i, (hx, hy) in enumerate([(30.5, 30.5), (74.5, 30.5), (30.5, 94.5), (66, 98)], 1):
+for i, (hx, hy) in enumerate([(30.5, 30.5), (74.5, 30.5), (30.5, 94.5), (66, 97.5)], 1):
     P(f'H{i}', 'M3', fp_mount_hole(), hx, hy, 0, side='B')
 
 # --- Resistors (back) ---
