@@ -5,8 +5,8 @@ import sys, os, math, copy
 sys.path.insert(0, os.path.dirname(__file__))
 from pcb_lib import *
 
-FPDIR = os.path.expanduser('~/kicad-root/root/usr/share/kicad/footprints')
-ESPDIR = os.path.expanduser('~/kicad-libs/kicad-libraries/footprints/Espressif.pretty')
+FPDIR = '/usr/share/kicad/footprints'
+ESPDIR = '/tmp/kicad-libraries/footprints/Espressif.pretty'
 HDR = open(os.path.join(os.path.dirname(__file__), 'board_header.txt')).read()
 
 # ============================================================
@@ -61,7 +61,14 @@ class Part:
         rotstr = f'{rot:g}' if rot else '0'
         fp.insert(li + 2, ['at', f'{x:g}', f'{y:g}', rotstr])
         set_fp_texts(fp, ref, value)
-        # fix property text: value visible on silk? keep fab defaults
+        # Force Reference to Fab layer (not SilkS) to avoid silk_over_copper DRC
+        fab_layer = 'F.Fab' if side == 'F' else 'B.Fab'
+        for prop in getlist(fp, 'property'):
+            if len(prop) > 2 and prop[1] == 'Reference':
+                for node in prop:
+                    if isinstance(node, list) and node[0] == 'layer':
+                        node[1] = fab_layer
+                        break
     def pin(self, padnum, netname):
         self.netmap[str(padnum)] = NN(netname)
         return self
@@ -84,7 +91,59 @@ class Part:
         return out
     def finalize(self):
         embed_footprint(self.fp, self.ref, self.value, (self.x, self.y), self.rot, self.netmap, side=self.side)
+        # Override reference text position if set
+        if hasattr(self, 'ref_at') and self.ref_at:
+            self._set_ref_pos(*self.ref_at)
         return self.fp
+    
+    def _set_ref_pos(self, x, y, layer=None, size=1.0, thickness=0.15, rot=0, hide=False):
+        """Set reference text position in local footprint coordinates.
+        If layer is None, keeps the current layer (default: Fab layer set in __init__)."""
+        for prop in getlist(self.fp, 'property'):
+            if len(prop) > 2 and prop[1] == 'Reference':
+                # Find and update the 'at' node
+                for node in prop:
+                    if isinstance(node, list) and node[0] == 'at':
+                        node[1] = f'{x:g}'
+                        node[2] = f'{y:g}'
+                        if rot:
+                            if len(node) > 3:
+                                node[3] = f'{rot:g}'
+                            else:
+                                node.append(f'{rot:g}')
+                        break
+                # Update layer only if explicitly provided
+                if layer is not None:
+                    for node in prop:
+                        if isinstance(node, list) and node[0] == 'layer':
+                            node[1] = layer
+                            break
+                # Update effects
+                for node in prop:
+                    if isinstance(node, list) and node[0] == 'effects':
+                        for eff in node:
+                            if isinstance(eff, list) and eff[0] == 'font':
+                                eff[1] = ['size', f'{size:g}', f'{size:g}']
+                                eff[2] = ['thickness', f'{thickness:g}']
+                        break
+                if hide:
+                    # add hide
+                    has_hide = False
+                    for node in prop:
+                        if isinstance(node, list) and node[0] == 'hide':
+                            node[1] = 'yes'
+                            has_hide = True
+                            break
+                    if not has_hide:
+                        prop.append(['hide', 'yes'])
+                break
+        return self
+    
+    def ref_pos(self, x, y, layer=None, size=1.0, thickness=0.15, rot=0, hide=False):
+        """Set reference text position (local footprint coordinates). Call before finalize.
+        If layer is None, keeps the current layer (default: Fab layer set in __init__)."""
+        self.ref_at = (x, y, layer, size, thickness, rot, hide)
+        return self
 
 PARTS = []
 
@@ -99,18 +158,18 @@ def fp_display_socket():
     for i, nm in enumerate(names):
         y = -8.895 + i * 2.54
         fp.append(mkpad(i + 1, 'thru_hole', 'circle', 0, y, 1.9, 1.9, ['*.Cu', '*.Mask'], drill=1.1))
-        # silk labels to the left (x=-2.2), 0.9mm font
-        fp.append(mktext('fp_text', nm, -2.0, y, 'F.SilkS', size=0.9, thickness=0.12))
-    # socket body outline + courtyard
-    fp.append(mkline('F.SilkS', -2.6, -10.3, 2.6, -10.3, 0.15))
+        # silk labels to the left (x=-4.5), 0.9mm font
+        fp.append(mktext('fp_text', nm, -4.5, y, 'F.SilkS', size=0.9, thickness=0.12))
+    # socket body outline + courtyard - outline at x=-6.0 to avoid label overlap (labels at -4.5)
+    fp.append(mkline('F.SilkS', -6.0, -10.3, 2.6, -10.3, 0.15))
     fp.append(mkline('F.SilkS', 2.6, -10.3, 2.6, 10.3, 0.15))
-    fp.append(mkline('F.SilkS', 2.6, 10.3, -2.6, 10.3, 0.15))
-    fp.append(mkline('F.SilkS', -2.6, 10.3, -2.6, -10.3, 0.15))
+    fp.append(mkline('F.SilkS', 2.6, 10.3, -6.0, 10.3, 0.15))
+    fp.append(mkline('F.SilkS', -6.0, 10.3, -6.0, -10.3, 0.15))
     for l in ('F.Fab', 'F.CrtYd'):
-        fp.append(mkline(l, -2.7, -10.4, 2.7, -10.4, 0.05))
+        fp.append(mkline(l, -6.1, -10.4, 2.7, -10.4, 0.05))
         fp.append(mkline(l, 2.7, -10.4, 2.7, 10.4, 0.05))
-        fp.append(mkline(l, 2.7, 10.4, -2.7, 10.4, 0.05))
-        fp.append(mkline(l, -2.7, 10.4, -2.7, -10.4, 0.05))
+        fp.append(mkline(l, 2.7, 10.4, -6.1, 10.4, 0.05))
+        fp.append(mkline(l, -6.1, 10.4, -6.1, -10.4, 0.05))
     fp.append(['attr', 'through_hole'])
     return fp
 
@@ -156,8 +215,9 @@ def fp_kf301():
         fp.append(mkline(l, m, -m, m, m, 0.05))
         fp.append(mkline(l, m, m, -m, m, 0.05))
         fp.append(mkline(l, -m, m, -m, -m, 0.05))
-    fp.append(mktext('fp_text', '1', -3.4, 0.9, 'F.SilkS', size=1.0, thickness=0.15))
-    fp.append(mktext('fp_text', '2', 1.7, 0.9, 'F.SilkS', size=1.0, thickness=0.15))
+    # pin labels on Fab layer to avoid silk_over_copper
+    fp.append(mktext('fp_text', '1', -3.4, 0.9, 'F.Fab', size=1.0, thickness=0.15))
+    fp.append(mktext('fp_text', '2', 1.7, 0.9, 'F.Fab', size=1.0, thickness=0.15))
     fp.append(['attr', 'through_hole'])
     return fp
 
@@ -171,7 +231,8 @@ def fp_soic8_ep():
 def fp_testpad(name):
     fp = mkfootprint(f'TestPad_{name}', 'F.Cu')
     fp.append(mkpad(1, 'smd', 'circle', 0, 0, 1.6, 1.6, ['F.Cu', 'F.Mask', 'F.Paste']))
-    fp.append(mktext('fp_text', name, 0, 1.6, 'F.SilkS', size=0.8, thickness=0.12))
+    # label on Fab layer to avoid silk_over_copper
+    fp.append(mktext('fp_text', name, 0, 1.6, 'F.Fab', size=0.8, thickness=0.12))
     fp.append(['attr', 'smd'])
     return fp
 
@@ -180,11 +241,27 @@ def fp_mount_hole():
     fp.append(['pad', '""', 'np_thru_hole', 'circle', ['at', '0', '0'],
                ['size', '3.2', '3.2'], ['drill', '3.2'], ['layers', '*.Cu', '*.Mask'],
                ['uuid', new_uuid()]])
-    fp.append(mkline('F.SilkS', -1.9, 0, -2.5, 0, 0.15))
-    fp.append(mkline('F.SilkS', 1.9, 0, 2.5, 0, 0.15))
-    fp.append(mkline('F.SilkS', 0, -1.9, 0, -2.5, 0.15))
-    fp.append(mkline('F.SilkS', 0, 1.9, 0, 2.5, 0.15))
+    # No silk crosshair - avoids silk_over_copper at board corners
     fp.append(['attr', 'exclude_from_pos_files', 'exclude_from_bom'])
+    return fp
+
+def fp_c1206_nosilk():
+    """1206 capacitor without silk outline (for C24 snubber)."""
+    fp = mkfootprint('C_1206_3216Metric_NoSilk', 'F.Cu')
+    # Standard 1206 pads
+    fp.append(mkpad(1, 'smd', 'rect', -1.6, 0, 1.6, 1.8, ['F.Cu', 'F.Mask', 'F.Paste']))
+    fp.append(mkpad(2, 'smd', 'rect', 1.6, 0, 1.6, 1.8, ['F.Cu', 'F.Mask', 'F.Paste']))
+    # Fab outline only (no silk)
+    fp.append(mkline('F.Fab', -2.0, -1.0, 2.0, -1.0, 0.1))
+    fp.append(mkline('F.Fab', 2.0, -1.0, 2.0, 1.0, 0.1))
+    fp.append(mkline('F.Fab', 2.0, 1.0, -2.0, 1.0, 0.1))
+    fp.append(mkline('F.Fab', -2.0, 1.0, -2.0, -1.0, 0.1))
+    # Courtyard
+    fp.append(mkline('F.CrtYd', -2.1, -1.1, 2.1, -1.1, 0.05))
+    fp.append(mkline('F.CrtYd', 2.1, -1.1, 2.1, 1.1, 0.05))
+    fp.append(mkline('F.CrtYd', 2.1, 1.1, -2.1, 1.1, 0.05))
+    fp.append(mkline('F.CrtYd', -2.1, 1.1, -2.1, -1.1, 0.05))
+    fp.append(['attr', 'smd'])
     return fp
 
 # board graphics helpers
@@ -220,6 +297,7 @@ def P(ref, value, lib_fp, x, y, rot=0, side='B'):
 
 # --- U1: ESP32-C5-WROOM-1-N8 (back, antenna at top edge) ---
 u1 = P('U1', 'ESP32-C5-WROOM-1-N8', ('__esp__', 'ESP32-C5-WROOM-1'), 52.5, 40.25, 0)
+u1.ref_pos(0, 12)  # move ref up from -15 to +12 (was at y=25.25, edge at 25)
 U1_NETS = {1:'GND', 2:'+3V3', 3:'EN', 5:'BTN2', 6:'RLY_DRV', 7:'IN_BTN',
            8:'SCK_M', 9:'IO7_PU', 10:'MOSI_M', 11:'DISP_DC', 12:'DISP_CS', 13:'USB_DN', 14:'USB_DP',
            15:'BTN1', 16:'DISP_BL', 17:'DISP_RST', 18:'IO27_PU', 21:'IN_NOTE', 23:'IN_COIN',
@@ -229,6 +307,7 @@ for padn, nname in U1_NETS.items():
 
 # --- U2: TPS54331DDA buck (back) ---
 u2 = P('U2', 'TPS54331DDA', ('Package_SO', 'SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.41x3.3mm'), 69.5, 45, 0)
+u2.ref_pos(0, -6)  # move ref down from default
 u2.pin(1, 'BOOT_C').pin(2, '+12V').pin(3, 'EN_BK').pin(4, 'SS_C')
 u2.pin(5, 'FB').pin(6, 'COMP_X').pin(7, 'GND').pin(8, 'SW').pin(9, 'GND')
 
@@ -238,6 +317,7 @@ u3.pin(1, 'GND').pin(2, '+3V3').pin(3, '+5V')
 
 # --- U4: USBLC6-2SC6 (back) ---
 u4 = P('U4', 'USBLC6-2SC6', ('Package_TO_SOT_SMD', 'SOT-23-6'), 38.4, 69.0, 0)  # lote 6: x-1.0 (39.4->38.4) — sai do courtyard do F2 (+0.77), F2 fica | y-1.0: TVS colado em J6/F2/C16
+u4.ref_pos(0, -3)
 u4.pin(1, 'USB_DP').pin(2, 'GND').pin(3, 'USB_DN').pin(4, 'USB_DN').pin(5, 'USB_VBUS').pin(6, 'USB_DP')
 
 # --- Q1: AO3400A relay driver (back) ---
@@ -264,6 +344,7 @@ d4 = P('D4', 'SMBJ18A', ('Diode_SMD', 'D_SMB'), 58.55, 84.3, 0).pin(1, '+12V').p
 d5 = P('D5', 'SS54', ('Diode_SMD', 'D_SMA'), 75.5, 44.5, 90).pin(1, 'SW').pin(2, 'GND')
 d6 = P('D6', 'SMBJ16A', ('Diode_SMD', 'D_SMB'), 76.1, 87, 0).pin(1, 'TRAVA_NO').pin(2, 'GND')  # original: cobre ate x=79.5, a 0.5mm da borda
 d7 = P('D7', 'M7', ('Diode_SMD', 'D_SMA'), 66, 91, 0).pin(1, 'TRAVA_NO').pin(2, 'GND')  # fix netlist: freewheel da trava estava invertido — como era, curto +12V->GND com o rele ligado
+d7.ref_pos(0, -4)
 
 # --- Fuses (back) ---
 f1 = P('F1', '1206L050/24', ('Fuse', 'Fuse_1206_3216Metric'), 41.5, 84.4, 0).pin(1, '+12V_IN').pin(2, 'F12V')  # lote 4: y+0.4 libera OPT1/OPT2 (gap 0.10)
@@ -276,16 +357,20 @@ l1 = P('L1', '6.8uH', ('Inductor_SMD', 'L_7.3x7.3_H3.5'), 73, 52, 180).pin(1, 'S
 sw1 = P('SW1', 'RST', ('Button_Switch_SMD', 'SW_SPST_PTS645'), 39.3, 58.3, 0).pin(1, 'EN').pin(2, 'GND')  # lote 6: y+0.3 — sai do courtyard do U1 (corredor dos botoes)
 sw2 = P('SW2', 'BOOT', ('Button_Switch_SMD', 'SW_SPST_PTS645'), 50, 58.3, 0).pin(1, 'BTN1').pin(2, 'GND')  # lote 6: y+0.3 — sai do courtyard do U1
 sw3 = P('SW3', 'CFG', ('Button_Switch_SMD', 'SW_SPST_PTS645'), 61, 58.3, 0).pin(1, 'BTN2').pin(2, 'GND')  # lote 6: y+0.3 — sai do courtyard do U1
+sw3.ref_pos(0, 4)
 
 # --- Connectors (back) ---
 j1 = P('J1', 'DC-005 12V', ('Connector_BarrelJack', 'BarrelJack_Horizontal'), 32, 85, 270)
 j1.pin(1, '+12V_IN').pin(2, 'GND').pin(3, 'GND')  # netfix3 (fechamento item 1): luva (pad 2) junto da chave (pad 3) em GND — duplo GND seguro nas 2 familias de pinout do PJ-102A (chave NC contra a luva, Barrel_Jack_Switch lib 9.0.2: folha a 0.254 da luva e 4.191 da ponta; ou 2a luva Pin3Ring); a unica familia destrutiva (NC contra a ponta) nao e atribuida ao PJ-102A e o passo 3 do roteiro de bancada detecta fisicamente — fallback de bancada: pin(3, '')
 j2 = P('J2', 'KF301 TRAVA', fp_kf301(), 74.8, 94.6, 90).pin(1, 'TRAVA_NO').pin(2, 'GND')
+j2.ref_pos(0, -6)
 j3 = P('J3', 'JST-XH NOTEIRO', ('Connector_JST', 'JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal'), 42.3, 89.5, 0)  # lote 6: x-1.2 — fileira JST desloca p/ esquerda (J3<->J4, J1<->J3)
 j3.pin(1, 'NOTE_SIG').pin(2, 'GND')
 j4 = P('J4', 'JST-XH MOEDEIRO', ('Connector_JST', 'JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal'), 50.85, 89.5, 0)  # lote 6: x-0.65 — J4<->J5/J3
+j4.ref_pos(0, -4)
 j4.pin(1, 'COIN_SIG').pin(2, 'GND')
 j5 = P('J5', 'JST-XH BOTAO', ('Connector_JST', 'JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal'), 59.4, 89.5, 0)  # lote 6: x-0.6 — J5<->D7 (D7 fica preso entre J5 e J2)
+j5.ref_pos(0, -4)
 j5.pin(1, 'BTN_SIG').pin(2, 'GND')  # fix netlist: pino 2 era +12V — botao seco fecha BTN_SIG->GND (padrao J3/J4: sinal no 1, GND no 2)
 j6 = P('J6', 'USB-C', ('Connector_USB', 'USB_C_Receptacle_HRO_TYPE-C-31-M-12'), 30.4, 71.9, 90)
 for pn in ('A1','B1','A12','B12'): j6.pin(pn, 'GND')
@@ -295,7 +380,8 @@ j6.pin('A6', 'USB_DP').pin('B6', 'USB_DP').pin('A7', 'USB_DN').pin('B7', 'USB_DN
 j6.pin('A8', '').pin('B8', '')
 
 # --- J7: display socket (FRONT) ---
-j7 = P('J7', 'TFT 1.54', fp_display_socket(), 31, 56, 0, side='F')
+j7 = P('J7', 'TFT 1.54', fp_display_socket(), 32, 56, 0, side='F')
+j7.ref_pos(0, 12)
 j7.pin(1, 'GND').pin(2, '+3V3').pin(3, 'SCK_D').pin(4, 'MOSI_D')
 j7.pin(5, 'DISP_RST').pin(6, 'DISP_DC').pin(7, 'DISP_CS').pin(8, 'DISP_BL')
 
@@ -303,6 +389,7 @@ j7.pin(5, 'DISP_RST').pin(6, 'DISP_DC').pin(7, 'DISP_CS').pin(8, 'DISP_BL')
 led1 = P('LED1', 'STATUS', ('LED_SMD', 'LED_0805_2012Metric'), 68.5, 29.5, 0, side='F')
 led1.pin(1, 'LED_K').pin(2, 'LED_A')  # netfix3 (fechamento item 2): +3V3->R19->LED(A->K)->GPIO25 — R19 em serie com o ANODO e GPIO25 (U1 pino 26) direto no catodo; LED_0805 pad 1 = catodo (Device:LED Sim.Pins "1=K 2=A", chanfro do fab do lado do pad 1). LOW acende ~(3,3-2,0)/1k = 1,3 mA; HIGH desliga
 r19 = P('R19', '1k', ('Resistor_SMD', 'R_0603_1608Metric'), 68.5, 32.5, 90, side='F')
+r19.ref_pos(0, -3)
 r19.pin(1, '+3V3').pin(2, 'LED_A')  # netfix3 (fechamento item 2): antes LED_K->GND — LED sempre aceso com GPIO25 so sentindo o no; agora serie no anodo limita a corrente em qualquer estado do pino (a nota "nunca dirigir a LOW" do WORKLOG deixa de existir)
 
 # --- Test pads (back) ---
@@ -316,7 +403,30 @@ for i, (hx, hy) in enumerate([(30.5, 30.5), (74.5, 30.5), (30.5, 94.5), (66, 98)
 
 # --- Resistors (back) ---
 def RR(ref, val, x, y, rot, n1, n2, pkg='R_0603_1608Metric'):
-    return P(ref, val, ('Resistor_SMD', pkg), x, y, rot).pin(1, n1).pin(2, n2)
+    p = P(ref, val, ('Resistor_SMD', pkg), x, y, rot).pin(1, n1).pin(2, n2)
+    # Auto-set reference position to avoid silk_over_copper
+    if '0603' in pkg or '1608' in pkg:
+        if rot == 0:
+            p.ref_pos(0, 2.2)  # above horizontal 0603
+        elif rot == 90 or rot == 270:
+            p.ref_pos(-2.2, 0)  # left of vertical 0603
+        elif rot == 180:
+            p.ref_pos(0, -2.2)  # below horizontal 0603 (upside down)
+    elif '0805' in pkg or '2012' in pkg:
+        if rot == 0:
+            p.ref_pos(0, 2.5)
+        elif rot == 90 or rot == 270:
+            p.ref_pos(-2.5, 0)
+        elif rot == 180:
+            p.ref_pos(0, -2.5)
+    elif '1206' in pkg or '3216' in pkg:
+        if rot == 0:
+            p.ref_pos(0, 3.0)
+        elif rot == 90 or rot == 270:
+            p.ref_pos(-3.0, 0)
+        elif rot == 180:
+            p.ref_pos(0, -3.0)
+    return p
 
 RR('R1', '5.1k', 38, 66, 0, 'CC1', 'GND')
 RR('R2', '5.1k', 41, 66.5, 0, 'CC2', 'GND')
@@ -330,9 +440,9 @@ RR('R9', '10k', 41.7, 73.8, 90, '+3V3', 'BTN2')  # lote 4: muda p/ o vão OPT1/O
 RR('R10', '10k', 63.7, 51, 0, '+3V3', 'IO7_PU')  # lote 5: x+0.2 — sai do courtyard do U1
 RR('R11', '10k', 41, 50.5, 90, '+3V3', 'IO26_PU')  # lote 5: so gira — sai do courtyard do U1
 RR('R12', '10k', 40.7, 53.6, 0, '+3V3', 'IO27_PU')  # fora do corredor SW1-SW2 (SW2 exigia >=10.4mm do PTS645)
-RR('R13', '10k', 27.4, 58, 90, 'IN_NOTE', '+3V3')  # lote 5: x-0.6 — sai do courtyard do J7 (soquete do display, lado oposto)
-RR('R14', '10k', 27.4, 61, 90, 'IN_COIN', '+3V3')  # lote 5: x-0.6 — sai do courtyard do J7
-RR('R15', '10k', 27.4, 64, 90, 'IN_BTN', '+3V3')  # lote 5: x-0.6 — sai do courtyard do J7
+RR('R13', '10k', 27.4, 58, 90, 'IN_NOTE', '+3V3').ref_pos(2, 0)  # lote 5: x-0.6 — sai do courtyard do J7 (soquete do display, lado oposto)
+RR('R14', '10k', 27.4, 61, 90, 'IN_COIN', '+3V3').ref_pos(2, 0)  # lote 5: x-0.6 — sai do courtyard do J7
+RR('R15', '10k', 27.4, 64, 90, 'IN_BTN', '+3V3').ref_pos(2, 0)  # lote 5: x-0.6 — sai do courtyard do J7
 RR('R16', '2.2k', 35.5, 68.5, 90, 'NOTE_A', '+12V')  # lote 6: x-1.0 (36.5->35.5) — quebra o deadlock do canto USB (abre espaco p/ o U4; folga ate o J6)
 RR('R17', '2.2k', 49, 66.6, 90, 'COIN_A', '+12V')  # lote 5: y-0.2 — sai do courtyard do D2
 RR('R18', '2.2k', 52.7, 67.4, 180, 'BTN_A', '+12V')  # lote 5: gira 180 e sobe 0.2 — sai do courtyard do D2
@@ -344,7 +454,45 @@ RR('R26', '100k', 64.0, 49.5, 0, '+12V', 'EN_BK')  # resolve R22<->R26
 
 # --- Capacitors (back) ---
 def CC(ref, val, x, y, rot, n1, n2, pkg='C_0603_1608Metric'):
-    return P(ref, val, ('Capacitor_SMD', pkg), x, y, rot).pin(1, n1).pin(2, n2)
+    # Handle both library footprints (tuple or string) and custom footprints (list)
+    if isinstance(pkg, list):
+        # Custom footprint list
+        p = P(ref, val, pkg, x, y, rot).pin(1, n1).pin(2, n2)
+        pkg_str = 'custom'
+    else:
+        # Library footprint (tuple or string)
+        p = P(ref, val, ('Capacitor_SMD', pkg), x, y, rot).pin(1, n1).pin(2, n2)
+        pkg_str = pkg
+    # Auto-set reference position to avoid silk_over_copper
+    if '0603' in pkg_str or '1608' in pkg_str:
+        if rot == 0:
+            p.ref_pos(0, 2.2)
+        elif rot == 90 or rot == 270:
+            p.ref_pos(-2.2, 0)
+        elif rot == 180:
+            p.ref_pos(0, -2.2)
+    elif '0805' in pkg_str or '2012' in pkg_str:
+        if rot == 0:
+            p.ref_pos(0, 2.5)
+        elif rot == 90 or rot == 270:
+            p.ref_pos(-2.5, 0)
+        elif rot == 180:
+            p.ref_pos(0, -2.5)
+    elif '1206' in pkg_str or '3216' in pkg_str:
+        if rot == 0:
+            p.ref_pos(0, 3.0)
+        elif rot == 90 or rot == 270:
+            p.ref_pos(-3.0, 0)
+        elif rot == 180:
+            p.ref_pos(0, -3.0)
+    elif '1210' in pkg_str or '3225' in pkg_str:
+        if rot == 0:
+            p.ref_pos(0, 3.5)
+        elif rot == 90 or rot == 270:
+            p.ref_pos(-3.5, 0)
+        elif rot == 180:
+            p.ref_pos(0, -3.5)
+    return p
 
 CC('C1', '10uF/25V', 67.5, 39.5, 90, '+12V', 'GND', 'C_1206_3216Metric')
 CC('C2', '10uF/25V', 70.5, 39.5, 90, '+12V', 'GND', 'C_1206_3216Metric')
@@ -369,7 +517,7 @@ CC('C20', '100nF', 63.7, 44.7, 0, 'EN', 'GND')  # lote 5: +0.2/+0.4 — sai dos 
 CC('C21', '100nF', 52.0, 72.5, 0, 'BTN1', 'GND')  # y+1.0: resolve D2<->C21
 CC('C22', '100nF', 63.5, 63.0, 0, 'BTN2', 'GND')  # lote 6: y+0.8 (62.2->63.0) — abre o teto do corredor SW
 CC('C23', '1uF', 69.3, 88.3, 180, '+3V3', 'GND')  # lote 5: so gira (90->180) — sai dos courtyards de D7/J2/D3/R23
-CC('C24', '100nF', 66.5, 94.5, 0, 'TRAVA_NO2', 'GND', 'C_1206_3216Metric')  # fix netlist: pino 2 era TRAVA_NO3 (net orfa) — snubber RC fecha em GND, junto de D6/D7
+CC('C24', '100nF', 66.5, 94.5, 0, 'TRAVA_NO2', 'GND', fp_c1206_nosilk())  # fix netlist: pino 2 era TRAVA_NO3 (net orfa) — snubber RC fecha em GND, junto de D6/D7
 
 # snubber do contato: TRAVA_NO -> R23 -> TRAVA_NO2 (nó do RC) -> C24 -> GND,
 # em paralelo com D6 (TVS) e D7 (freewheel), todos no par TRAVA_NO/GND
