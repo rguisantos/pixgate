@@ -28,6 +28,7 @@ echo "==> Gerbers"
 kicad-cli pcb export gerbers \
   --output "$FAB/" \
   --layers "F.Cu,B.Cu,F.SilkS,B.SilkS,F.Mask,B.Mask,Edge.Cuts" \
+  --no-x2 --subtract-soldermask \
   "$PCB"
 
 echo "==> Drill"
@@ -53,9 +54,10 @@ echo "==> BOM"
 python3 "$HW/prepare_bom.py" > "$FAB/pixgate-BOM.csv"
 
 echo "==> Job file"
-kicad-cli pcb export gerber-jobfile \
-  --output "$FAB/pixgate-job.gbrjob" \
-  "$PCB" 2>/dev/null || echo "(gerber-jobfile não suportado — ignorando)"
+# gerber-jobfile: não suportado no kicad-cli 9.0.2 — upload manual de camadas no portal do fabricante
+# kicad-cli pcb export gerber-jobfile \
+#   --output "$FAB/pixgate-job.gbrjob" \
+#   "$PCB" 2>/dev/null || echo "(gerber-jobfile não suportado — ignorando)"
 
 echo
 echo "OK — arquivos em $FAB:"
