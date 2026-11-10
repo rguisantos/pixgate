@@ -453,4 +453,21 @@ Itens 1–3 do fechamento da revisão independente (prioridade imediata definida
 
 ---
 
+## 2026-11-10 (14) — Rodada 4: conferência contra datasheet (U1, K1, OPT1-3, J7) — 4/4 aprovados, board intocado
+
+Última rodada de conferência pré-roteamento pedida pelo revisor — os quatro itens que o `net_audit` não cobria por serem **geometria/pinout contra fonte** (diodos/LED/J1/U4/Q1 já estavam cobertos). Relatório integral em `docs/conferencia-datasheet.md`; reprodução por `hardware/check_pads.py` (dump de pads/nets finais com rotação e lado do verso — entrou no repo neste commit, com caminho relativo e `netmap.get`).
+
+**Veredito do revisor: 4/4 aprovados, nenhuma mudança de código.** O board do 37d2eef segue sendo o aprovado para o roteamento.
+
+- **U1 × datasheet C5-WROOM-1 v1.3 (Tabela 3-1):** 29 pinos conferidos um a um contra o dump — TX0/RX0 (pinos 25/24), USB D−/D+ (13/14), EN com RC (R7/C20/SW1 = padrão Espressif), GPIO25 no **pino 26**. Ambiguidade "número de pino do módulo × número de GPIO" do WORKLOG antigo resolvida e ancorada na fonte: **GPIO7 = pino 9** (§4.4 — sem pull interno, o R10 10k→+3V3 é exigido e está presente). Consequências registradas como regra: **JTAG por USB desligado nesta revisão** (com GPIO7=1 a fonte de JTAG vira MTDI/MTCK/MTMS/MTDO, todos ocupados); **gravação por USB-C não afetada** (depende do modo de boot, não do GPIO7). Se um dia precisar de JTAG-USB: mover o R10 para GND.
+- **K1 (SRD-12VDC-SL-C):** `fp_relay_srd` conferido contra a lib oficial KiCad `Relay_THT` **pós-correção #1003** (NC em cima / NO embaixo) e o footprint comunitário SVTmaker — Δ máximo **0,05 mm**. Bobina sem diodo interno (não é a variante "-D") → A1/A2 simétricos; o flyback D3 externo vale em qualquer sentido. **Ressalva de compra:** o PDF da Songle estava bloqueado no ambiente — antes de encomendar, comparar o relé a comprar com a pinagem do datasheet do **fabricante** dele.
+- **OPT1–3 (PC817, DIP-4 a 90° no verso):** derivação física + dump confirmam as fileiras {1,2}/{4,3}; pad 1 (ânodo) quadrado no canto sup-esq com o entalhe de silk — **dot do PC817 no canto superior esquerdo**; girado 180° o ânodo cairia no emissor (GND) e o opto não funcionaria.
+- **J7 (display):** ordem **GND VCC SCL SDA RST DC CS BL** conferida contra o print do módulo real ("1.54TFT-SPI-ST7789 Ver:1.1", Mercado Libre, lido por visão computacional). **Regra de compra: só módulo de 8 pinos nessa ordem e nesse lado — módulo de 7 pinos (sem CS) não serve.**
+
+**Token/GitHub (regra fixada pelo revisor nesta rodada):** nenhum token é usado nem necessário neste ambiente — varredura por padrões `gh?_…`/`github_pat_…` em todo o workspace: **zero ocorrências**. O push sai da máquina do usuário, a partir do bundle. Qualquer token que tenha circulado por qualquer canal deve ser tratado como comprometido e revogado (github.com/settings/tokens).
+
+**Estado:** roteamento liberado na máquina do usuário (base 37d2eef; KiCad + Freerouting — roteiro no fim do relatório da rodada 4). Pré-fab que volta para cá depois do roteamento: pass de silk, H4 ≥ 0,5 mm da borda, DRC final.
+
+---
+
 *Worklog mantido à mão a partir dos artefatos e timestamps do ambiente de desenvolvimento. Cada bloco acima é verificável pelos arquivos correspondentes no repositório.*

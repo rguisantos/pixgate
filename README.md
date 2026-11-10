@@ -37,6 +37,15 @@ Projeto de hardware **open** desenvolvido de forma programática: toda a placa (
 
 Layout proposital: **frente** só com display e LED (vista limpa); **verso** com toda a eletrônica e potência.
 
+## Regras de compra e montagem (fixadas na conferência contra datasheet)
+
+- **Display:** só o módulo TFT 1.54" **ST7789 SPI de 8 pinos**, ordem **GND VCC SCL SDA RST DC CS BL** — módulo de 7 pinos (sem CS) **não serve**.
+- **Relé:** antes de encomendar, conferir a pinagem do relé comprado contra o datasheet do **fabricante** dele (a conferência usou a lib oficial KiCad pós-#1003 + um footprint comunitário; o PDF da Songle estava bloqueado no ambiente).
+- **PC817:** dot do pino 1 no canto superior esquerdo de cada opto (pad 1 quadrado + entalhe de silk).
+- **JTAG por USB: desligado** nesta revisão — o R10 puxa o GPIO7 (pino 9 do módulo) para +3V3, exigido pelo §4.4 do datasheet; a **gravação pela USB-C não é afetada**; para habilitar JTAG-USB, mover o R10 para GND.
+
+Checklist completo de compra, montagem e primeira energização em [docs/conferencia-datasheet.md](docs/conferencia-datasheet.md).
+
 ## Blocos funcionais
 
 | Bloco | Componentes | Função |
@@ -60,6 +69,7 @@ pixgate/
 │   ├── pcb_lib.py       # Parser/serializador S-expression + utilitários KiCad 9
 │   │                    #   (flip back-side, embed com nets, builders de footprint)
 │   ├── net_audit.py     # Auditoria da netlist (polaridade, pinagem, nets órfãs)
+│   ├── check_pads.py    # Dump de pads/nets finais (conferência vs datasheet)
 │   └── board_header.txt # Cabeçalho .kicad_pcb validado (layers/setup padrão)
 ├── validation/          # Evidências de validação com o DRC do KiCad 9
 │   ├── test_board.py    # Teste 1: módulo no verso, nets, segmento
@@ -71,7 +81,8 @@ pixgate/
 │   ├── extract_svg_text.py  # Extração de texto/coords de SVG de land pattern
 │   └── parse_wiki_usb.py    # Pinout USB-C extraído da Wikipédia
 └── docs/
-    └── references.md    # Datasheets, libs e designs de referência usados
+    ├── references.md    # Datasheets, libs e designs de referência usados
+    └── conferencia-datasheet.md  # Rodada 4: conferência pin-a-pin vs datasheet
 ```
 
 ## Gerando a placa
@@ -117,6 +128,7 @@ A pasta `validation/drc/` guarda a trilha de evidências do desenvolvimento: um 
 - [x] Formato de arquivo validado no DRC do KiCad 9 (`kicad-cli`), incluindo a convenção de rotação de pads do formato 9
 - [x] Serialização do board completo (`hardware/pixgate.kicad_pcb` carrega no pcbnew)
 - [x] Colocação concluída (lotes 1–6: shorts, clearances e courtyards zerados no DRC; no place_check só resta o artefato de bbox do BarrelJack)
+- [x] Conferência contra datasheet (rodada 4): U1/K1/OPT1-3/J7 verificados pin-a-pin — **board inalterado** ([docs/conferencia-datasheet.md](docs/conferencia-datasheet.md))
 - [ ] Pass de silk pré-Gerbers (silk_overlap/silk_over_copper/silk_edge) e H4 a ≥ 0,5 mm da borda
 - [ ] Roteamento (frente: display/USB; verso: potência)
 - [ ] Zonas de cobre (GND) + vias térmicas do U2

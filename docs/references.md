@@ -8,6 +8,7 @@ Material de pesquisa que embasou as decisões de design. Os originais foram baix
 | --- | --- | --- |
 | Footprints oficiais KiCad (`Resistor_SMD`, `Capacitor_SMD`, `Package_SO`, `Package_TO_SOT_SMD`, `Package_DIP`, `Diode_SMD`, `Connector_*`, `Button_Switch_SMD`, `LED_SMD`, `Fuse`, `Inductor_SMD`, `Connector_BarrelJack`, `Connector_USB`) | https://github.com/KiCad/kicad-footprints | `7ebfa6b` |
 | Footprints Espressif (`ESP32-C5-WROOM-1`) | https://github.com/espressif/kicad-libraries | `dd76561` |
+| Relé SRD (conferência do `fp_relay_srd`, rodada 4) | `Relay_THT:Relay_SPDT_SANYOU_SRD_Series_Form_C` da lib master https://github.com/KiCad/kicad-footprints (pós-correção da issue #1003) + footprint comunitário SVTmaker `RELAY_SRD-05VDC-SL-C` | fetch ad hoc 2026-11 (sem hash registrado) |
 
 Os footprints embedados no board gerado vêm do pacote Debian `kicad-footprints` **9.0.2-1** (formato 9.x, carregado e validado pelo `kicad-cli` 9.0.2 no DRC). O clone `7ebfa6b` listado acima é o material de pesquisa de 2020 — formato legado `module`/`fp_arc`, que o KiCad 9 não carrega; fica como referência histórica.
 
@@ -35,6 +36,8 @@ O clone do ambiente de trabalho trouxe o `Connector.kicad_sym` como um **stub de
 - **LTV817** — DigiKey/Vishay (alternativa avaliada ao PC817)
 - **LM2596** — Texas Instruments / web (alternativa avaliada ao buck; o design final usa TPS54331)
 - **TPS54331** — Texas Instruments (buck 3 A, 28 V, SOIC-8 EP) — ver calculadora de compensação no datasheet
+- **Songle SRD-12VDC-SL-C** — datasheet do fabricante (PDF **bloqueado** no ambiente na conferência); pinagem conferida contra a lib oficial KiCad pós-#1003 + footprint comunitário SVTmaker — **conferir contra o fabricante antes da compra**
+- **Display TFT 1.54" ST7789 SPI** — módulo "1.54TFT-SPI-ST7789 Ver:1.1" (print Mercado Libre, lido por visão computacional): cabeçalho de 8 pinos **GND VCC SCL SDA RST DC CS BL** — regra de compra (7 pinos sem CS não serve)
 - **Pinout USB Type-C** — Wikipédia (usb_wiki.html / usb_pinouts.html no ambiente de trabalho)
 
 ## Ferramentas internas
@@ -44,3 +47,4 @@ O clone do ambiente de trabalho trouxe o `Connector.kicad_sym` como um **stub de
 | `tools/extract_svg_text.py` | Extrai texto/coordenadas do SVG de land pattern do datasheet do C5-WROOM |
 | `tools/parse_wiki_usb.py` | Parse do HTML da Wikipédia para tabela de pinout USB-C |
 | `tools/redirect.c` | Shim `LD_PRELOAD` que redireciona `/usr/share/kicad` para um KiCad extraído em outro diretório (`KICAD_REAL_SHARE`), permitindo rodar `kicad-cli pcb drc` com libs externas |
+| `hardware/check_pads.py` | Dump de pads/nets finais por componente (rotação + lado do verso aplicados) — base da conferência contra datasheet da rodada 4 |
