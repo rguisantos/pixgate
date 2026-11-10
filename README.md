@@ -127,6 +127,7 @@ A pasta `validation/drc/` guarda a trilha de evidências do desenvolvimento: um 
 ## Créditos e fontes
 
 - Footprints: [KiCad/kicad-footprints](https://github.com/KiCad/kicad-footprints) e [espressif/kicad-libraries](https://github.com/espressif/kicad-libraries)
+- Símbolos (verificação do jack DC-005): pacote Debian `kicad-symbols` 9.0.2-1 (upstream [KiCad/kicad-symbols](https://github.com/KiCad/kicad-symbols)) — ver [docs/references.md](docs/references.md)
 - Designs de referência: [SparkFun Thing Plus ESP32-C6](https://github.com/sparkfun/SparkFun_Thing_Plus_ESP32_C6) e [SparkFun Thing Plus ESP32-S3](https://github.com/sparkfun/SparkFun_Thing_Plus_ESP32-S3)
 - Datasheets e pinouts: ver [docs/references.md](docs/references.md)
 

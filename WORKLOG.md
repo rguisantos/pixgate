@@ -443,4 +443,14 @@ Itens 1–3 do fechamento da revisão independente (prioridade imediata definida
 
 ---
 
+## 2026-11-10 (13) — Revisão do pacote confirmada; item 7 aplicado — fechamento concluído
+
+**Revisão independente do pacote do fechamento (retorno do revisor):** hash do tarball confere (`2255cb3b…`); diff do gerador contra o lote 6 = **só as três mudanças pretendidas** (J1 com pad 2 e 3 em GND, net `LED_A` no fim da lista sem renumerar, R19 de `+3V3` a `LED_A` com LED1 de `LED_A` a `LED_K`), resto de `hardware/` idêntico; `net_audit.py` do repo LIMPO (51 nets, todas ≥ 2 pads, `J1: 1=+12V_IN, 2=GND, 3=GND → OK`); contagens de pads por net no board serializado = `LED_A` 0→2 e `LED_K` 3→2 com GND/+3V3 totais iguais (cada net ganha um pad e perde outro — os 5 hunks); place_check dele com as libs antigas dá 3 pares (OPT1↔J1 −0,20; OPT2/OPT3↔D1 −0,02) — diferença de footprint das libs 2020 já explicada; com as 9.0.2 é 1 par, o artefato OPT1↔J1. DRC e patches/bundle não re-verificados do lado dele (sem `kicad-cli` lá; só o tarball foi anexado) — os números ficam como os do relatório, cujo `.rpt` integral vai dentro do tarball. **Veredito: pacote aprovado para o roteamento.**
+
+**Item 7 aplicado (docs-only, zero mudança no board):** `docs/references.md` ganhou a seção de biblioteca de símbolos — pacote Debian `kicad-symbols` **9.0.2-1** como fonte primária do `Connector:Barrel_Jack_Switch` (o clone do ambiente veio com o `Connector.kicad_sym` como stub de 14 bytes `404: Not Found`), com o fato verificado que sela o item 1: chave NC contra a luva (pino 2), folha a 0,254 mm da luva e 4,191 mm da ponta; cópia isolada do símbolo citada com sha256. Nota de que os footprints embedados vêm do pacote `kicad-footprints` 9.0.2-1 (clone `7ebfa6b` = legado, histórico). Créditos do README atualizados.
+
+**Fechamento da revisão: concluído** — o item 7 era o último pendente apontado. GitHub: o clone público segue em `1265ea1`; o push fica pendente de um token novo, a partir do bundle — nada a fazer daqui até o token existir.
+
+---
+
 *Worklog mantido à mão a partir dos artefatos e timestamps do ambiente de desenvolvimento. Cada bloco acima é verificável pelos arquivos correspondentes no repositório.*

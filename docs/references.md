@@ -9,6 +9,16 @@ Material de pesquisa que embasou as decisões de design. Os originais foram baix
 | Footprints oficiais KiCad (`Resistor_SMD`, `Capacitor_SMD`, `Package_SO`, `Package_TO_SOT_SMD`, `Package_DIP`, `Diode_SMD`, `Connector_*`, `Button_Switch_SMD`, `LED_SMD`, `Fuse`, `Inductor_SMD`, `Connector_BarrelJack`, `Connector_USB`) | https://github.com/KiCad/kicad-footprints | `7ebfa6b` |
 | Footprints Espressif (`ESP32-C5-WROOM-1`) | https://github.com/espressif/kicad-libraries | `dd76561` |
 
+Os footprints embedados no board gerado vêm do pacote Debian `kicad-footprints` **9.0.2-1** (formato 9.x, carregado e validado pelo `kicad-cli` 9.0.2 no DRC). O clone `7ebfa6b` listado acima é o material de pesquisa de 2020 — formato legado `module`/`fp_arc`, que o KiCad 9 não carrega; fica como referência histórica.
+
+## Biblioteca de símbolos
+
+| Biblioteca | Fonte | Versão usada |
+| --- | --- | --- |
+| Símbolos oficiais KiCad (`Connector:Barrel_Jack_Switch`, usado na verificação do J1) | https://github.com/KiCad/kicad-symbols (upstream) — pacote Debian `kicad-symbols` (trixie) | **9.0.2-1** |
+
+O clone do ambiente de trabalho trouxe o `Connector.kicad_sym` como um **stub de 14 bytes** (`404: Not Found`) — por isso a fonte primária do símbolo é o pacote Debian `kicad-symbols` 9.0.2-1. O que foi verificado na lib 9.0.2 real (item 1 do fechamento da revisão): a chave NC do `Barrel_Jack_Switch` fecha contra a **luva (pino 2)** — folha a 0,254 mm da luva e 4,191 mm do contato da ponta; é o que torna seguro o duplo GND (pad 2 luva + pad 3 chave) do J1 no gerador. Uma cópia isolada do símbolo (`Barrel_Jack_Switch_9.0.2.kicad_sym`, sha256 `b5aa7aca1381b397b0714da8331fe7f336fa7607fa1af9d0bde5594b6f9f613f`) acompanha o ambiente de trabalho para inspeção no editor de símbolos.
+
 ## Designs de referência
 
 | Design | Fonte | Uso |
