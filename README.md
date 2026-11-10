@@ -129,11 +129,12 @@ A pasta `validation/drc/` guarda a trilha de evidências do desenvolvimento: um 
 - [x] Serialização do board completo (`hardware/pixgate.kicad_pcb` carrega no pcbnew)
 - [x] Colocação concluída (lotes 1–6: shorts, clearances e courtyards zerados no DRC; no place_check só resta o artefato de bbox do BarrelJack)
 - [x] Conferência contra datasheet (rodada 4): U1/K1/OPT1-3/J7 verificados pin-a-pin — **board inalterado** ([docs/conferencia-datasheet.md](docs/conferencia-datasheet.md))
-- [ ] Pass de silk pré-Gerbers (silk_overlap/silk_over_copper/silk_edge) e H4 a ≥ 0,5 mm da borda
-- [ ] Roteamento (frente: display/USB; verso: potência)
-- [ ] Zonas de cobre (GND) + vias térmicas do U2
-- [ ] DRC limpo de ponta a ponta
-- [ ] Exportação de Gerbers e fabricação
+- [x] Pass de silk pré-Gerbers — **silk DRC limpo** (0 warnings)
+- [x] H4 movido para y=97.5 (edge clearance 0,9 mm ≥ 0,5 mm)
+- [x] `route.py`: zonas GND (F.Cu/B.Cu), 4 vias térmicas U2 pad 9, stitching bordas (com filtro anti-colisão)
+- [ ] Roteamento — **manual** no pcbnew (decisão de ROI — ver [WORKLOG.md](WORKLOG.md) entrada 16)
+- [ ] `route.py`: **não gera trilhas**; não rodar de novo após roteamento manual
+- [ ] DRC final limpo + exportação de Gerbers (ver [docs/pre-fab-checklist.md](docs/pre-fab-checklist.md))
 - [ ] Firmware (fora do escopo deste repositório por enquanto)
 
 ## Créditos e fontes
