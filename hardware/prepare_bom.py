@@ -4,7 +4,12 @@ Uso: python3 hardware/prepare_bom.py > hardware/fab/pixgate-BOM.csv
 """
 import sys, os, csv
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import gen_board as G
+# gen_board imprime diagnóstico no import (nets/parts/pads) — redirecionar
+# para o stdout não poluir o CSV (o BOM sai em sys.stdout; antes disto, as
+# 6 primeiras linhas do arquivo eram lixo de diagnóstico).
+import io, contextlib
+with contextlib.redirect_stdout(io.StringIO()):
+    import gen_board as G
 
 EXCLUDE_REFS = {'H1', 'H2', 'H3', 'H4'}  # mounting holes: exclude_from_bom
 

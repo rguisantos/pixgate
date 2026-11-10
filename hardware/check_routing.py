@@ -16,46 +16,19 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 HW = os.path.dirname(os.path.abspath(__file__))
 PCB = os.path.join(HW, 'pixgate.kicad_pcb')
 
+# Especificação de larguras — tabela COMPLETA do docs/routing-guide.md
+# (USB_DP/USB_DN ficam de fora: diff pair 90R, largura não especificada)
 WIDTH_SPEC = {
     '+12V_IN': 0.5, 'F12V': 0.5, '+12V': 0.5, '+5V': 0.5, '+3V3': 0.4,
     'TRAVA_NO': 0.5, 'TRAVA_NO2': 0.5, 'GND': 0.5, 'RELAY_COIL': 0.4,
+    'NOTE_A': 0.4, 'COIN_A': 0.4, 'BTN_A': 0.4,
+    'NOTE_SIG': 0.4, 'COIN_SIG': 0.4, 'BTN_SIG': 0.4,
+    'IN_NOTE': 0.25, 'IN_COIN': 0.25, 'IN_BTN': 0.25,
+    'RLY_GATE': 0.25, 'RLY_DRV': 0.25,
+    'SCK_D': 0.25, 'MOSI_D': 0.25, 'SCK_M': 0.25, 'MOSI_M': 0.25,
+    'DISP_RST': 0.25, 'DISP_DC': 0.25, 'DISP_CS': 0.25, 'DISP_BL': 0.25,
+    'SW': 1.0, 'FB': 0.2, 'COMP_X': 0.2, 'COMP_Y': 0.2,
 }
-
-def parse_segments(text):
-    """Parse all segments from KiCad S-expression text."""
-    segs = []
-    # Find all (segment ... ) blocks
-    pattern = r'\(segment\s+((?:[^()]|\([^()]*\))+)\)'
-    for match in re.finditer(pattern, text, re.DOTALL):
-        content = match.group(1)
-        net_match = re.search(r'\(net\s+(\d+)\)', content)
-        start_match = re.search(r'\(start\s+([\d.-]+)\s+([\d.-]+)\)', content)
-        end_match = re.search(r'\(end\s+([\d.-]+)\s+([\d.-]+)\)', content)
-        width_match = re.search(r'\(width\s+([\d.]+)\)', content)
-        layer_match = re.search(r'\(layer\s+(\w+)\)', content)
-        
-        if not all([net_match, start_match, end_match, width_match, layer_match]):
-            continue
-            
-        net_idx = net_match.group(1)
-        x1 = float(start_match.group(1))
-        y1 = float(start_match.group(2))
-        x2 = float(end_match.group(1))
-        y2 = float(end_match.group(2))
-        width = float(width_match.group(1))
-        layer = layer_match.group(1)
-        
-        segs = {
-            'net': net_idx,
-            'x1': x1, 'y1': y1, 'x2': x2, 'y2': y2,
-            'width': width, 'layer': layer,
-            'length': math.hypot(x2-x1, y2-y1),
-        }
-        segs = []
-        # We'll use a dict for net_idx -> list of segments
-        # Actually let's build the dict properly
-        # Wait, I need to restructure this
-        pass
 
 def parse_pcb(filepath):
     """Parse PCB file and return segments by net_idx."""
@@ -72,7 +45,7 @@ def parse_pcb(filepath):
         start_match = re.search(r'\(start\s+([\d.-]+)\s+([\d.-]+)\)', content)
         end_match = re.search(r'\(end\s+([\d.-]+)\s+([\d.-]+)\)', content)
         width_match = re.search(r'\(width\s+([\d.]+)\)', content)
-        layer_match = re.search(r'\(layer\s+(\w+)\)', content)
+        layer_match = re.search(r'\(layer\s+"?([\w.]+)"?\)', content)  # KiCad 9 escreve (layer "F.Cu") — aspas e ponto
         
         if not all([net_match, start_match, end_match, width_match, layer_match]):
             continue

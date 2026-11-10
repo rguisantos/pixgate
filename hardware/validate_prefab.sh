@@ -22,8 +22,13 @@ kicad-cli pcb drc --severity-all --output "$RPT" "$PCB" || {
 # Extrai contagens do relatório DRC
 get_count() {
   local cat="$1"
-  # Formato do kicad-cli 9.0.2: linhas "[categoria]: descricao"
-  grep -c "^\[$cat\]" "$RPT" 2>/dev/null || echo 0
+  # Formato do kicad-cli 9.0.2: linhas "[categoria]: descricao".
+  # Nota: grep -c JÁ imprime 0 quando não encontra (exit 1) — o
+  # "|| echo 0" antigo imprimia um SEGUNDO 0 e a variável virava "0\n0",
+  # quebrando a comparação != "0" (o gate falhava mesmo com tudo em 0).
+  local n
+  n=$(grep -c "^\[$cat\]" "$RPT" 2>/dev/null || true)
+  echo "${n:-0}"
 }
 
 UNCONNECTED=$(get_count "unconnected_items")
@@ -36,6 +41,8 @@ EDGE=$(get_count "copper_edge_clearance")
 COURTYARD=$(get_count "courtyards_overlap")
 SILK_OVERLAP=$(get_count "silk_overlap")
 SILK_COPPER=$(get_count "silk_over_copper")
+SILK_EDGE=$(get_count "silk_edge_clearance")
+TEXT_BACK=$(get_count "nonmirrored_text_on_back_layer")
 
 echo "==> Validação pré-fab"
 echo "  unconnected_items:  $UNCONNECTED  (esperado 0)"
@@ -48,6 +55,8 @@ echo "  copper_edge:        $EDGE  (esperado 0)"
 echo "  courtyards_overlap: $COURTYARD  (esperado 0)"
 echo "  silk_overlap:       $SILK_OVERLAP  (esperado 0)"
 echo "  silk_over_copper:   $SILK_COPPER  (esperado 0)"
+echo "  silk_edge_clearance: $SILK_EDGE  (esperado 0)"
+echo "  nonmirrored_text:    $TEXT_BACK  (esperado 0)"
 
 FAIL=0
 check() {
@@ -65,6 +74,10 @@ check "hole_clearance" "$HOLE_CLEAR"
 check "hole_to_hole" "$HOLE_TO_HOLE"
 check "copper_edge" "$EDGE"
 check "courtyards_overlap" "$COURTYARD"
+check "silk_overlap" "$SILK_OVERLAP"
+check "silk_over_copper" "$SILK_COPPER"
+check "silk_edge_clearance" "$SILK_EDGE"
+check "nonmirrored_text_on_back_layer" "$TEXT_BACK"
 
 echo
 if [[ "$FAIL" -eq 0 ]]; then

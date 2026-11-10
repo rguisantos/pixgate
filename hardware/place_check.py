@@ -118,7 +118,7 @@ def main():
 
     # conflitos
     parts = list(G.PARTS)
-    cu_conf, cyd_conf = [], []
+    cu_conf, cyd_conf, cross_conf = [], [], []
     for i in range(len(parts)):
         for j in range(i + 1, len(parts)):
             a, b = parts[i], parts[j]
@@ -131,13 +131,25 @@ def main():
             if da is not None and db is not None:
                 gy = gap(da, db)
                 if gy < 0:
-                    cyd_conf.append((a.ref, b.ref, gy))
+                    # Colisão física só no MESMO lado (mesma semântica do DRC do
+                    # KiCad 9: courtyards F x B não colidem). O alargamento do
+                    # courtyard do J7 p/ caber os silk labels (commit 5f19410)
+                    # criou pares F x B que o DRC ignora por design — reportar
+                    # à parte para não poluir o sinal de conflitos reais.
+                    if getattr(a, 'side', 'B') == getattr(b, 'side', 'B'):
+                        cyd_conf.append((a.ref, b.ref, gy))
+                    else:
+                        cross_conf.append((a.ref, b.ref, gy))
     print(f'== COPRE (gap < {CLR}): {len(cu_conf)}')
     for r1, r2, g in sorted(cu_conf, key=lambda t: t[2]):
         print(f'  {g:7.3f}  {r1} <-> {r2}')
-    print(f'== COURTYARD (overlap): {len(cyd_conf)}')
+    print(f'== COURTYARD (overlap, mesmo lado): {len(cyd_conf)}')
     for r1, r2, g in sorted(cyd_conf, key=lambda t: t[2]):
         print(f'  {g:7.3f}  {r1} <-> {r2}')
+    if cross_conf:
+        print(f'== COURTYARD cross-side (F vs B, sem colisão física — DRC ignora): {len(cross_conf)}')
+        for r1, r2, g in sorted(cross_conf, key=lambda t: t[2]):
+            print(f'  {g:7.3f}  {r1} <-> {r2}  [{r1}={getattr(next(p for p in G.PARTS if p.ref == r1), "side", "?")} / {r2}={getattr(next(p for p in G.PARTS if p.ref == r2), "side", "?")}]')
 
 
 if __name__ == '__main__':

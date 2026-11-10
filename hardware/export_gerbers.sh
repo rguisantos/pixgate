@@ -54,10 +54,13 @@ echo "==> BOM"
 python3 "$HW/prepare_bom.py" > "$FAB/pixgate-BOM.csv"
 
 echo "==> Job file"
-# gerber-jobfile: não suportado no kicad-cli 9.0.2 — upload manual de camadas no portal do fabricante
-# kicad-cli pcb export gerber-jobfile \
-#   --output "$FAB/pixgate-job.gbrjob" \
-#   "$PCB" 2>/dev/null || echo "(gerber-jobfile não suportado — ignorando)"
+# O 'pcb export gerbers' do kicad-cli 9.0.2 JÁ gera o job file automaticamente
+# (pixgate-job.gbrjob em $FAB — verificado na prática nesta rotina).
+# Chamada separada desnecessária.
+
+echo "==> Zip para o portal do fabricante"
+( cd "$FAB" && rm -f pixgate.zip \
+  && zip -q pixgate.zip *.g?? pixgate.drl pixgate-job.gbrjob pixgate-BOM.csv pixgate-pos.csv )
 
 echo
 echo "OK — arquivos em $FAB:"

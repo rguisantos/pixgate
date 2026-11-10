@@ -27,8 +27,8 @@ Executar ANTES de enviar os Gerbers para JLCPCB/PCBWay.
 - [ ] Gerbers gerados com `hardware/export_gerbers.sh`
 - [ ] Inspecionar cada camada no KiCad Gerber Viewer (não só o preview
   do JLCPCB)
-- [ ] Drill file: `pixgate-PTH.drl` e `pixgate-NPTH.drl`
-- [ ] Job file (`pixgate-job.gbrjob`) para o JLCPCB detectar automação
+- [ ] Drill file: `pixgate.drl` (PTH+NPTH num arquivo só — MixedPlating; o portal aceita)
+- [ ] Job file (`pixgate-job.gbrjob` — gerado automaticamente pelo `export gerbers`) para o JLCPCB detectar automação
 
 ## BOM
 

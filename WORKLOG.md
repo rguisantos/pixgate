@@ -556,3 +556,28 @@ Validação final (DRC --severity-all, zones only):
 
 Commit: `a123182` (main).
 Relatório DRC: `validation/drc/fix-zones.rpt` (a ser gerado pós-commit).
+
+---
+
+## 2026-11-11 (17) — Revalidação independente do 596345c (pós-PRs #1–#4) + fixes de tooling pós-roteamento
+
+Board re-clonado do GitHub (`596345c`: silk clean, hotfix H4, zonas GND + vias térmicas/stitching, infra de fab). Ambiente de validação reconstruído no sandbox a partir do Debian trixie (kicad-cli 9.0.2+dfsg-1, kicad-footprints 9.0.2-1, clone espressif) — agora persistente em `kicad-env/` com os .debs cacheados (re-executável após recycle do sandbox).
+
+**Revalidação independente (board intocado, zero mudança de geometria/netlist):**
+
+- DRC `--severity-all` em terceiro ambiente: **214 unconnected + 40 via_dangling + 0 footprint errors, conteúdo idêntico item a item ao `fix-zones-final.rpt`** (rpt anexo: `validation/drc/repro-independente-596345c.rpt`).
+- `net_audit.py` LIMPO (51 nets, todas ≥ 2 pads); `check_pads.py` OK; `check_sync.py` ✅ (85 parts, board == gerador).
+- Drift de geometria board × gerador conferido nos 9 refs da região do J7 (J7/R13/R14/R15/SW1/C15/OPT1/J1/C24): **0,00 mm** em todos.
+- Os "6 courtyard overlaps" que o place_check passou a reportar após o PR #1: 5 são **cross-side** (J7 na frente × R13/R14/R15/SW1/C15 no verso — alargamento do courtyard do J7 para caber os silk labels; sem colisão física, o DRC 9 ignora F×B por design) e 1 é o artefato conhecido OPT1↔J1 (−0,17, bbox superestimada do BarrelJack). Nenhum real.
+
+**Bugs de tooling encontrados e corrigidos (todos invisíveis enquanto o board está sem trilhas):**
+
+1. `check_routing.py` — o regex de layer não casava `(layer "F.Cu")` (aspas + ponto, formato KiCad 9): **todos os segmentos eram descartados silenciosamente** e a ferramenta reportaria "não roteado" mesmo com o roteamento completo. Corrigido; código morto `parse_segments` (1,4 KB de restos de iteração) removido; `WIDTH_SPEC` agora cobre a tabela completa do `docs/routing-guide.md` (antes 9 de 31 nets — faltavam SW=1,0, FB/COMP=0,2, optos, SPI). Teste com 7 segmentos sintéticos injetados numa cópia do board: parser enxerga todos, match USB medido (diff=0 µm ✓), largura errada flagada.
+2. `validate_prefab.sh` — `grep -c … || echo 0`: o grep já imprime 0 quando não encontra (exit 1), o `||` imprimia um SEGUNDO 0 e a variável virava `"0\n0"` ≠ `"0"` → **o gate pré-fab falhava mesmo 100% limpo**. Corrigido; `silk_edge_clearance` e `nonmirrored_text_on_back_layer` agora são conferidos (eram só exibidos).
+3. `prepare_bom.py` — importava `gen_board` sem redirecionar stdout: **as 6 primeiras linhas do `pixgate-BOM.csv` eram lixo de diagnóstico** (nets/parts/pads) e o BOM subiria corrompido para a fabricação. Redirect no import; CSV agora começa no header (82 linhas = 81 parts + header, H1–H4 fora).
+4. `export_gerbers.sh` — o `docs/pre-fab-checklist.md` manda enviar `pixgate.zip`, mas o script não criava zip nenhum. Zip adicionado (gerbers + drill + job + BOM + pos = 12 arquivos). Comentário incorreto corrigido: o `pcb export gerbers` do kicad-cli 9.0.2 **gera o `.gbrjob` automaticamente** (verificado na prática). Checklist atualizado: drill é UM arquivo MixedPlating (`pixgate.drl`), não PTH/NPTH separados.
+5. `place_check.py` (melhoria, não bug) — courtyard agora separa pares do mesmo lado (colisão física possível) dos cross-side F×B (informativo, mesma semântica do DRC 9): falsos positivos 6→1 (só o artefato OPT1↔J1).
+
+**Portabilidade:** `gen_board.py` resolve FPDIR/ESPDIR por env (`KICAD_FOOTPRINT_DIR`/`ESP_FOOTPRINT_DIR`, padrões inalterados na máquina de desenvolvimento) — gerador e validadores rodam em ambiente sem KiCad no sistema.
+
+**Estado:** board `596345c` intocado (só tooling). Pendências inalteradas: roteamento manual (11 sessões do routing-guide), fill das zonas no pcbnew, `validate_prefab.sh` verde e `export_gerbers.sh` + upload.
