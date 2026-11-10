@@ -517,3 +517,42 @@ furo tem que ser conferida por geometria ou com regra custom.
 
 Commit: `fa924cf` (branch `kilo/lucky-field-14v`).
 Relatório DRC: `validation/drc/fix-mirror-h4.rpt`.
+
+---
+
+## 2026-11-10 (16) — Decisão: roteamento manual, route.py só para zonas
+
+Após o esqueleto de route.py (fase power + SPI), a análise de ROI mostrou
+que para este board (55×75, 182 nets), programmatic routing das trilhas
+é marginal: ~30 segmentos em 2-4h de iteração vs 20-30 min manual no
+pcbnew com push-and-shove.
+
+Decisão: route.py fica restrito a:
+
+· Zonas GND (F.Cu + B.Cu)
+· Vias térmicas U2 pad 9
+· Stitching vias nas bordas (com filtro de colisão)
+
+Roteamento manual em pcbnew:
+
+· Power (+12V, +5V, +3V3 trunks)
+· Relé + optos + snubber
+· SPI do display (J7 → R5/R6 → U1)
+· USB diff pair (J6 diff, sem via)
+· SW node (loop mínimo)
+· FB/COMP (guard GND)
+
+Regressão conhecida do commit `a123182`: 2 hole_to_hole + 3 hole_clearance
++ 1 clearance, causados por stitching grid naïf. Corrigido com filtro
+`via_clear()` em `phase_zones()` (rects de exclusão para H1..H4, J7,
+R13..R15, K1/J2/D7, U2).
+
+Validação final (DRC --severity-all, zones only):
+- hole_to_hole=0, hole_clearance=0, clearance=0
+- via_dangling=41 (zonas não preenchidas — resolve no pcbnew Fill Zones)
+- unconnected=214 (board não roteado, 182 originais + vias dangling)
+- shorting_items=0, tracks_crossing=0
+- Total: 42 (exceto unconnected)
+
+Commit: `a123182` (main).
+Relatório DRC: `validation/drc/fix-zones.rpt` (a ser gerado pós-commit).
