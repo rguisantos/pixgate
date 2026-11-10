@@ -226,7 +226,7 @@ def flip_footprint(fp):
     return fp
 
 def _mirror_text_if_back(node):
-    """Add (justify mirror) to a text item whose layer is on the back side."""
+    """Add mirror to a text item whose layer is on the back side."""
     lay = getlist(node, 'layer')
     if not lay or not str(lay[0][1]).startswith('B.'):
         return
@@ -234,8 +234,13 @@ def _mirror_text_if_back(node):
     if not eff:
         return
     e = eff[0]
-    if not getlist(e, 'justify'):
+    just = getlist(e, 'justify')
+    if not just:
         e.append(['justify', 'mirror'])
+        return
+    j = just[0]
+    if 'mirror' not in j[1:]:
+        j.append('mirror')
 
 def apply_pad_rotation(fp, theta):
     """Add footprint rotation theta to every pad's own rotation.
