@@ -424,4 +424,23 @@ Receita da seção (8) aplicada sem desvios, depois dos fixes de D3/LED1 e da au
 
 ---
 
+## 2026-11-10 (12) — Fechamento da revisão: J1 (luva em GND), LED1 com R19 em série no ânodo, net_audit no repo
+
+Itens 1–3 do fechamento da revisão independente (prioridade imediata definida pelo usuário) aplicados sobre o 9e7a954 — só netlist e ferramenta, zero geometria:
+
+1. **J1 (DC-005/PJ-102A) — item 1:** `pin(2, '')` → `pin(2, 'GND')`. A luva (pad 2) fica em GND junto com o lado da chave (pad 3, que já estava). O duplo GND é seguro nas duas famílias de pinout do PJ-102A — chave NC contra a luva (confirmada no símbolo oficial `Connector:Barrel_Jack_Switch` da lib 9.0.2: folha a 0.254 da luva e 4.191 do contato da ponta; fonte primária = pacote Debian `kicad-symbols` 9.0.2-1, já que o clone do ambiente de referência era um stub de 14 bytes `404: Not Found`) ou segunda luva ("Pin3Ring"). A única família destrutiva (chave NC fechando contra a ponta) não é atribuída ao PJ-102A por nenhuma fonte e o passo 3 do roteiro de bancada detecta fisicamente — o fallback de bancada continua sendo `pin(3, '')`.
+2. **LED1/R19 — item 2:** o R19 (1k) sai do caminho cátodo→GND e vira resistor **em série com o ânodo** (+3V3→R19→LED_A), com o **GPIO25 (U1 pino 26, net LED_K) direto no cátodo**. Antes: LED sempre aceso (~1,3 mA por R19→GND) e o pino só sentindo o nó, com a nota de firmware "nunca dirigir a LOW"; agora LOW acende (~1,3 mA), HIGH desliga e a corrente fica limitada em qualquer estado do pino — a nota deixa de existir (era o "num futuro rev mover o R19 para série com o anodo" já anotado quando do fix reverso do LED1). Net nova `LED_A` (R19.2 + LED1.2), acrescentada **no fim** da lista para não renumerar as nets existentes (50→51 redes).
+3. **`net_audit.py` entra no repo — item 3:** agora em `hardware/`, com caminho relativo ao próprio arquivo (roda de qualquer diretório), acessos ao netmap via `netmap.get(str(n), (0, ''))` — pad sem chamada `.pin()` vira problema apontado com net vazia em vez de `KeyError` — e **verificação nova do J1** (1=+12V_IN, 2=GND, 3=GND) junto de U4/Q1 na seção de pinagens.
+
+**Validação** (ambiente reconstruído: kicad 9.0.2 + `kicad-footprints` 9.0.2-1 do Debian trixie + clone espressif):
+
+- `hardware/net_audit.py`: **LIMPO** (exit 0) — polaridade D1–D7/LED1 na nova topologia, pinagem J1/U4/Q1, 0 netmaps apontando pad inexistente, 51 nets todas com ≥ 2 pads.
+- Diff semântico do board regenerado (linhas de UUID fora — mudam a cada serialização por design): **exatamente 5 hunks** — `(net 51 "LED_A")` na seção de nets, J1 pad 2 ganha `(net 1 "GND")`, LED1 pad 2 +3V3→LED_A, R19 pad 1 LED_K→+3V3, R19 pad 2 GND→LED_A. Nenhuma renumeração, nenhuma outra mudança.
+- `place_check.py`: idêntico ao lote 6 — COPRE **0**, COURTYARD **1** (só o artefato OPT1↔J1, −0.17, bbox superestimada do BarrelJack, invisível ao DRC).
+- DRC (`validation/drc/fechamento-drc.rpt`): **136 violações / 182 unconnected / 0 footprint errors — courtyard 0** (critério de aceitação da rodada). Perfil idêntico ao lote 6: 80 silk_overlap + 50 silk_over_copper + 5 silk_edge + 1 texto. O unconnected se mantém em 182 porque o grafo só re-amarra: LED_A nasce como net de 2 pads (+1 conexão faltante), LED_K perde o R19.1 e cai de 3 para 2 pads (−1), +3V3 troca LED1.2 por R19.1 e GND recebe J1.2 no lugar de R19.2.
+
+**Estado:** itens 1–3 do fechamento aplicados e validados. Pendências inalteradas: pass de silk (80+50+5), H4 a 0,40 mm da borda (≥ 0,5), roteamento (182), zonas de GND, vias térmicas do U2. Dos itens restantes do fechamento, falta registrar a fonte do símbolo (Debian `kicad-symbols` 9.0.2-1) junto à versão do `kicad-footprints` nos docs (item 7).
+
+---
+
 *Worklog mantido à mão a partir dos artefatos e timestamps do ambiente de desenvolvimento. Cada bloco acima é verificável pelos arquivos correspondentes no repositório.*

@@ -59,6 +59,7 @@ pixgate/
 │   ├── gen_board.py     # Netlist completa + colocação de todos os componentes
 │   ├── pcb_lib.py       # Parser/serializador S-expression + utilitários KiCad 9
 │   │                    #   (flip back-side, embed com nets, builders de footprint)
+│   ├── net_audit.py     # Auditoria da netlist (polaridade, pinagem, nets órfãs)
 │   └── board_header.txt # Cabeçalho .kicad_pcb validado (layers/setup padrão)
 ├── validation/          # Evidências de validação com o DRC do KiCad 9
 │   ├── test_board.py    # Teste 1: módulo no verso, nets, segmento
@@ -93,6 +94,7 @@ Ajuste `FPDIR`/`ESPDIR` para o seu layout (ex.: `/usr/share/kicad/footprints` nu
 
 ```bash
 python3 hardware/serialize.py           # gera hardware/pixgate.kicad_pcb (board completo)
+python3 hardware/net_audit.py           # auditoria da netlist (exit 1 se achar problema)
 python3 hardware/place_check.py         # conflitos de colocação (cobre/courtyard) instantâneos
 ```
 
@@ -111,7 +113,7 @@ A pasta `validation/drc/` guarda a trilha de evidências do desenvolvimento: um 
 - [x] Arquitetura da placa e seleção de componentes (BOM virtual completa)
 - [x] Biblioteca Python de manipulação de `.kicad_pcb` (`pcb_lib.py`), com semântica de flip para o verso validada
 - [x] Footprints custom: soquete do display, relé SRD, KF301, SOIC-8 com EP, pads de teste, furos M3
-- [x] Netlist completa (50 redes nomeadas) e **auditada** — polaridade de D1–D7 + LED1 e pinagem de U4/Q1 verificadas (`scripts/net_audit.py`)
+- [x] Netlist completa (51 redes nomeadas) e **auditada** — polaridade de D1–D7 + LED1 e pinagem de J1/U4/Q1 verificadas (`hardware/net_audit.py`)
 - [x] Formato de arquivo validado no DRC do KiCad 9 (`kicad-cli`), incluindo a convenção de rotação de pads do formato 9
 - [x] Serialização do board completo (`hardware/pixgate.kicad_pcb` carrega no pcbnew)
 - [x] Colocação concluída (lotes 1–6: shorts, clearances e courtyards zerados no DRC; no place_check só resta o artefato de bbox do BarrelJack)

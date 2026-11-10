@@ -30,6 +30,7 @@ N = {n: net(n) for n in [
     'LED_K', 'TX0', 'RX0',
     'IO7_PU', 'IO26_PU', 'IO27_PU',
     'SCK_M', 'MOSI_M', 'EN_BK', 'SS_C', 'F12V', 'TRAVA_NO2',
+    'LED_A',  # netfix3 (fechamento item 2): no R19.2/LED1.2 — R19 em serie com o anodo; no fim da lista para nao renumerar as nets existentes
 ]}
 NETIDX = {n: i for i, n in enumerate(NETS)}
 def NN(name):  # (idx, name) tuple for pad assignment
@@ -278,7 +279,7 @@ sw3 = P('SW3', 'CFG', ('Button_Switch_SMD', 'SW_SPST_PTS645'), 61, 58.3, 0).pin(
 
 # --- Connectors (back) ---
 j1 = P('J1', 'DC-005 12V', ('Connector_BarrelJack', 'BarrelJack_Horizontal'), 32, 85, 270)
-j1.pin(1, '+12V_IN').pin(2, '').pin(3, 'GND')
+j1.pin(1, '+12V_IN').pin(2, 'GND').pin(3, 'GND')  # netfix3 (fechamento item 1): luva (pad 2) junto da chave (pad 3) em GND — duplo GND seguro nas 2 familias de pinout do PJ-102A (chave NC contra a luva, Barrel_Jack_Switch lib 9.0.2: folha a 0.254 da luva e 4.191 da ponta; ou 2a luva Pin3Ring); a unica familia destrutiva (NC contra a ponta) nao e atribuida ao PJ-102A e o passo 3 do roteiro de bancada detecta fisicamente — fallback de bancada: pin(3, '')
 j2 = P('J2', 'KF301 TRAVA', fp_kf301(), 74.8, 94.6, 90).pin(1, 'TRAVA_NO').pin(2, 'GND')
 j3 = P('J3', 'JST-XH NOTEIRO', ('Connector_JST', 'JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal'), 42.3, 89.5, 0)  # lote 6: x-1.2 — fileira JST desloca p/ esquerda (J3<->J4, J1<->J3)
 j3.pin(1, 'NOTE_SIG').pin(2, 'GND')
@@ -300,9 +301,9 @@ j7.pin(5, 'DISP_RST').pin(6, 'DISP_DC').pin(7, 'DISP_CS').pin(8, 'DISP_BL')
 
 # --- LED (front) ---
 led1 = P('LED1', 'STATUS', ('LED_SMD', 'LED_0805_2012Metric'), 68.5, 29.5, 0, side='F')
-led1.pin(1, 'LED_K').pin(2, '+3V3')  # fix netlist: LED_0805 pad 1 = CATODO (Device:LED Sim.Pins "1=K 2=A"; chanfro do fab do lado do pad 1) — como estava (K no +3V3) o LED ficava reverso e nunca acendia; agora A no +3V3 e K no noh do R19/GPIO25
+led1.pin(1, 'LED_K').pin(2, 'LED_A')  # netfix3 (fechamento item 2): +3V3->R19->LED(A->K)->GPIO25 — R19 em serie com o ANODO e GPIO25 (U1 pino 26) direto no catodo; LED_0805 pad 1 = catodo (Device:LED Sim.Pins "1=K 2=A", chanfro do fab do lado do pad 1). LOW acende ~(3,3-2,0)/1k = 1,3 mA; HIGH desliga
 r19 = P('R19', '1k', ('Resistor_SMD', 'R_0603_1608Metric'), 68.5, 32.5, 90, side='F')
-r19.pin(1, 'LED_K').pin(2, 'GND')  # LED aceso ~1,3 mA com GPIO25 em alta impedancia; GPIO25 HIGH desliga — nao dirigir a LOW (sem R serie no pino, ver WORKLOG)
+r19.pin(1, '+3V3').pin(2, 'LED_A')  # netfix3 (fechamento item 2): antes LED_K->GND — LED sempre aceso com GPIO25 so sentindo o no; agora serie no anodo limita a corrente em qualquer estado do pino (a nota "nunca dirigir a LOW" do WORKLOG deixa de existir)
 
 # --- Test pads (back) ---
 tp1 = P('TP1', 'TX0', fp_testpad('TX0'), 37.5, 33.5, 0).pin(1, 'TX0')
