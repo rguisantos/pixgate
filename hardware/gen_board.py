@@ -258,7 +258,7 @@ k1.pin('A1', '+12V').pin('A2', 'RELAY_COIL').pin('COM', '+12V').pin('NC', '').pi
 # --- Diodes (back) ---
 d1 = P('D1', 'SS54', ('Diode_SMD', 'D_SMA'), 47.5, 84.93, 0).pin(1, '+12V').pin(2, 'F12V')  # lote 4: encaixe na faixa livre real [83.17..86.69] (3.52mm); y=84.95 invadiria J3/J4 em 0.01 — fix netlist: pino 1 = catodo (D_SMA), serie J1->F1->D1->rail: K no rail
 d2 = P('D2', 'SS14', ('Diode_SMD', 'D_SMA'), 49, 70, 0).pin(1, '+5V').pin(2, 'USB_5V_F')  # fix netlist: or-ing USB->+5V estava invertido (pad 1 = catodo)
-d3 = P('D3', 'SS14', ('Diode_SMD', 'D_SMA'), 69.2, 85.4, 0).pin(1, 'RELAY_COIL').pin(2, '+12V')  # x-0.3: separa de D6 com margem (gap 0.25mm > limite 0.2)
+d3 = P('D3', 'SS14', ('Diode_SMD', 'D_SMA'), 69.2, 85.4, 0).pin(1, '+12V').pin(2, 'RELAY_COIL')  # fix netlist: flyback da bobina do K1 estava INVERTIDO (pad 1 = catodo, verificado no D_SMA) — como estava, com o Q1 ligado o SS14 conduzia +12V->dreno->GND em paralelo com a bobina (curto no rail) e o turn-off ficava sem clamp; correto: K no +12V (A1 do K1), A no RELAY_COIL (dreno do Q1)
 d4 = P('D4', 'SMBJ18A', ('Diode_SMD', 'D_SMB'), 58.55, 84.3, 0).pin(1, '+12V').pin(2, 'GND')  # lote 4: courtyard 4.5mm nao cabe na faixa; frente do J5 (gap 0.14) e abaixo do K1 (gap 0.55); no caminho natural do +12V rumo a D3/J5
 d5 = P('D5', 'SS54', ('Diode_SMD', 'D_SMA'), 75.5, 44.5, 90).pin(1, 'SW').pin(2, 'GND')
 d6 = P('D6', 'SMBJ16A', ('Diode_SMD', 'D_SMB'), 76.1, 87, 0).pin(1, 'TRAVA_NO').pin(2, 'GND')  # original: cobre ate x=79.5, a 0.5mm da borda
@@ -300,9 +300,9 @@ j7.pin(5, 'DISP_RST').pin(6, 'DISP_DC').pin(7, 'DISP_CS').pin(8, 'DISP_BL')
 
 # --- LED (front) ---
 led1 = P('LED1', 'STATUS', ('LED_SMD', 'LED_0805_2012Metric'), 68.5, 29.5, 0, side='F')
-led1.pin(1, '+3V3').pin(2, 'LED_K')
+led1.pin(1, 'LED_K').pin(2, '+3V3')  # fix netlist: LED_0805 pad 1 = CATODO (Device:LED Sim.Pins "1=K 2=A"; chanfro do fab do lado do pad 1) — como estava (K no +3V3) o LED ficava reverso e nunca acendia; agora A no +3V3 e K no noh do R19/GPIO25
 r19 = P('R19', '1k', ('Resistor_SMD', 'R_0603_1608Metric'), 68.5, 32.5, 90, side='F')
-r19.pin(1, 'LED_K').pin(2, 'GND')  # pad1 top(29.7?) -> careful, assigned below
+r19.pin(1, 'LED_K').pin(2, 'GND')  # LED aceso ~1,3 mA com GPIO25 em alta impedancia; GPIO25 HIGH desliga — nao dirigir a LOW (sem R serie no pino, ver WORKLOG)
 
 # --- Test pads (back) ---
 tp1 = P('TP1', 'TX0', fp_testpad('TX0'), 37.5, 33.5, 0).pin(1, 'TX0')

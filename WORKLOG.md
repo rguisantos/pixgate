@@ -369,5 +369,32 @@ D3/D4/D5/D6 estavam certos — o padrão dos 4 corretos é que confirma a conven
 
 ---
 
+## 2026-11-10 (10) — D3 e LED1 invertidos: auditoria de polaridade em todos os diodos
+
+O usuário conferiu no gerador e contestou o "D3/D4/D5/D6 estavam certos" do bloco (9) — **confirmado: o D3 estava invertido** — e a auditoria estendida achou **o LED1 também**. A convenção foi re-verificada nas fontes oficiais antes de mexer em qualquer net: `D_SMA`/`D_SMB` (banda de silk vertical e barra de catodo do fab, ambas do lado do pad 1) e `Device:LED` do KiCad 9.0.2 (`Sim.Pins "1=K 2=A"`; chanfro do fab do `LED_0805` do lado do pad 1) — **pad 1 = catodo em todos**. O `scripts/net_audit.py` ganhou o bloco de polaridade (tabela abaixo), a verificação de pinagem do U4/Q1 e a checagem de netmap→pad inexistente; sai com exit 1 se achar problema.
+
+| ref | pad1(K) | pad2(A) | função no circuito | veredito |
+| --- | --- | --- | --- | --- |
+| D1 | +12V | F12V | série J1→F1→D1→rail 12 V (K no rail) | OK (fix 09de669) |
+| D2 | +5V | USB_5V_F | or-ing USB→+5V (K no rail) | OK (fix 09de669) |
+| D3 | RELAY_COIL→**+12V** | +12V→**RELAY_COIL** | flyback da bobina do K1 (Q1 low-side) | **INVERTIDO → corrigido** |
+| D4 | +12V | GND | TVS SMBJ18A do rail 12 V | OK |
+| D5 | SW | GND | freewheel do buck TPS54331 (K no nó SW) | OK |
+| D6 | TRAVA_NO | GND | TVS SMBJ16A da saída da trava | OK |
+| D7 | TRAVA_NO | GND | freewheel da carga da trava (via J2) | OK (fix 09de669) |
+| LED1 | +3V3→**LED_K** | LED_K→**+3V3** | status: +3V3→LED→R19 1k→GND | **INVERTIDO → corrigido** |
+| U4 | — | — | USBLC6-2SC6: DP=(1,6), DN=(3,4), VBUS=5, GND=2 | OK (linhas retas 1↔6 e 3↔4 confirmadas no símbolo oficial `Power_Protection:USBLC6-2P6`) |
+| Q1 | — | — | AO3400A: 1=G, 2=S(GND), 3=D(RELAY_COIL) | OK |
+
+- **D3, por que era grave:** bobina entre +12V (A1) e RELAY_COIL (A2, dreno do Q1). O flyback correto bloqueia com o Q1 ligado e conduz no turn-off (clampa RELAY_COIL em ~+12,7 V). Como estava, com o Q1 ligado o SS14 conduzia +12V→dreno→GND em paralelo com a bobina — curto no rail limitado só pelo Rds(on) — e o turn-off ficava sem clamp (queima/avalo do Q1). Mesma família de bug do D7 pré-09de669, só que no caminho do dreno em vez do contato.
+- **LED1:** o mapeamento original pôs a net "do anodo" no pad 1 — que é o catodo. LED reverso na alimentação: nunca acenderia. Corrigido: A no +3V3, K no nó LED_K (R19 1k→GND + **GPIO25** = pino 26 do módulo; datasheet C5: pino 26 = IO25/GPIO25, não-strapping). **Nota de firmware:** o GPIO25 está direto no nó do cátodo (o R19 fica em paralelo, não em série): HIGH = desligado, alta impedância = aceso (~1,3 mA); **nunca dirigir a LOW** — o brilho extra viria de corrente sem resistor de série pelo pino. Se o controle total importar, num futuro rev mover o R19 para série com o anodo.
+
+**Validação:**
+- `net_audit.py`: 2 invertidos → **0 problemas** (polaridade + pinagem + netmap→pad + orfãs; 50 nets, todas ≥ 2 pads).
+- `place_check.py`: idêntico ao 09de669 (COPRE 0, COURTYARD 9) — mudança só de nets, zero geometria.
+- DRC (`validation/drc/netfix2-drc.rpt`): **147 violações / 182 unconnected / 0 footprint errors** — perfil idêntico ao netfix (81 silk_overlap + 52 silk_over_copper + 8 courtyards + 5 silk_edge + 1 texto). O grafo de conectividade não muda: D3 e LED1 só trocam pads entre nets já existentes (mesmos membros por net).
+- Correção de ferramenta: o cabeçalho do `scripts/kicad.sh` dizia `--output-report`; a opção do kicad-cli 9.0.2 é `--output`.
+
+---
 
 *Worklog mantido à mão a partir dos artefatos e timestamps do ambiente de desenvolvimento. Cada bloco acima é verificável pelos arquivos correspondentes no repositório.*
