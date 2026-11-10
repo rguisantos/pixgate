@@ -473,3 +473,47 @@ Itens 1–3 do fechamento da revisão independente (prioridade imediata definida
 ---
 
 *Worklog mantido à mão a partir dos artefatos e timestamps do ambiente de desenvolvimento. Cada bloco acima é verificável pelos arquivos correspondentes no repositório.*
+
+---
+
+## 2026-11-10 (15) — Hotfix H4 (borda) + fix mirror em B.Fab
+
+O PR #1 (merge 7d221c3) descreveu "Moved H4 from y=98 to y=94.5"
+mas o diff real manteve o H4 em (66, 98). A colisão com o C24
+(66.5, 94.5) descrita em revisão externa NÃO existia no estado
+mergeado — só existiria se o H4 tivesse sido movido para 94.5
+como o PR descreveu.
+
+O problema real do H4 em (66, 98): drill edge em y=99.6, board
+em y=100 → edge clearance 0.4 mm (abaixo do mínimo 0.5 mm para
+M3). O KiCad DRC não flaggeia `copper_edge_clearance` para
+np_thru_hole sem cobre, então o warning passava invisível.
+
+| Part | Antes | Depois | Motivo |
+| --- | --- | --- | --- |
+| H4 | (66, 98) | **(66, 97.5)** | edge clearance 0.4 → 0.9 mm; distância ao C24.pad2 3.04 mm (folga 1.44 mm do raio do drill) |
+
+Segundo fix (cosmético mas visível na fab): 11 `nonmirrored_text_on_back_layer`
+no B.Fab. Causa: refs movidos para Fab no PR #1 herdaram
+`justify left/right` do footprint de origem, e `_mirror_text_if_back`
+em `pcb_lib.py` só anexava `(justify mirror)` quando `justify` NÃO
+existia — se já existia `left/right`, o mirror nunca era aplicado.
+Corrigido: `_mirror_text_if_back` agora anexa `mirror` a um
+`justify` existente que não o tenha. `Part.__init__` e `gr_text()`
+foram ajustados no mesmo sentido.
+
+**Validação (DRC --severity-all):**
+- `hole_clearance`=0, `shorting_items`=0, `clearance`=0, `copper_edge`=0
+- `silk_overlap`=0, `silk_over_copper`=0, `silk_edge_clearance`=0
+- `nonmirrored_text_on_back_layer`: 11 → **0**
+- `courtyards_overlap`=0, `unconnected`=182 (esperado, roteamento pendente)
+- **Total: 193 → 182** (Δ = 11, exatamente os textos)
+
+**Lição:** descrições de PR podem mentir. Sempre verificar
+`git show <merge> -- <arquivo>` antes de assumir que uma mudança
+foi aplicada. E: DRC `--severity-all` é obrigatório — `np_thru_hole`
+sem cobre não aparece em `copper_edge_clearance`, então borda do
+furo tem que ser conferida por geometria ou com regra custom.
+
+Commit: `fa924cf` (branch `kilo/lucky-field-14v`).
+Relatório DRC: `validation/drc/fix-mirror-h4.rpt`.
