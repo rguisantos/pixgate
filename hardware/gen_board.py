@@ -5,8 +5,13 @@ import sys, os, math, copy
 sys.path.insert(0, os.path.dirname(__file__))
 from pcb_lib import *
 
-FPDIR = '/usr/share/kicad/footprints'
-ESPDIR = '/tmp/kicad-libraries/footprints/Espressif.pretty'
+# Libs de footprints. Padrões = máquina de desenvolvimento (KiCad 9 no sistema,
+# clone espressif em /tmp/kicad-libraries). Overridáveis por env var para
+# ambientes sem KiCad instalado no sistema (CI/sandbox de validação):
+#   KICAD_FOOTPRINT_DIR  -> libs oficiais (kicad-footprints 9.0.2)
+#   ESP_FOOTPRINT_DIR    -> diretorio Espressif.pretty do clone esp-kicad
+FPDIR = os.environ.get('KICAD_FOOTPRINT_DIR', '/usr/share/kicad/footprints')
+ESPDIR = os.environ.get('ESP_FOOTPRINT_DIR', '/tmp/kicad-libraries/footprints/Espressif.pretty')
 HDR = open(os.path.join(os.path.dirname(__file__), 'board_header.txt')).read()
 
 # ============================================================
