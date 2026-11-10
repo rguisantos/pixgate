@@ -58,16 +58,21 @@ def phase_zones():
         return False
     
     # Stitching bordas
+    seen = set()
+    def add_via(x, y):
+        key = (x, y)
+        if key in seen:
+            return
+        seen.add(key)
+        if not in_exclude(x, y):
+            out.append(mkvia(x, y, 0.6, 0.3, net_idx('GND')))
+    
     for x in range(28, 78, 5):
-        if not in_exclude(x, 28):
-            out.append(mkvia(x, 28, 0.6, 0.3, net_idx('GND')))
-        if not in_exclude(x, 97):
-            out.append(mkvia(x, 97, 0.6, 0.3, net_idx('GND')))
+        add_via(x, 28)
+        add_via(x, 97)
     for y in range(28, 98, 5):
-        if not in_exclude(28, y):
-            out.append(mkvia(28, y, 0.6, 0.3, net_idx('GND')))
-        if not in_exclude(77, y):
-            out.append(mkvia(77, y, 0.6, 0.3, net_idx('GND')))
+        add_via(28, y)
+        add_via(77, y)
     return out
 
 def build_routing():
