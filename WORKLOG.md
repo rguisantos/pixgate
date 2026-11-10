@@ -453,11 +453,13 @@ Itens 1–3 do fechamento da revisão independente (prioridade imediata definida
 
 ---
 
-## 2026-11-10 (14) — Rodada 4: conferência contra datasheet (U1, K1, OPT1-3, J7) — 4/4 aprovados, board intocado
+## 2026-11-10 (14) — Rodada 4: conferência contra datasheet (U1, K1, OPT1-3, J7) — fechada pelo revisor sem mudanças, board intocado
 
 Última rodada de conferência pré-roteamento pedida pelo revisor — os quatro itens que o `net_audit` não cobria por serem **geometria/pinout contra fonte** (diodos/LED/J1/U4/Q1 já estavam cobertos). Relatório integral em `docs/conferencia-datasheet.md`; reprodução por `hardware/check_pads.py` (dump de pads/nets finais com rotação e lado do verso — entrou no repo neste commit, com caminho relativo e `netmap.get`).
 
-**Veredito do revisor: 4/4 aprovados, nenhuma mudança de código.** O board do 37d2eef segue sendo o aprovado para o roteamento.
+**Fechamento da rodada pelo revisor, sem mudança de código:** os pontos batem com o que ele pediu; o board inalterado é coerente porque o `net_audit` já cobria a lógica e a rodada só confirmou geometria e pinout contra fontes — com as tabelas pin-a-pin tomadas **como relatadas** (relatório e `check_pads.py` não chegaram anexados a ele).
+
+**Escopo exato da revisão independente (registrado a pedido do revisor, 2026-11-10):** a aprovação dele cobre **o tarball `pixgate-fechamento.tar.gz` (sha256 `2255cb3b…`, commit `895c28c`)** — nada além disso. **Não revisados por ele: `37d2eef`, patch 0004, `fc12890`, patch 0005 e o `REVISAO.md`** (documentação; "veredito recebido e registrado" nos relatórios do entregador NÃO é aprovação desses commits). A revisão dos docs foi deixada para depois do roteamento, a pedido dele — menor valor da lista. O board para rotear é o do `895c28c`; `37d2eef` e `fc12890` são commits docs-only sobre ele, com `hardware/pixgate.kicad_pcb` e `gen_board.py` idênticos (verificado: `git diff 895c28c..fc12890 --name-only` = só README/WORKLOG/docs + `check_pads.py` novo).
 
 - **U1 × datasheet C5-WROOM-1 v1.3 (Tabela 3-1):** 29 pinos conferidos um a um contra o dump — TX0/RX0 (pinos 25/24), USB D−/D+ (13/14), EN com RC (R7/C20/SW1 = padrão Espressif), GPIO25 no **pino 26**. Ambiguidade "número de pino do módulo × número de GPIO" do WORKLOG antigo resolvida e ancorada na fonte: **GPIO7 = pino 9** (§4.4 — sem pull interno, o R10 10k→+3V3 é exigido e está presente). Consequências registradas como regra: **JTAG por USB desligado nesta revisão** (com GPIO7=1 a fonte de JTAG vira MTDI/MTCK/MTMS/MTDO, todos ocupados); **gravação por USB-C não afetada** (depende do modo de boot, não do GPIO7). Se um dia precisar de JTAG-USB: mover o R10 para GND.
 - **K1 (SRD-12VDC-SL-C):** `fp_relay_srd` conferido contra a lib oficial KiCad `Relay_THT` **pós-correção #1003** (NC em cima / NO embaixo) e o footprint comunitário SVTmaker — Δ máximo **0,05 mm**. Bobina sem diodo interno (não é a variante "-D") → A1/A2 simétricos; o flyback D3 externo vale em qualquer sentido. **Ressalva de compra:** o PDF da Songle estava bloqueado no ambiente — antes de encomendar, comparar o relé a comprar com a pinagem do datasheet do **fabricante** dele.
@@ -466,7 +468,7 @@ Itens 1–3 do fechamento da revisão independente (prioridade imediata definida
 
 **Token/GitHub (regra fixada pelo revisor nesta rodada):** nenhum token é usado nem necessário neste ambiente — varredura por padrões `gh?_…`/`github_pat_…` em todo o workspace: **zero ocorrências**. O push sai da máquina do usuário, a partir do bundle. Qualquer token que tenha circulado por qualquer canal deve ser tratado como comprometido e revogado (github.com/settings/tokens).
 
-**Estado:** roteamento liberado na máquina do usuário (base 37d2eef; KiCad + Freerouting — roteiro no fim do relatório da rodada 4). Pré-fab que volta para cá depois do roteamento: pass de silk, H4 ≥ 0,5 mm da borda, DRC final.
+**Estado:** netlist e colocação fechadas e verificadas até o `895c28c` (J1, LED1/R19 e pinagens U1/K1/PC817/J7 — estas segundo o relatório). Com o usuário ficam: **push a partir do bundle** com token novo (clone público em `1265ea1`), **roteamento no KiCad** (182 conexões, zonas de GND, vias térmicas do U2 — base = board do `895c28c`, idêntico em `37d2eef`/`fc12890`/HEAD), e **compras** (relé conferido contra o datasheet do fabricante; display de 8 pinos). Pré-fab que volta para cá depois do roteamento: pass de silk, H4 ≥ 0,5 mm da borda, DRC final.
 
 ---
 
