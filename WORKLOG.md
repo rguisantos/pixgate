@@ -338,5 +338,36 @@ Simulação: **COPRE 0, COURTYARD 1** (só o artefato OPT1↔J1, invisível ao D
 
 ---
 
-*Worklog mantido à mão a partir dos artefatos e timestamps do ambiente de desenvolvimento. Cada bloco acima é verificável pelos arquivos correspondentes no repositório.*
+## 2026-11-10 (9) — Auditoria de netlist (alerta do lote 5): 7 bugs corrigidos
 
+O alerta do lote 5 pedia "conferir que as nets de cada pad continuam certas" após as rotações. As rotações não mudam nada (nets ligam ao número do pad, verificado por dump antes/depois) — mas a auditoria completa (`scripts/net_audit.py`: nets orfãs + netmaps sem pad real no footprint) achou bugs **pré-existentes**, todos do commit inicial:
+
+**Polaridade de diodos (convenção verificada: `Device:D` pino 1 = K; banda de silk do `D_SMA` no lado do pad 1):**
+
+| Part | Como estava | Efeito | Correção |
+| --- | --- | --- | --- |
+| D1 (série 12 V) | K=F12V, A=+12V | or-ing invertido: **bloqueava a alimentação** (o rail é que alimentaria a entrada) — board morto na bancada | `.pin(1,'+12V').pin(2,'F12V')` |
+| D2 (or USB→5V) | K=USB_5V_F, A=+5V | idem: USB nunca alimentaria o rail | `.pin(1,'+5V').pin(2,'USB_5V_F')` |
+| D7 (freewheel trava) | K=GND, A=TRAVA_NO | **curto +12V→GND via diodo com o relé ligado** (M7 queimaria na 1ª atuação) | `.pin(1,'TRAVA_NO').pin(2,'GND')` |
+
+D3/D4/D5/D6 estavam certos — o padrão dos 4 corretos é que confirma a convenção (se pad 1 fosse anodo, os TVS D4/D6 seriam curtos permanentes).
+
+**Nets orfãs (1 pad só):**
+
+| Net | Problema | Correção |
+| --- | --- | --- |
+| IO7_PU | R10 (10k) puxava para... nada: U1 não tinha o pino 9 na netlist. GPIO7 = **pino 9** do módulo (strapping pin — fonte do JTAG no boot; também FSPID/MISO, não usado) — é exatamente o caso de uso do pull-up | `U1_NETS[9] = 'IO7_PU'` (pad existe: (61.0, 44.65)) |
+| BTN_SIG | J5.1 órfão e OPT3 pino 2 = GND: LED do opto **sempre aceso** (BTN_A fixo no +12V via R18) e o botão externo sem função | `OPT3.2 = 'BTN_SIG'` + `J5.2 = 'GND'` (era +12V; botão seco fecha BTN_SIG→GND — padrão J3/J4: sinal no 1, GND no 2; IN_BTN fica ativo-baixo como IN_NOTE/IN_COIN) |
+| TRAVA_NO3 | C24.2 órfão: snubber RC aberto (R23→C24→nada) | `C24.2 = 'GND'` — snubber fecha em GND junto de D6 (TVS) e D7 (freewheel); net TRAVA_NO3 removida (51→50 nets) |
+
+**Validação:**
+- `net_audit.py`: 3 orfãs → **0**; nenhum netmap aponta pad inexistente no footprint.
+- `place_check.py`: idêntico (COPRE 0, COURTYARD 9) — correções são só de net, sem geometria.
+- DRC (`validation/drc/netfix-drc.rpt`): 147 violações (igual ao lote 5 — mesmo perfil: 8 courtyards, 81 silk_overlap, 52 silk_over_copper, 5 silk_edge, 1 texto); unconnected 180→182 (esperado: pares de conexão re-formados — ex. `D1.2↔F1.2`, `D2.1↔U3.3`, `D7.1↔R23.1`, `R10.2↔U1.9`, `C24.2↔D7.2` agora aparecem como pendências de roteamento corretas).
+
+**Lição (para o roteamento):** a direção de cada diodo agora está correta no arquivo; o DRC de conectividade serve de segundo oráculo de topologia — os pares "missing connection" listados são o grafo esperado do roteamento.
+
+---
+
+
+*Worklog mantido à mão a partir dos artefatos e timestamps do ambiente de desenvolvimento. Cada bloco acima é verificável pelos arquivos correspondentes no repositório.*

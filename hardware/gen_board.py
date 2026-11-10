@@ -29,8 +29,7 @@ N = {n: net(n) for n in [
     'BTN1', 'BTN2', 'EN', 'SW', 'FB', 'BOOT_C', 'COMP_X', 'COMP_Y',
     'LED_K', 'TX0', 'RX0',
     'IO7_PU', 'IO26_PU', 'IO27_PU',
-    'SCK_M', 'MOSI_M', 'EN_BK', 'SS_C', 'F12V',
-    'TRAVA_NO2', 'TRAVA_NO3',
+    'SCK_M', 'MOSI_M', 'EN_BK', 'SS_C', 'F12V', 'TRAVA_NO2',
 ]}
 NETIDX = {n: i for i, n in enumerate(NETS)}
 def NN(name):  # (idx, name) tuple for pad assignment
@@ -221,9 +220,9 @@ def P(ref, value, lib_fp, x, y, rot=0, side='B'):
 # --- U1: ESP32-C5-WROOM-1-N8 (back, antenna at top edge) ---
 u1 = P('U1', 'ESP32-C5-WROOM-1-N8', ('__esp__', 'ESP32-C5-WROOM-1'), 52.5, 40.25, 0)
 U1_NETS = {1:'GND', 2:'+3V3', 3:'EN', 5:'BTN2', 6:'RLY_DRV', 7:'IN_BTN',
-           8:'SCK_M', 10:'MOSI_M', 11:'DISP_DC', 12:'DISP_CS', 13:'USB_DN', 14:'USB_DP',
+           8:'SCK_M', 9:'IO7_PU', 10:'MOSI_M', 11:'DISP_DC', 12:'DISP_CS', 13:'USB_DN', 14:'USB_DP',
            15:'BTN1', 16:'DISP_BL', 17:'DISP_RST', 18:'IO27_PU', 21:'IN_NOTE', 23:'IN_COIN',
-           24:'RX0', 25:'TX0', 26:'LED_K', 27:'IO26_PU', 28:'GND', 29:'GND'}
+           24:'RX0', 25:'TX0', 26:'LED_K', 27:'IO26_PU', 28:'GND', 29:'GND'}  # pino 9 = GPIO7 (strapping/JTAG, FSPID nao usado): destino do pull-up R10
 for padn, nname in U1_NETS.items():
     u1.pin(padn, nname)
 
@@ -250,20 +249,20 @@ opt1.pin(1, 'NOTE_A').pin(2, 'NOTE_SIG').pin(3, 'GND').pin(4, 'IN_NOTE')
 opt2 = P('OPT2', 'PC817', ('Package_DIP', 'DIP-4_W7.62mm'), 44.15, 74.5, 90)
 opt2.pin(1, 'COIN_A').pin(2, 'COIN_SIG').pin(3, 'GND').pin(4, 'IN_COIN')
 opt3 = P('OPT3', 'PC817', ('Package_DIP', 'DIP-4_W7.62mm'), 50.65, 74.5, 90)
-opt3.pin(1, 'BTN_A').pin(2, 'GND').pin(3, 'GND').pin(4, 'IN_BTN')
+opt3.pin(1, 'BTN_A').pin(2, 'BTN_SIG').pin(3, 'GND').pin(4, 'IN_BTN')  # fix netlist: pino 2 era GND — BTN_SIG ficou orfa e o LED sempre aceso
 
 # --- K1: relay SRD-12VDC-SL-C (back) ---
 k1 = P('K1', 'SRD-12VDC-SL-C', fp_relay_srd(), 65.1, 73.5, 0)  # x+0.6 + fileira -1.35: resolve colisao FISICA OPT3/K1 (0.86mm) com folga ~0.6mm dos 2 lados
 k1.pin('A1', '+12V').pin('A2', 'RELAY_COIL').pin('COM', '+12V').pin('NC', '').pin('NO', 'TRAVA_NO')
 
 # --- Diodes (back) ---
-d1 = P('D1', 'SS54', ('Diode_SMD', 'D_SMA'), 47.5, 84.93, 0).pin(1, 'F12V').pin(2, '+12V')  # lote 4: encaixe na faixa livre real [83.17..86.69] (3.52mm); y=84.95 invadiria J3/J4 em 0.01
-d2 = P('D2', 'SS14', ('Diode_SMD', 'D_SMA'), 49, 70, 0).pin(1, 'USB_5V_F').pin(2, '+5V')
+d1 = P('D1', 'SS54', ('Diode_SMD', 'D_SMA'), 47.5, 84.93, 0).pin(1, '+12V').pin(2, 'F12V')  # lote 4: encaixe na faixa livre real [83.17..86.69] (3.52mm); y=84.95 invadiria J3/J4 em 0.01 — fix netlist: pino 1 = catodo (D_SMA), serie J1->F1->D1->rail: K no rail
+d2 = P('D2', 'SS14', ('Diode_SMD', 'D_SMA'), 49, 70, 0).pin(1, '+5V').pin(2, 'USB_5V_F')  # fix netlist: or-ing USB->+5V estava invertido (pad 1 = catodo)
 d3 = P('D3', 'SS14', ('Diode_SMD', 'D_SMA'), 69.2, 85.4, 0).pin(1, 'RELAY_COIL').pin(2, '+12V')  # x-0.3: separa de D6 com margem (gap 0.25mm > limite 0.2)
 d4 = P('D4', 'SMBJ18A', ('Diode_SMD', 'D_SMB'), 58.55, 84.3, 0).pin(1, '+12V').pin(2, 'GND')  # lote 4: courtyard 4.5mm nao cabe na faixa; frente do J5 (gap 0.14) e abaixo do K1 (gap 0.55); no caminho natural do +12V rumo a D3/J5
 d5 = P('D5', 'SS54', ('Diode_SMD', 'D_SMA'), 75.5, 44.5, 90).pin(1, 'SW').pin(2, 'GND')
 d6 = P('D6', 'SMBJ16A', ('Diode_SMD', 'D_SMB'), 76.1, 87, 0).pin(1, 'TRAVA_NO').pin(2, 'GND')  # original: cobre ate x=79.5, a 0.5mm da borda
-d7 = P('D7', 'M7', ('Diode_SMD', 'D_SMA'), 66, 91, 0).pin(1, 'GND').pin(2, 'TRAVA_NO')
+d7 = P('D7', 'M7', ('Diode_SMD', 'D_SMA'), 66, 91, 0).pin(1, 'TRAVA_NO').pin(2, 'GND')  # fix netlist: freewheel da trava estava invertido — como era, curto +12V->GND com o rele ligado
 
 # --- Fuses (back) ---
 f1 = P('F1', '1206L050/24', ('Fuse', 'Fuse_1206_3216Metric'), 41.5, 84.4, 0).pin(1, '+12V_IN').pin(2, 'F12V')  # lote 4: y+0.4 libera OPT1/OPT2 (gap 0.10)
@@ -286,7 +285,7 @@ j3.pin(1, 'NOTE_SIG').pin(2, 'GND')
 j4 = P('J4', 'JST-XH MOEDEIRO', ('Connector_JST', 'JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal'), 51.5, 89.5, 0)
 j4.pin(1, 'COIN_SIG').pin(2, 'GND')
 j5 = P('J5', 'JST-XH BOTAO', ('Connector_JST', 'JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal'), 60, 89.5, 0)
-j5.pin(1, 'BTN_SIG').pin(2, '+12V')
+j5.pin(1, 'BTN_SIG').pin(2, 'GND')  # fix netlist: pino 2 era +12V — botao seco fecha BTN_SIG->GND (padrao J3/J4: sinal no 1, GND no 2)
 j6 = P('J6', 'USB-C', ('Connector_USB', 'USB_C_Receptacle_HRO_TYPE-C-31-M-12'), 30.4, 71.9, 90)
 for pn in ('A1','B1','A12','B12'): j6.pin(pn, 'GND')
 for pn in ('A4','A9','B4','B9'): j6.pin(pn, 'USB_VBUS')
@@ -369,10 +368,10 @@ CC('C20', '100nF', 63.7, 44.7, 0, 'EN', 'GND')  # lote 5: +0.2/+0.4 — sai dos 
 CC('C21', '100nF', 52.0, 72.5, 0, 'BTN1', 'GND')  # y+1.0: resolve D2<->C21
 CC('C22', '100nF', 63.5, 62.2, 0, 'BTN2', 'GND')
 CC('C23', '1uF', 69.3, 88.3, 180, '+3V3', 'GND')  # lote 5: so gira (90->180) — sai dos courtyards de D7/J2/D3/R23
-CC('C24', '100nF', 66.5, 94.5, 0, 'TRAVA_NO2', 'TRAVA_NO3', 'C_1206_3216Metric')
+CC('C24', '100nF', 66.5, 94.5, 0, 'TRAVA_NO2', 'GND', 'C_1206_3216Metric')  # fix netlist: pino 2 era TRAVA_NO3 (net orfa) — snubber RC fecha em GND, junto de D6/D7
 
-# fix net aliases: snubber chain TRAVA_NO -> R23 -> C24 -> TRAVA_NO3 -> same node as TRAVA_NO? unify:
-# (we keep separate net names and will bridge them in routing)
+# snubber do contato: TRAVA_NO -> R23 -> TRAVA_NO2 (nó do RC) -> C24 -> GND,
+# em paralelo com D6 (TVS) e D7 (freewheel), todos no par TRAVA_NO/GND
 
 print('parts:', len(PARTS))
 print('U1 pads sample:', u1.pad_pos(1), u1.pad_pos(2), u1.pad_pos(21))
