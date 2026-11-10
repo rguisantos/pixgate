@@ -280,6 +280,44 @@ def mkline(layer, x1, y1, x2, y2, width=0.12):
             ['stroke', ['width', f'{width:g}'], ['type', 'solid']], ['layer', layer],
             ['uuid', new_uuid()]]
 
+def mksegment(x1, y1, x2, y2, layer, width, net_idx):
+    return ['segment',
+            ['start', f'{x1:.6f}'.rstrip('0').rstrip('.'),
+                      f'{y1:.6f}'.rstrip('0').rstrip('.')],
+            ['end', f'{x2:.6f}'.rstrip('0').rstrip('.'),
+                    f'{y2:.6f}'.rstrip('0').rstrip('.')],
+            ['width', f'{width:g}'],
+            ['layer', layer],
+            ['net', str(net_idx)],
+            ['uuid', new_uuid()]]
+
+def mkvia(x, y, size, drill, net_idx, layers=('F.Cu', 'B.Cu')):
+    return ['via',
+            ['at', f'{x:.6f}'.rstrip('0').rstrip('.'),
+                   f'{y:.6f}'.rstrip('0').rstrip('.')],
+            ['size', f'{size:g}'],
+            ['drill', f'{drill:g}'],
+            ['layers'] + list(layers),
+            ['net', str(net_idx)],
+            ['uuid', new_uuid()]]
+
+def mkzone(net_idx, net_name, layer, pts, thermal_gap=0.5, thermal_bridge=0.5,
+           min_thickness=0.25, connect_clearance=0.508):
+    zone = ['zone',
+            ['net', str(net_idx)],
+            ['net_name', net_name],
+            ['layer', layer],
+            ['uuid', new_uuid()],
+            ['hatch', 'edge', '0.5'],
+            ['connect_pads', ['clearance', f'{connect_clearance:g}']],
+            ['min_thickness', f'{min_thickness:g}'],
+            ['fill', 'yes',
+             ['thermal_gap', f'{thermal_gap:g}'],
+             ['thermal_bridge_width', f'{thermal_bridge:g}']],
+            ['polygon',
+             ['pts'] + [['xy', f'{x:g}', f'{y:g}'] for x, y in pts]]]
+    return zone
+
 def mktext(kind, text, x, y, layer, size=1.0, thickness=0.15, rot=0, hide=False):
     node = [kind, 'user', text,
             ['at', f'{x:g}', f'{y:g}'] + ([f'{rot:g}'] if rot else []),
