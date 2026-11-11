@@ -13,10 +13,12 @@ out/
 *.rpt
 !validation/drc/*.rpt
 
-# Não versionar bibliotecas de terceiros (clonar conforme docs/references.md)
+# Não versionar bibliotecas de terceiros (clonar conforme docs/references.md
+# ou tools/rebuild-kicad-env.sh)
 refs/
 kicad-root/
 kicad-libs/
+kicad-env/
 
 # Diversos
 .DS_Store

@@ -1,0 +1,5 @@
+#!/bin/bash
+# Põe o kicad-cli 9.0.2 do ambiente extraído no PATH (via tools/env.sh).
+# Necessário porque hardware/validate_prefab.sh e hardware/export_gerbers.sh
+# chamam `kicad-cli` direto.
+exec bash "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/kicad.sh" "$@"

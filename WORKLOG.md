@@ -581,3 +581,26 @@ Board re-clonado do GitHub (`596345c`: silk clean, hotfix H4, zonas GND + vias t
 **Portabilidade:** `gen_board.py` resolve FPDIR/ESPDIR por env (`KICAD_FOOTPRINT_DIR`/`ESP_FOOTPRINT_DIR`, padrões inalterados na máquina de desenvolvimento) — gerador e validadores rodam em ambiente sem KiCad no sistema.
 
 **Estado:** board `596345c` intocado (só tooling). Pendências inalteradas: roteamento manual (11 sessões do routing-guide), fill das zonas no pcbnew, `validate_prefab.sh` verde e `export_gerbers.sh` + upload.
+
+---
+
+## 2026-11-11 (18) — Pós-recycle do sandbox: baseline revalidado do zero; receita de rebuild do ambiente entra no repo
+
+Sessão nova após perda de contexto. O `kicad-env/` "persistente" da entrada 17 não sobreviveu ao recycle (nem o cache de .debs); o clone local estava em `fb1d8e1` com 19 arquivos em modo 755 fantasma (chmod pós-commit, conteúdo byte a byte idêntico — diff 0/0) — restaurados ao HEAD com `git restore`. Upstream re-conferido (fetch + `ls-remote` + clone público anônimo): nada novo além de `fb1d8e1` (26 commits, árvore limpa). Board segue sem trilhas — **0 segmentos**; o roteamento manual (11 sessões do `docs/routing-guide.md`) continua na máquina do usuário, como planejado.
+
+**Receita de reconstrução agora vive no repo** (`tools/rebuild-kicad-env.sh` + `tools/env.sh` + `tools/kicad.sh` + `tools/bin/kicad-cli`; o `redirect.c` já estava em `tools/`):
+
+- Baixa o closure de dependências do pacote `kicad` do Debian trixie com `apt-get download` (sem root), extrai com `dpkg-deb -x` em `kicad-env/` (dentro do repo, agora coberto pelo `.gitignore`; `.debs` cacheados — re-run pós-recycle refaz tudo em ~3-5 min), clona `espressif/kicad-libraries` em `refs/esp-kicad` se ausente e compila o `redirect.so` para FORA do repo.
+- Testada nesta sessão do download à extração (o clone espressif já existia fora do layout novo e foi movido para `refs/`; URL conferida contra a origem dele — o nome certo é `espressif/kicad-libraries`, não `kicad-libs`).
+- `source tools/env.sh` exporta `KICAD_FOOTPRINT_DIR`/`ESP_FOOTPRINT_DIR` (os defaults do `gen_board.py` continuam apontando para a máquina de desenvolvimento, onde nada disso é preciso) e põe o wrapper `kicad-cli` no PATH — `validate_prefab.sh` e `export_gerbers.sh` chamam o binário direto.
+
+**Revalidação de baseline em `fb1d8e1` (board intocado, ambiente recém-reconstruído):**
+
+- `net_audit.py`: **LIMPO** (51 nets, todas ≥ 2 pads; polaridades D1–D7/LED1 e pinagens J1/U4/Q1 OK).
+- `check_sync.py`: **✅ sincronizado** (85 parts, board == gerador).
+- `place_check.py`: COPRE **0**, COURTYARD **1** (artefato OPT1↔J1 −0,17) + 5 cross-side informativos (J7 na frente × verso).
+- `check_routing.py`: exit 1 **correto** — 0 segmentos, SW/USB não roteados (o parser consertado no `fb1d8e1` enxerga segmentos).
+- DRC `--severity-all`: **40 via_dangling + 214 unconnected, zero violações de fabricação** — idêntico categoria a categoria ao `validation/drc/repro-independente-596345c.rpt`.
+- `validate_prefab.sh`: bloqueia **apenas** por `unconnected_items=214` e `via_dangling=40` — exatamente as duas pendências que o roteamento + fill das zonas resolvem. O gate falha pela razão certa.
+
+**Estado:** board `fb1d8e1` intocado (tooling/receita apenas). O DRC roda neste ambiente — quando o board roteado voltar: `net_audit` + `place_check` + `check_sync` + `check_routing` + DRC `--severity-all` + `validate_prefab.sh` verdes → `export_gerbers.sh` → `hardware/fab/pixgate.zip`.
