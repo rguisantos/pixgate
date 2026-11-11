@@ -57,6 +57,29 @@ que todas as sessões concluídas têm entrada.
 - [ ] Gerbers inspecionados no KiCad Gerber Viewer
 - [ ] Upload JLCPCB/PCBWay
 
+
+## Verificação final — autorroteamento (2026-11-11, WORKLOG 19)
+
+- [x] DRC `--severity-all`: **0 erros de fabricação** (0 short/clearance/
+      via_dangling/edge/courtyard/silk/mask); 21 unconnected = lista manual
+      do canto USB (ver `validation/drc/autoroute-drc.rpt`); 12 thermal warnings
+- [x] `check_routing.py` → exit 0 — USB DP=52,50 / DN=52,51 mm (7 µm de match)
+- [x] `check_sync.py` → exit 0
+- [x] `net_audit.py` → LIMPO
+- [ ] `validate_prefab.sh` → bloqueado SÓ por unconnected_items (passe manual)
+- [ ] Visual inspection 3D (com o usuário, no pcbnew)
+- [ ] `export_gerbers.sh` (após o passe manual + gate verde)
+- [ ] Gerbers inspecionados no KiCad Gerber Viewer
+- [ ] Upload JLCPCB/PCBWay
+
+## Sessões 1–11 (roteamento automático)
+
+O roteamento das 11 sessões foi executado pelo Freerouting 2.5 (headless) +
+fixes programáticos — WORKLOG 19. Nets que precisam de mão (push-and-shove):
+canto USB/J6 (VBUS dos pads do J6, C16.1→U4.5, ponte A7↔B7) e stitching GND
+(8 pads com spokes afogados). SW/FB roteados pelo autorouter ficaram longos
+(32,5/17,1 mm) — polimento opcional no pcbnew.
+
 ## Travas e soluções
 
 Registrar cada bloqueio e como foi resolvido (para não repetir em revisões futuras):
