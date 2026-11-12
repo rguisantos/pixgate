@@ -1,0 +1,93 @@
+# PixGate v1.0 — Cotação de montagem
+
+Placa de referência `972d7fd`. A alimentação de J1 e J8 é de 12 Vcc
+regulados. A documentação de cotação usa a posição exportada do PCB
+KiCad e preserva o footprint, as trilhas e o netlist desta revisão.
+
+## Arquivos para cotar
+
+| Arquivo | Uso |
+|---|---|
+| `gerbers.zip` | Cobre, máscara, serigrafia, pasta nas duas faces, contorno, furação e job. |
+| `completa/BOM.csv` e `completa/CPL.csv` | 79 posições nas duas faces, incluindo os componentes de furo passante. Cote a montagem Standard. |
+| `hibrida/BOM.csv` e `hibrida/CPL.csv` | 65 posições no verso, incluindo o USB-C. Cote a montagem no verso e confirme a modalidade elegível com a variante exata de U1. |
+| `compras.csv` | Lista por referência com MPN, fonte e pontos para conferência. Filtre `Brasil` na coluna `Montagem_hibrida` para ver as 14 posições de finalização local. |
+
+Use o mesmo `gerbers.zip` nas duas cotações. Envie o BOM e o CPL da
+mesma pasta no fluxo de PCBA. Para uma montadora brasileira, use o
+perfil completo como referência e solicite preço com fornecimento
+das peças e com as peças consignadas. Compare a mesma quantidade de
+placas e o custo total entregue em Campo Grande, incluindo montagem,
+frete, tributos e a finalização local. As taxas e o estoque precisam
+ser conferidos na cotação do lote.
+
+Os códigos de catálogo conferidos aparecem no BOM de cotação.
+Linhas `validar` e `externo` em `compras.csv` requerem seleção
+manual, mesmo quando a plataforma sugerir uma correspondência.
+As colunas `Mid X`, `Mid Y` e `Rotation` usam o exportador
+do KiCad. No visualizador da montadora, confira a orientação
+e o alinhamento de U1, U2, J6, K1 e conectores THT, especialmente
+o jack J1 e o acesso aos parafusos de J2 e J8.
+[Formato BOM](https://jlcpcb.com/help/article/bill-of-materials-for-pcb-assembly) ·
+[Formato CPL](https://jlcpcb.com/help/article/pick-place-file-for-pcb-assembly) ·
+[Modalidades de PCBA](https://jlcpcb.com/blog/reduce-pcb-assembly-cost-prototype)
+
+## Peças a confirmar antes de comprar
+
+| Referência | Decisão para cotação | Conferência para o piloto |
+|---|---|---|
+| U1 | Usar `ESP32-C5-WROOM-1-N8R8` como candidato de 8 MB de flash e 8 MB de PSRAM, com antena integrada. | O pad 19 está sem rede no PCB, compatível com a reserva do pino pela PSRAM. Confirmar o sufixo com o fornecedor e a imagem de firmware, flash e partições de 8 MB. O código JLCPCB `C42441836` descreve a família sem declarar o sufixo. |
+| L1 | Candidato GLE `GCRH73-6R8MC`, `C439496`, de 6,8 µH ±20%, anunciado com 2 A e 62 mΩ. | O footprint KiCad tem corpo nominal de 7,3 × 7,3 × 3,5 mm, dois pads de 1,50 × 2,20 mm e passo de 6,40 mm. Confirmar terminais, altura, curvas de saturação e aquecimento com a ficha do lote. |
+| U3, C11 e C12 | Cotar o AMS1117-3.3 `C6186` e especificar os capacitores de saída junto com o regulador. | A ficha do AMS1117 apresenta 22 µF de tântalo como referência de estabilidade. Verificar a capacitância efetiva, ESR, proximidade e resposta a degrau com a configuração real. Se C12 for polarizado, o positivo é o pad 2. |
+| F1 e F2 | Cotações externas para Littelfuse `1206L110/16WR` e `1206L050/24WR`. | Confirmar fornecimento ou consignação. F1 protege a lógica de 12 V, F2 protege o USB. |
+| J1, J2, J7 e J8 | Cotar pela geometria do desenho e da caixa. | Confirmar o contato comutado de J1, o passo real de 5,08 mm em J2/J8 e o soquete J7 1×8 de 2,54 mm. O módulo de display é um item separado. |
+| D7, K1 e F3 | Preservar o relé Songle de bobina 12 Vcc `C30431` e o fusível Littelfuse `C179008`. | Qualificar a combinação com a fechadura real a 5 A por 3 s. A seleção de D7 depende do pulso repetitivo de recirculação. |
+
+Para L1, a triagem usa entrada de 12 V, saída de 5 V, 456 kHz,
+indutância de 5,44 µH no extremo da tolerância e carga estimada
+de 0,523 A. A ondulação ideal em condução contínua é
+`ΔI = Vout × (1 − Vout/Vin)/(L × f)`, cerca de 1,18 A.
+A carga está abaixo da fronteira de 0,59 A. Para a onda triangular
+ideal em condução descontínua, `Ipk = √(2 × Iout × ΔI)` dá
+cerca de 1,11 A. A seleção ainda depende das medições de partida,
+carga e temperatura.
+[Espressif, módulos C5](https://www.espressif.com/en/products/modules/esp32/ordering-information) ·
+[TPS54331, §§6.6 e 8.2.2](https://www.ti.com/lit/ds/symlink/tps54331.pdf) ·
+[GLE GCRH73-6R8MC](https://jlcpcb.com/partdetail/GLE-GCRH736R8MC/C439496) ·
+[AMS1117](https://datasheet.lcsc.com/lcsc/1810231814_Advanced-Monolithic-Systems-AMS1117-1-2_C14529.pdf)
+
+## Confirmação de montagem nas duas camadas
+
+Anexe estas cinco posições à consulta de DFM. Todos os furos têm
+Ø0,30 mm e ficam em áreas soldáveis do verso. As duas vias U2.9
+são térmicas. Peça confirmação de preenchimento e capeamento em
+cobre, IPC-4761 Tipo VII, para **esta placa de duas camadas**,
+com inspeção do arquivo de produção.
+
+| Pad | X no KiCad (mm) | Y no KiCad (mm) |
+|---|---:|---:|
+| J6.A4/B9 | 26,640 | 69,450 |
+| C3.2 | 64,550 | 43,175 |
+| U2.3 | 72,050 | 45,650 |
+| U2.9 | 70,100 | 44,200 |
+| U2.9 | 70,100 | 45,800 |
+
+As coordenadas são do editor KiCad. A exportação de fabricação
+usa a convenção Y invertida. A aprovação do processo, a inspeção
+da caixa e o ensaio com a carga indutiva continuam em aberto.
+O par USB também precisa de confirmação no empilhamento de produção.
+[Acabamentos de via da JLCPCB](https://jlcpcb.com/help/article/pcb-via-covering)
+
+## Reprodução
+
+No ambiente KiCad do projeto, a partir da raiz do repositório:
+
+```bash
+bash hardware/validate_prefab.sh
+bash hardware/export_gerbers.sh out/fab
+python3 hardware/export_pcba_quote.py out/fab out/cotacao
+```
+
+O gerador rejeita divergências de referências, valores, footprints
+e faces entre as entradas. Para rever uma compra, atualize
+`hardware/pcba_sourcing.csv` e regenere os dois perfis.

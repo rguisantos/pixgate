@@ -129,6 +129,7 @@ o cobre de FB e SW. O nó SW permanece com 29,419 mm de trilha.
 
 ## BOM
 
+- [ ] Usar os perfis e a lista de compras da [cotação de montagem](cotacao-pcba.md).
 - [ ] `pixgate-BOM.csv` com Reference/Value/Footprint/Side/X/Y/Rotation
 - [ ] Conferir que `H1..H4` estão fora e que R26 e TP1–TP3 estão ausentes do BOM e do CPL
 - [ ] Conferir que R24 e R25 não existem (numeração histórica R1..R23, R26)
