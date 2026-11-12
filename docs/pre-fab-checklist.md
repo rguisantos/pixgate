@@ -11,14 +11,13 @@ Executar ANTES de enviar os Gerbers para JLCPCB/PCBWay.
 
 ## Pendências para a primeira placa
 
-- [ ] Resolver a interferência de montagem entre J8 e K1 antes de
-  enviar os arquivos para fabricação.
+- [ ] Confirmar encaixe e acesso ao novo J8 e ao K1 na caixa do piloto.
 - [ ] Qualificar o ramo J8/F3/K1/J2 para 12 V, 5 A por 3 s, com
   intervalo mínimo de 30 s. F1 protege apenas a alimentação lógica.
 - [ ] Confirmar uma seção USB de 90 Ω com o empilhamento de produção.
   O match de comprimento passou, e a estimativa da seção atual ficou
   acima de 90 Ω.
-- [ ] Confirmar caixa, acesso aos bornes e tratamento das cinco vias em
+- [ ] Confirmar caixa, acesso aos bornes e tratamento das quatro vias em
   pads soldáveis conforme as seções abaixo.
 
 [WORKLOG, entrada 20](../WORKLOG.md#2026-11-12-20--passe-manual-do-pixgate-v10)
@@ -33,19 +32,19 @@ Executar ANTES de enviar os Gerbers para JLCPCB/PCBWay.
   imediatamente antes de abrir. A classificação da carga real
   depende do ensaio com o solenoide e D7.
   [Ficha Songle SRD, §§5–7](https://datasheet4u.com/pdf-down/S/R/D/SRD-12VDC-xx-x_ETC.pdf)
-- [ ] **Proteção da trava**. D7 (M7) conduz a corrente inicial de
-  recirculação, potencialmente 5 A. O M7 de referência publica 1 A
-  médio e surto não repetitivo de 30 A. Medir decaimento e verificar a
-  capacidade de pulso repetitivo da peça comprada. D6 (SMBJ16A) limita
+- [ ] **Proteção da trava**. D7 (SS54 SMA, 5 A, 40 V) conduz a
+  corrente inicial de recirculação, potencialmente 5 A. Medir
+  decaimento, temperatura e tempo de retorno da trava, pois o
+  Schottky tem menor queda direta que o M7. D6 (SMBJ16A) limita
   transientes positivos e R23/C24 (100 Ω/100 nF) amortecem a transição.
-  Conferir o fio dedicado de J8.2 ao 0 V da fonte, usado pelo D7
+  Conferir o fio dedicado de J2.2 ao 0 V da fonte, usado pelo D7
   quando o negativo da trava retorna direto à fonte.
   D7 recebe a corrente de decaimento depois da comutação. O contato
   ainda abre com a corrente que estiver passando no fim do pulso.
   Medir tensão COM–NO, corrente na carga e temperatura de K1 em
   pulsos repetidos conforme o [roteiro de bancada](bring-up.md).
   [Supressão de arco em cargas indutivas](https://www.littelfuse.com/assetdocs/inductive-load-arc-suppression-application-note?assetguid=67c3a678-da06-4c93-9aa2-d20d951138e2) ·
-  [Dados do M7 Juxing](https://www.lcsc.com/pt/product-detail/C5337558.html)
+  [SS54 SINEDEVICE](https://jlcpcb.com/partdetail/SINEDEVICE-SS54/C22439152)
 - [x] **F3 Littelfuse 0454007.MR**. O land pattern 452/454 pede
   pads de 1,96 × 3,15 mm e vão de 2,95 mm. O footprint KiCad
   `Fuse_Littelfuse-NANO2-451_453` instalado tem essas dimensões,
@@ -83,23 +82,22 @@ Executar ANTES de enviar os Gerbers para JLCPCB/PCBWay.
 
 ## Caixa e chicote
 
-Na revisão `6ff812b`, o centro do furo de J8.1 (72,75; 76,71) mm
-fica sob o corpo de K1 no verso. O centro do furo de K1.A2
-(71,20; 79,50) mm fica sob o corpo de J8 na frente. Os terminais e
-filetes de solda precisam de folga na face oposta. A montagem rente à
-placa está bloqueada até validar a geometria e o acesso à solda.
+O WAGO J8 de um polo fica na frente, em (67,50; 72,00) mm.
+Seus dois pads SMD são do mesmo polo e ficam na frente. O corpo
+deixa livres os terminais de K1 na frente. Conferir acesso ao
+acionador do borne e ao chicote na caixa física.
 [Revisão no PR #5](https://github.com/rguisantos/pixgate/pull/5)
 
 | Peça | Face | Acesso previsto no PCB |
 |---|---|---|
-| J8, entrada da trava | F.Cu | Fios paralelos à placa, vindos da borda direita (+X). A frente do corpo no desenho F.Fab fica em X = 77,85 mm, 2,15 mm para dentro do contorno. |
+| J8, entrada da trava | F.Cu | Borne WAGO 2060-451/998-404 de 9 A, 4,5 mm de altura, com fio paralelo à placa. Conferir acesso ao acionador com a tampa montada. |
 | J2, saída da trava | B.Cu | Fios paralelos à placa, vindos do interior (−X). Conferir a passagem sobre a região de D7 e o acesso aos parafusos pelo verso. |
 | F3 | F.Cu | Corpo de até 2,94 mm acima da face da placa. |
 | J1 e K1 | B.Cu | Conferir acesso ao plugue de J1 e folga do corpo de K1 no verso. |
 
 - [ ] Montar o chicote com positivo da trava em J2.1 (NO), negativo
-  no 0 V da fonte de J8.1 e J2.2 livre. Conferir as ligações de J8.1
-  e J8.2 no [roteiro de bancada](bring-up.md).
+  direto no 0 V da fonte de J8.1 e fio dedicado de J2.2 ao mesmo 0 V.
+  [Roteiro de bancada](bring-up.md)
 - [ ] Confirmar código e desenho do borne comprado, passo de 5,08 mm,
   altura instalada, acesso da chave e espaço de dobra do chicote com
   a tampa fechada. O nome comercial KF301 aparece também em peças
@@ -114,10 +112,11 @@ O furo de U2.5 (FB) já constava em `2a5701e` em (67,80; 46,80)
 mm. A revisão pré-fabricação moveu a via para (68,15; 47,80) mm,
 com 0,388 mm de folga mínima do anel aos pads SMD e 2,480 mm entre
 o cobre de FB e SW. O nó SW permanece com 29,419 mm de trilha.
+No USB-C, a via de VBUS fica agora em (27,540; 69,810) mm, com
+0,214 mm entre o anel e o pad soldável mais próximo.
 
 | Pad | Rede | Centros no KiCad (mm) | Furo |
 |---|---|---|---|
-| J6.A4/B9 | USB_VBUS | (26,640; 69,450) | Ø0,30 mm |
 | C3.2 | GND | (64,550; 43,175) | Ø0,30 mm |
 | U2.3 | EN_BK | (72,050; 45,650) | Ø0,30 mm |
 | U2.9 | GND | (70,100; 44,200) e (70,100; 45,800) | Ø0,30 mm cada |
@@ -125,8 +124,8 @@ o cobre de FB e SW. O nó SW permanece com 29,419 mm de trilha.
 - [ ] Pedir confirmação da fabricação de duas camadas com
   preenchimento e capeamento em cobre das vias acima (IPC-4761
   Tipo VII), com superfície plana e soldável no verso. Identificar
-  as cinco posições no desenho e confirmar o tratamento nos arquivos
-  de produção. A via de J6, a de C3 e a de EN precisam preservar a
+  as quatro posições no desenho e confirmar o tratamento nos arquivos
+  de produção. As vias de C3 e EN precisam preservar a
   superfície de solda. As duas vias de U2.9 são térmicas intencionais.
   Para esse par, a TI também descreve a cobertura no lado oposto ao
   PowerPAD, com o processo de pasta aprovado pela montadora.

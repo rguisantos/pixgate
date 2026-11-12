@@ -8,16 +8,16 @@ mesma fonte que alimenta J8.1.
 | Terminal | Ligação externa |
 |---|---|
 | J8.1 (+) | +12 V da fonte da trava |
-| J8.2 (−) | 0 V da fonte da trava, por um fio dedicado |
 | J2.1 (NO) | Fio positivo da trava |
-| J2.2 (GND) | Livre no chicote |
+| J2.2 (GND_LOCK) | 0 V da fonte da trava, por um fio dedicado |
 | Fio negativo da trava | Direto ao borne de 0 V da fonte da trava |
 
 Com K1 fechado, a corrente volta à fonte pelo fio negativo da trava.
-Na abertura de K1, o fio de J8.2 mantém o caminho de recirculação
-pelo D7. Mantenha esse fio curto e dimensionado para a corrente
-transitória da trava. Se J1 compartilhar a fonte, leve seu 0 V ao
-borne da fonte por um fio separado e registre a ligação no ensaio.
+Na abertura de K1, o fio de J2.2 mantém o caminho de recirculação
+pelo D7. Ligue esse fio antes de ensaiar a trava. Mantenha-o curto e
+dimensionado para a corrente transitória. GND_LOCK e GND são redes
+separadas na placa. Se J1 compartilhar a fonte, leve o 0 V de J1
+ao borne da fonte por um fio separado e registre a ligação no ensaio.
 [Texas Instruments, recirculação e grampeamento de solenoides](https://www.ti.com/lit/an/slvae59a/slvae59a.pdf)
 
 J8 tem proteção por fusível, sem proteção ativa contra inversão. A

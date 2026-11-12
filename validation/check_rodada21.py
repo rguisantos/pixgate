@@ -8,11 +8,11 @@ import argparse
 from collections import Counter, defaultdict, deque
 
 import pcbnew as pcb
-from shapely.geometry import LineString, Point, Polygon
+from shapely.geometry import LineString, MultiPoint, Point, Polygon
 from shapely.ops import unary_union
 
 LAYERS = (pcb.F_Cu, pcb.B_Cu)
-LOCAL_PADS = {'J8.2', 'J2.2', 'D6.2', 'D7.2', 'C24.2'}
+LOCAL_PADS = {'J2.2', 'D6.2', 'D7.2', 'C24.2'}
 MOUNT_EXCLUSIONS = {'R26', 'TP1', 'TP2', 'TP3'}
 
 
@@ -57,7 +57,8 @@ def pad_map(board):
 def compare(before, after):
     a, b = pad_map(before), pad_map(after)
     replacements = {('K1', 'COM', '+12V'): '+12V_LOCK', ('J6', 'S1', ''): 'GND'}
-    additions = {('J8', '1'): '+12V_LOCK_IN', ('J8', '2'): 'GND',
+    replacements.update((tuple(key.split('.')) + ('GND',), 'GND_LOCK') for key in LOCAL_PADS)
+    additions = {('J8', '1'): '+12V_LOCK_IN',
                  ('F3', '1'): '+12V_LOCK_IN', ('F3', '2'): '+12V_LOCK'}
     expected = Counter((ref, number, pt, replacements.get((ref, number, net), net))
                        for ref, number, pt, net in a.elements())
@@ -85,7 +86,13 @@ def compare(before, after):
     print('Atributos de exclusão de montagem:', 'OK' if assembly_ok else 'FALHA')
     print('F1:', before.FindFootprintByReference('F1').GetValue(), '→', footprints['F1'].GetValue())
     print('Pads de +12V_LOCK:', sorted(lock_pads))
-    return expected == b and not moved and enable_ok and assembly_ok and lock_pads == {('F3', '2'), ('K1', 'COM')}
+    j8_pads = [pad for pad in footprints['J8'].Pads()]
+    connector_ok = len(j8_pads) == 2 and all(
+        pad.GetNumber() == '1' and pad.GetAttribute() == pcb.PAD_ATTRIB_SMD
+        for pad in j8_pads
+    )
+    return (expected == b and not moved and enable_ok and assembly_ok and connector_ok
+            and lock_pads == {('F3', '2'), ('K1', 'COM')})
 
 
 def is_via(track):
@@ -154,50 +161,63 @@ def widths(board):
         wide = wide_tracks(board, net, 2)
         all_segments = wide_tracks(board, net, 0)
         minimum = min((pcb.ToMM(t.GetWidth()) for t in all_segments), default=0)
-        connected = end in reach(copper_records(board, net, wide + vias), start)
+        records = copper_records(board, net, wide + vias)
+        if start == 'J8.1':
+            # Both solder feet must reach F3 through the PCB copper.
+            records = [(f'{key}:{i}' if key == start else key, layer, shape)
+                       for i, (key, layer, shape) in enumerate(records)]
+            feet = [key for key, _, _ in records if key.startswith('J8.1:')]
+            connected = len(feet) == 2 and all(end in reach(records, foot) for foot in feet)
+        else:
+            connected = end in reach(records, start)
         supply &= connected and minimum >= 2
         print(f'{net}: mínima {minimum:.3f} mm, {len(vias)} vias, {start} → {end} a ≥2 mm: {connected}')
 
-    ground = [t for t in tracks if t.GetNetname() == 'GND']
-    wide = wide_tracks(board, 'GND', 3)
-    via = [t for t in ground if is_via(t)]
-    wide_reach = reach(copper_records(board, 'GND', wide + via), 'J8.2')
-    main = 'J2.2' in wide_reach
-    protection = LOCAL_PADS <= wide_reach
-    print(f'J8.2 → J2.2 a ≥3 mm: {main}. Retorno completo a ≥3 mm: {protection}.')
-    print('Pads alcançados exclusivamente com trilhas GND ≥3 mm:', sorted(wide_reach & LOCAL_PADS))
-
-    tie = [t for t in ground if not is_via(t) and t.GetLayer() == pcb.F_Cu
-           and {xy(t.GetStart()), xy(t.GetEnd())} == {(72.75, 81.79), (74.75, 81.25)}]
-    ground_records = copper_records(board, 'GND', ground, fill=True)
-    with_tie = reach(ground_records, 'J8.2')
-    without_tie = reach([row for row in ground_records if row[0] not in {t.m_Uuid.AsString() for t in tie}], 'J8.2')
-    single = (len(tie) == 1 and LOCAL_PADS <= without_tie
-              and any(key.startswith('plane-') for key in with_tie)
-              and not any(key.startswith('plane-') for key in without_tie)
-              and not any('.' in key and key not in LOCAL_PADS for key in without_tie))
-    print('Ligação ao GND principal, removida em memória para teste:', 'única' if single else 'FALHA')
-    for t in ground:
-        if not is_via(t) and t.m_Uuid.AsString() in without_tie and pcb.ToMM(t.GetWidth()) < 3:
-            print(f'Retorno local estreito {board.GetLayerName(t.GetLayer())} {pcb.ToMM(t.GetWidth()):.3f} mm '
-                  f'{xy(t.GetStart())} → {xy(t.GetEnd())}')
-    return_segments = [t for t in ground if not is_via(t) and t.m_Uuid.AsString() in without_tie]
-    minimum = min((pcb.ToMM(t.GetWidth()) for t in return_segments), default=0)
-    print(f'Retorno GND isolado: largura mínima {minimum:.3f} mm.')
+    lock_ground = [t for t in tracks if t.GetNetname() == 'GND_LOCK']
+    wide = wide_tracks(board, 'GND_LOCK', 3)
+    vias = [t for t in lock_ground if is_via(t)]
+    lock_records = copper_records(board, 'GND_LOCK', wide + vias, fill=True)
+    wide_reach = reach(lock_records, 'J2.2')
+    logical_records = copper_records(board, 'GND', [t for t in tracks if t.GetNetname() == 'GND'], fill=True)
+    logical_copper = {layer: unary_union([shape for _, lay, shape in logical_records if lay == layer])
+                      for layer in LAYERS}
+    separation = min(shape.distance(logical_copper[layer]) for _, layer, shape in lock_records)
+    minimum = min((pcb.ToMM(t.GetWidth()) for t in lock_ground if not is_via(t)), default=0)
+    protection = LOCAL_PADS <= wide_reach and minimum >= 3 and separation > 0
+    print(f'J2.2 → D6.2/D7.2/C24.2 a ≥3 mm: {protection}. Mínima {minimum:.3f} mm.')
+    print(f'Separação do retorno de proteção para GND na placa: {separation:.3f} mm. União externa no 0 V da fonte.')
     rc = wide_tracks(board, 'TRAVA_NO2', 0)
     if rc:
         print(f'TRAVA_NO2 (ramo RC): largura mínima {min(pcb.ToMM(t.GetWidth()) for t in rc):.3f} mm.')
     transitions_ok = True
     for net, locations in [
+        ('+12V_LOCK_IN', [(67.5, 68.9), (67.5, 75.2), (69.0, 72.9)]),
         ('TRAVA_NO', [(60.85, 79.6), (66.625, 80.5), (67.15, 89.45), (76.2, 89.15)]),
-        ('GND', [(71.95, 94.075), (65.25, 92.55)]),
+        ('GND_LOCK', [(71.95, 94.075), (65.25, 92.55)]),
     ]:
         for location in locations:
             count = sum(is_via(t) and t.GetNetname() == net
                         and Point(location).distance(Point(position(t))) < 0.8 for t in tracks)
             print(f'Transição {net} {location}: {count} vias.')
             transitions_ok &= count >= 3
-    return supply and main and protection and single and transitions_ok
+    return supply and protection and transitions_ok
+
+
+def connector_assembly(board):
+    connector = board.FindFootprintByReference('J8')
+    fab = [drawing for drawing in connector.GraphicalItems()
+           if isinstance(drawing, pcb.PCB_SHAPE) and drawing.GetLayer() == pcb.F_Fab]
+    housing = MultiPoint([xy(point) for drawing in fab
+                          for point in (drawing.GetStart(), drawing.GetEnd())]).convex_hull
+    if housing.geom_type != 'Polygon':
+        return False
+    nearest = min(
+        (housing.distance(pad_shape(pad, pcb.F_Cu)), f'{fp.GetReference()}.{pad.GetNumber()}')
+        for fp, pad in pads(board)
+        if fp.GetLayer() == pcb.B_Cu and pad.GetAttribute() == pcb.PAD_ATTRIB_PTH
+    )
+    print(f'Corpo de J8 → solda THT mais próxima ({nearest[1]}): {nearest[0]:.3f} mm.')
+    return nearest[0] > 0
 
 
 def buck_geometry(board):
@@ -260,12 +280,13 @@ def main():
     netlist_ok = compare(before, after)
     print('\n== Cobre do ramo da trava ==')
     width_ok = widths(after)
+    assembly_ok = connector_assembly(after)
     print('\n== Geometria do buck ==')
     buck_geometry(after)
     print('\n== Vias em pads SMD ==')
     via_ok = via_report(before, after)
-    print(f'\nNetlist={netlist_ok} Larguras={width_ok} Vias={via_ok}')
-    return int(not (netlist_ok and width_ok and via_ok))
+    print(f'\nNetlist={netlist_ok} Larguras={width_ok} Montagem={assembly_ok} Vias={via_ok}')
+    return int(not (netlist_ok and width_ok and assembly_ok and via_ok))
 
 
 if __name__ == '__main__':

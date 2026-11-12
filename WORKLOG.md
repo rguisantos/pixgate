@@ -1018,3 +1018,37 @@ a mola faz o retorno à posição inicial. O roteiro de bancada
 passa a medir o tempo de acionamento e o retorno mecânico. A
 validação do firmware e os ensaios da trava seguem pendentes.
 [Roteiro de bancada](docs/bring-up.md#acionamento-da-trava)
+
+## 2026-11-12 (23) — Montagem do J8 e custo do piloto
+
+O WAGO 2060-451/998-404 substitui o KF301 de dois polos em J8.
+O novo corpo SMD de 9 A, com 4,5 mm de altura, fica em (67,50; 72,00)
+mm na frente. Os dois terminais de solda do único polo usam pads de
+2,50 × 2,60 mm, separados por 11,60 mm entre centros, conforme o
+desenho da WAGO. O cobre liga ambos os pads a F3.1. A menor folga
+entre o corpo de J8 e um pad de solda de K1 na face oposta mede
+0,700 mm. O acesso ao chicote na caixa precisa de conferência física.
+[Desenho WAGO](https://uk.misumi-ec.com/pdf/vona/el/WAG1/WAG1_2060-451_998-404_Datasheet_en_1.pdf)
+
+J8 recebe só o positivo. O negativo da trava vai direto à fonte.
+J2.2 passa a ser o retorno dedicado de D6, D7 e C24, ligado ao
+mesmo 0 V da fonte por um fio do chicote. A rede GND_LOCK fica
+separada do GND da lógica no PCB, com separação mínima medida de
+0,250 mm. Os três caminhos de potência mantêm 2,00 mm. O retorno
+J2.2 → D6/D7/C24 mantém 3,00 mm. As transições usam três vias
+cada. A entrada J8 a F3 ganhou três dessas transições.
+
+D7 passa de M7 para o SS54 SMA de D1/D5, 5 A e 40 V. A peça
+compartilhada reduz um tipo de diodo na montagem. O ensaio com
+a carga real precisa medir o aquecimento, o decaimento de corrente
+e o tempo de retorno pela mola. A hipótese de economia de
+alimentador e o comparativo de montagem de uma e duas faces
+estão na [cotação](docs/cotacao-pcba.md#custo-do-piloto).
+
+A via de VBUS saiu dos pads de J6 para (27,540; 69,810) mm,
+com folga de 0,214 mm à área soldável. Foi necessário desviar
+localmente CC1. A geometria de USB_DP e USB_DN permaneceu igual.
+Restam quatro vias em pads, em C3.2, U2.3 e duas em U2.9.
+O DRC elétrico passou. A auditoria de montagem permanece com
+saída 1 por essas quatro vias, pendentes de DFM.
+[Evidências da rodada](validation/rodada23)

@@ -1,8 +1,9 @@
 # PixGate v1.0 — Cotação de montagem
 
 A alimentação de J1 e J8 é de 12 Vcc regulados. A documentação de
-cotação usa a posição exportada pelo KiCad. O módulo U1 de 4 MB usa
-a mesma pinagem, footprint e roteamento da placa de referência `972d7fd`.
+cotação usa a posição exportada pelo KiCad. O retorno da proteção
+da trava sai em J2.2. O módulo U1 de 4 MB mantém a pinagem e o
+footprint da placa de referência `972d7fd`.
 
 ## Arquivos para cotar
 
@@ -27,7 +28,7 @@ manual, mesmo quando a plataforma sugerir uma correspondência.
 As colunas `Mid X`, `Mid Y` e `Rotation` usam o exportador
 do KiCad. No visualizador da montadora, confira a orientação
 e o alinhamento de U1, U2, J6, K1 e conectores THT, especialmente
-o jack J1 e o acesso aos parafusos de J2 e J8.
+o jack J1, os parafusos de J2 e o acionador de J8.
 [Formato BOM](https://jlcpcb.com/help/article/bill-of-materials-for-pcb-assembly) ·
 [Formato CPL](https://jlcpcb.com/help/article/pick-place-file-for-pcb-assembly) ·
 [Modalidades de PCBA](https://jlcpcb.com/blog/reduce-pcb-assembly-cost-prototype)
@@ -40,8 +41,9 @@ o jack J1 e o acesso aos parafusos de J2 e J8.
 | L1 | Candidato GLE `GCRH73-6R8MC`, `C439496`, de 6,8 µH ±20%, anunciado com 2 A e 62 mΩ. | O footprint KiCad tem corpo nominal de 7,3 × 7,3 × 3,5 mm, dois pads de 1,50 × 2,20 mm e passo de 6,40 mm. Confirmar terminais, altura, curvas de saturação e aquecimento com a ficha do lote. |
 | U3, C11 e C12 | Cotar o AMS1117-3.3 `C6186` e especificar os capacitores de saída junto com o regulador. | A ficha do AMS1117 apresenta 22 µF de tântalo como referência de estabilidade. Verificar a capacitância efetiva, ESR, proximidade e resposta a degrau com a configuração real. Se C12 for polarizado, o positivo é o pad 2. |
 | F1 e F2 | Cotações externas para Littelfuse `1206L110/16WR` e `1206L050/24WR`. | Confirmar fornecimento ou consignação. F1 protege a lógica de 12 V, F2 protege o USB. |
-| J1, J2, J7 e J8 | Cotar pela geometria do desenho e da caixa. | Confirmar o contato comutado de J1, o passo real de 5,08 mm em J2/J8 e o soquete J7 1×8 de 2,54 mm. O módulo de display é um item separado. |
-| D7, K1 e F3 | Preservar o relé Songle de bobina 12 Vcc `C30431` e o fusível Littelfuse `C179008`. | Qualificar a combinação com a fechadura real a 5 A por 3 s. A seleção de D7 depende do pulso repetitivo de recirculação. |
+| J1, J2 e J7 | Cotar pela geometria do desenho e da caixa. | Confirmar o contato comutado de J1, o passo de 5,08 mm em J2 e o soquete J7 1×8 de 2,54 mm. O display é um item separado. |
+| J8 | WAGO de 9 A `2060-451/998-404`, `C2765054`. | Confirmar o acesso ao chicote e o processo de refusão no lado frontal. A WAGO recomenda estêncil de 150 µm com a geometria dos pads. |
+| D7, K1 e F3 | SS54 SMA `C22439152` também usado em D1/D5, relé de 12 V `C30431` e fusível `C179008`. | Qualificar a combinação com a trava real a 5 A por 3 s. Medir o aquecimento de D7 e o tempo de retorno da trava. |
 
 Para L1, a triagem usa entrada de 12 V, saída de 5 V, 456 kHz,
 indutância de 5,44 µH no extremo da tolerância e carga estimada
@@ -57,9 +59,23 @@ carga e temperatura.
 [GLE GCRH73-6R8MC](https://jlcpcb.com/partdetail/GLE-GCRH736R8MC/C439496) ·
 [AMS1117](https://datasheet.lcsc.com/lcsc/1810231814_Advanced-Monolithic-Systems-AMS1117-1-2_C14529.pdf)
 
+## Custo do piloto
+
+O perfil híbrido concentra a montagem automatizada em B.Cu. Na
+tabela Standard, a diferença de setup e estêncil entre duas faces
+e uma face é US$ 33,77 por pedido. Compare essa diferença com a
+finalização local de J7, F3 e J8 na frente e dos conectores e
+componentes THT do verso. F3 e J8 exigem soldagem SMD na frente.
+O SS54 compartilhado em D1/D5/D7 reduz um tipo de diodo no BOM.
+A economia de alimentador pode chegar a US$ 3,07 no Economic se
+o M7 separado fosse cobrado como Extended. Os valores são
+taxas de referência, sem montagem local, frete ou tributos.
+[Tabela de preços da JLCPCB](https://jlcpcb.com/help/article/pcb-assembly-price) ·
+[Ficha do borne WAGO](https://uk.misumi-ec.com/pdf/vona/el/WAG1/WAG1_2060-451_998-404_Datasheet_en_1.pdf)
+
 ## Confirmação de montagem nas duas camadas
 
-Anexe estas cinco posições à consulta de DFM. Todos os furos têm
+Anexe estas quatro posições à consulta de DFM. Todos os furos têm
 Ø0,30 mm e ficam em áreas soldáveis do verso. As duas vias U2.9
 são térmicas. Peça confirmação de preenchimento e capeamento em
 cobre, IPC-4761 Tipo VII, para **esta placa de duas camadas**,
@@ -67,7 +83,6 @@ com inspeção do arquivo de produção.
 
 | Pad | X no KiCad (mm) | Y no KiCad (mm) |
 |---|---:|---:|
-| J6.A4/B9 | 26,640 | 69,450 |
 | C3.2 | 64,550 | 43,175 |
 | U2.3 | 72,050 | 45,650 |
 | U2.9 | 70,100 | 44,200 |

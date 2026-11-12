@@ -39,8 +39,8 @@ DIODES = {
     'D3':   ('+12V', 'RELAY_COIL', 'flyback da bobina do K1 (Q1 low-side): K no +12V, A no noh do dreno'),
     'D4':   ('+12V', 'GND',        'TVS SMBJ18A do rail +12V: K no positivo'),
     'D5':   ('SW', 'GND',          'freewheel do buck TPS54331: K no noh SW, A no GND'),
-    'D6':   ('TRAVA_NO', 'GND',    'TVS SMBJ16A da saida TRAVA_NO: K no positivo'),
-    'D7':   ('TRAVA_NO', 'GND',    'freewheel da carga indutiva da trava (via J2): K no positivo'),
+    'D6':   ('TRAVA_NO', 'GND_LOCK', 'TVS SMBJ16A da saída da trava: K no positivo'),
+    'D7':   ('TRAVA_NO', 'GND_LOCK', 'Roda livre da trava: K no positivo'),
     'LED1': ('LED_K', 'LED_A',     'status: +3V3->R19 1k->LED(A->K)->GPIO25 (U1 pino 26) — '
                                    'R19 em serie com o anodo, GPIO25 direto no catodo; '
                                    'LOW acende (~1,3 mA), HIGH desliga'),

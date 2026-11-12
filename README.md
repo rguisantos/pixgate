@@ -54,7 +54,7 @@ Checklist completo de compra, montagem e primeira energização em [docs/confere
 | Buck 12→5 V | U2 TPS54331DDA, L1 6,8 µH, D5 SS54, C1–C9, R20/R21/R22, R26 | Regulação de 5 V, compensação e soft-start dimensionados |
 | LDO 3,3 V | U3 AMS1117-3.3, C10–C13 | Rails de 3,3 V digital |
 | Driver do relé | Q1 AO3400A, R3 100R, R4 10k, D3 SS14 (flyback), K1 | Bobina 12 V chaveada por GPIO |
-| Saída protegida | R23 100R + C24 100nF (snubber), D6 SMBJ16A (TVS), D7 M7 | Proteção do contato NO da trava |
+| Saída protegida | R23 100R + C24 100nF (snubber), D6 SMBJ16A (TVS), D7 SS54 | Proteção do contato NO da trava |
 | Entradas isoladas | OPT1–3 PC817, R13–R15 10k, R16–R18 2,2k | 12 V → 3,3 V com isolamento galvânico |
 | USB-C | J6, U4 USBLC6-2SC6, R1/R2 5,1k (CC), F2 PTC, D2 SS14, C16/C17 | VBUS or-ing com buck, ESD, enumeração |
 | Display | J7 soquete 1×8, R5/R6 33R (série SPI), R10–R12 10k | TFT frontal com terminação série |

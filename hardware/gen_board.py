@@ -36,7 +36,7 @@ N = {n: net(n) for n in [
     'IO7_PU', 'IO26_PU', 'IO27_PU',
     'SCK_M', 'MOSI_M', 'EN_BK', 'SS_C', 'F12V', 'TRAVA_NO2',
     'LED_A',  # netfix3 (fechamento item 2): no R19.2/LED1.2 — R19 em serie com o anodo; no fim da lista para nao renumerar as nets existentes
-    '+12V_LOCK_IN', '+12V_LOCK',
+    '+12V_LOCK_IN', '+12V_LOCK', 'GND_LOCK',
 ]}
 NETIDX = {n: i for i, n in enumerate(NETS)}
 def NN(name):  # (idx, name) tuple for pad assignment
@@ -240,6 +240,27 @@ def fp_kf301():
     fp.append(['attr', 'through_hole'])
     return fp
 
+def fp_wago_2060_451():
+    """WAGO 2060-451/998-404, one pole and two solder feet."""
+    fp = mkfootprint('TerminalBlock_WAGO_2060-451_1P')
+    fp.append(['attr', 'smd'])
+    for y in (-5.8, 5.8):
+        fp.append(mkpad(1, 'smd', 'rect', 0, y, 2.5, 2.6,
+                        ['F.Cu', 'F.Paste', 'F.Mask']))
+    for layer, half_width, top, bottom in (
+        ('F.Fab', 1.95, -6.45, 6.65),
+        ('F.CrtYd', 2.2, -7.35, 7.35),
+    ):
+        fp.extend([
+            mkline(layer, -half_width, top, half_width, top, 0.05),
+            mkline(layer, half_width, top, half_width, bottom, 0.05),
+            mkline(layer, half_width, bottom, -half_width, bottom, 0.05),
+            mkline(layer, -half_width, bottom, -half_width, top, 0.05),
+        ])
+    fp.append(mktext('fp_text', '+12V TRAVA IN', -2.9, 0, 'F.SilkS',
+                     size=0.8, thickness=0.13, rot=90))
+    return fp
+
 def fp_soic8_ep():
     """SOIC-8 3.9x4.9 P1.27 + exposed pad 2.9x3.4 with 4 vias baked as separate pads."""
     fp = load('Package_SO', 'SOIC-8_3.9x4.9mm_P1.27mm')
@@ -363,8 +384,8 @@ d2 = P('D2', 'SS14', ('Diode_SMD', 'D_SMA'), 49.4, 70, 0).pin(1, '+5V').pin(2, '
 d3 = P('D3', 'SS14', ('Diode_SMD', 'D_SMA'), 68.75, 85.4, 0).pin(1, '+12V').pin(2, 'RELAY_COIL')  # lote 6: x-0.45 (69.2->68.75) — sai dos courtyards de D6 (+0.20) e R23 (+0.22), D6 fica | fix netlist: flyback da bobina do K1 estava INVERTIDO (pad 1 = catodo, verificado no D_SMA) — como estava, com o Q1 ligado o SS14 conduzia +12V->dreno->GND em paralelo com a bobina (curto no rail) e o turn-off ficava sem clamp; correto: K no +12V (A1 do K1), A no RELAY_COIL (dreno do Q1)
 d4 = P('D4', 'SMBJ18A', ('Diode_SMD', 'D_SMB'), 58.55, 84.3, 0).pin(1, '+12V').pin(2, 'GND')  # lote 4: courtyard 4.5mm nao cabe na faixa; frente do J5 (gap 0.14) e abaixo do K1 (gap 0.55); no caminho natural do +12V rumo a D3/J5
 d5 = P('D5', 'SS54', ('Diode_SMD', 'D_SMA'), 75.5, 44.5, 90).pin(1, 'SW').pin(2, 'GND')
-d6 = P('D6', 'SMBJ16A', ('Diode_SMD', 'D_SMB'), 76.1, 87, 0).pin(1, 'TRAVA_NO').pin(2, 'GND')  # original: cobre ate x=79.5, a 0.5mm da borda
-d7 = P('D7', 'M7', ('Diode_SMD', 'D_SMA'), 66, 91, 0).pin(1, 'TRAVA_NO').pin(2, 'GND')  # fix netlist: freewheel da trava estava invertido — como era, curto +12V->GND com o rele ligado
+d6 = P('D6', 'SMBJ16A', ('Diode_SMD', 'D_SMB'), 76.1, 87, 0).pin(1, 'TRAVA_NO').pin(2, 'GND_LOCK')
+d7 = P('D7', 'SS54', ('Diode_SMD', 'D_SMA'), 66, 91, 0).pin(1, 'TRAVA_NO').pin(2, 'GND_LOCK')
 d7.ref_pos(0, -4)
 
 # --- Fuses (back) ---
@@ -385,19 +406,10 @@ sw3.ref_pos(0, 4)
 # --- Connectors (back) ---
 j1 = P('J1', 'DC-005 12V', ('Connector_BarrelJack', 'BarrelJack_Horizontal'), 32, 85, 270)
 j1.pin(1, '+12V_IN').pin(2, 'GND').pin(3, 'GND')  # netfix3 (fechamento item 1): luva (pad 2) junto da chave (pad 3) em GND — duplo GND seguro nas 2 familias de pinout do PJ-102A (chave NC contra a luva, Barrel_Jack_Switch lib 9.0.2: folha a 0.254 da luva e 4.191 da ponta; ou 2a luva Pin3Ring); a unica familia destrutiva (NC contra a ponta) nao e atribuida ao PJ-102A e o passo 3 do roteiro de bancada detecta fisicamente — fallback de bancada: pin(3, '')
-j2 = P('J2', 'KF301 TRAVA', fp_kf301(), 74.8, 94.6, 90).pin(1, 'TRAVA_NO').pin(2, 'GND')
+j2 = P('J2', 'KF301 TRAVA', fp_kf301(), 74.8, 94.6, 90).pin(1, 'TRAVA_NO').pin(2, 'GND_LOCK')
 j2.ref_pos(0, -6)
-j8_fp = [
-    item for item in fp_kf301()
-    if not (isinstance(item, list) and item[0] == 'fp_line'
-            and getlist(item, 'layer')[0][1] == 'F.SilkS')
-]
-j8_fp.append(mktext('fp_text', '12V TRAVA IN +/-', 0, -5.7, 'F.SilkS',
-                    size=0.8, thickness=0.13))
-j8_fp.append(mktext('fp_text', '+', -2.54, 5.9, 'F.SilkS', size=1, thickness=0.15))
-j8_fp.append(mktext('fp_text', '-', 2.54, 5.9, 'F.SilkS', size=1, thickness=0.15))
-j8 = P('J8', 'KF301 12V TRAVA IN', j8_fp, 72.75, 79.25, 270, side='F')
-j8.pin(1, '+12V_LOCK_IN').pin(2, 'GND')
+j8 = P('J8', '2060-451/998-404', fp_wago_2060_451(), 67.5, 72, side='F')
+j8.pin(1, '+12V_LOCK_IN')
 j3 = P('J3', 'JST-XH NOTEIRO', ('Connector_JST', 'JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal'), 42.3, 89.5, 0)  # lote 6: x-1.2 — fileira JST desloca p/ esquerda (J3<->J4, J1<->J3)
 j3.pin(1, 'NOTE_SIG').pin(2, 'GND')
 j4 = P('J4', 'JST-XH MOEDEIRO', ('Connector_JST', 'JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal'), 50.85, 89.5, 0)  # lote 6: x-0.65 — J4<->J5/J3
@@ -552,10 +564,9 @@ CC('C20', '100nF', 63.7, 44.7, 0, 'EN', 'GND')  # lote 5: +0.2/+0.4 — sai dos 
 CC('C21', '100nF', 52.0, 72.5, 0, 'BTN1', 'GND')  # y+1.0: resolve D2<->C21
 CC('C22', '100nF', 63.5, 63.0, 0, 'BTN2', 'GND')  # lote 6: y+0.8 (62.2->63.0) — abre o teto do corredor SW
 CC('C23', '1uF', 69.3, 88.3, 180, '+3V3', 'GND')  # lote 5: so gira (90->180) — sai dos courtyards de D7/J2/D3/R23
-CC('C24', '100nF', 66.5, 94.5, 0, 'TRAVA_NO2', 'GND', fp_c1206_nosilk())  # fix netlist: pino 2 era TRAVA_NO3 (net orfa) — snubber RC fecha em GND, junto de D6/D7
+CC('C24', '100nF', 66.5, 94.5, 0, 'TRAVA_NO2', 'GND_LOCK', fp_c1206_nosilk())
 
-# snubber do contato: TRAVA_NO -> R23 -> TRAVA_NO2 (nó do RC) -> C24 -> GND,
-# em paralelo com D6 (TVS) e D7 (freewheel), todos no par TRAVA_NO/GND
+# Snubber e diodos retornam por J2.2 ao 0 V da fonte da trava.
 
 print('parts:', len(PARTS))
 print('U1 pads sample:', u1.pad_pos(1), u1.pad_pos(2), u1.pad_pos(21))

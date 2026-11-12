@@ -132,3 +132,14 @@ Registrar cada bloqueio e como foi resolvido (para não repetir em revisões fut
 - A lista por referência documenta peças mapeadas, candidatos e
   compras externas. A escolha final depende do estoque, do DFM
   e das conferências da [cotação](cotacao-pcba.md).
+
+### Rodada 23 — borne da trava e custo do piloto
+
+- J8 usa o borne SMD WAGO de 9 A. A geometria deixa livre a solda
+  de K1, com 0,700 mm de folga mínima medida no PCB.
+- O positivo entra em J8.1 e o fio de retorno da proteção sai em
+  J2.2. O negativo da trava retorna direto à fonte de 12 V.
+- O BOM compartilha o SS54 entre D1, D5 e D7. A via de VBUS de
+  J6 saiu da área soldável. Restam quatro vias em pads no verso.
+- O checklist mantém em aberto o DFM das vias, a caixa e o
+  ensaio com a trava. [Evidências](../validation/rodada23)
