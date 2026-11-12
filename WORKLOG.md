@@ -918,3 +918,37 @@ Saídas em [`validation/rodada21`](validation/rodada21), com logs de
 colocação antes e depois de cada item. A auditoria
 [`check_rodada21.py`](validation/check_rodada21.py) retorna 1
 enquanto houver via em pad SMD soldável.
+
+### Revisão pré-fabricação após a conferência de `7aa57a6`
+
+A aplicação usa 12 Vcc regulados em J1 e J8 e K1 de bobina 12 Vcc.
+Mantidos o Songle SRD-12VDC-SL-C e o PPTC F1 de 16 V para a entrada
+de 12 V especificada. O ensaio do contato e de D7 ficou explícito no
+roteiro de bancada. A ficha da Songle dá 7 A resistivos em 28 VDC
+para o Form C. A proteção em roda livre reduz a tensão de abertura
+e permite medir a comutação no circuito real.
+
+O desenho Littelfuse 452/454 e o cobre medido do footprint de F3
+coincidem em tamanho de pad e vão. A extensão de ponta a ponta mede
+6,87 mm no KiCad, diferença de 0,01 mm para a cota arredondada do
+fabricante. J8 e F3 ficam em F.Cu. A boca de J8 aponta para a borda
+direita e a de J2 aponta para o interior pelo verso. A altura do
+borne de 5,08 mm e a folga da caixa dependem do lote e do gabinete.
+A seção de caixa e chicote do checklist registra o que medir.
+
+A via de FB já estava em U2.5 no commit `2a5701e`, em
+(67,80; 46,80) mm. Foi deslocada para (68,15; 47,80) mm, com
+0,388 mm de folga mínima entre o anel e pads SMD. O ajuste das
+trilhas de FB e COMP_X preservou a distância projetada de
+2,480 mm de FB a SW e 1,472 mm de COMP_X a SW. FB passou de
+14,057 para 14,789 mm. SW permanece com 29,419 mm. D5 e L1
+mantêm suas posições. Se a bancada mostrar ruído ou EMI, revisar
+a colocação de D5/L1 em torno de U2 e encurtar a malha SW.
+
+A auditoria aponta cinco vias em pads, três em J6.A4/B9, C3.2
+e U2.3 e duas térmicas em U2.9. As posições e os furos para a
+consulta à montadora estão no [checklist pré-fabricação](docs/pre-fab-checklist.md).
+O tratamento das vias em duas camadas, a caixa e a qualificação
+do circuito de 5 A permanecem pendentes. O gate de vias continua
+retornando 1. O DRC KiCad 9.0.2 permanece em zero violações,
+zero desconectados e zero erros de footprint.

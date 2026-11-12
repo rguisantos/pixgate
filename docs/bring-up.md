@@ -1,7 +1,8 @@
 # Primeira energização do PixGate
 
-Use duas saídas de 12 Vcc com limitação de corrente. J1 alimenta a
-lógica, com positivo no centro. J8.1 (+) alimenta o ramo da trava e
+Use duas saídas de 12 Vcc reguladas com limitação de corrente.
+Confira a tensão das fontes em vazio, na partida e sob carga.
+J1 alimenta a lógica, com positivo no centro. J8.1 (+) alimenta o ramo da trava e
 J8.2 (−) é o retorno. Os retornos se unem na placa. Se as saídas
 compartilharem terra fora da placa, registre essa ligação e verifique
 se ela não fecha um caminho paralelo para a corrente da carga.
@@ -31,19 +32,25 @@ energizar. Desligue as fontes para mudar as conexões.
    longo dos pulsos. Capture no osciloscópio a queda e o ripple
    pico a pico de +5V e +3V3 antes, durante e depois do pulso.
    Use referência local de GND para os rails e ponta diferencial
-   para quedas entre nós ativos. Interrompa se houver sobrecorrente,
+   para medir diretamente entre COM e NO no fechamento e na abertura.
+   Observe se o contato abre após cada pulso e acompanhe a
+   temperatura de K1 ao longo de vários pulsos. Interrompa se houver sobrecorrente,
    reinício da lógica, contato colado ou aquecimento anormal.
 3. **Boot e reset.** Mantenha a carga fantasma. Confirme a ausência
    de pulsos de J2 e de acionamento de K1 ao ligar J1, no reset do
    ESP e ao desligar/religar as fontes em ordens diferentes.
    Repita após o ensaio de potência.
-4. **Solenoide real.** Libere este passo somente após os anteriores
-   e após qualificar K1 para a comutação indutiva de 5 A, D7 e seu
-   retorno para a recirculação repetitiva e F3 para a fonte e o
-   ambiente usados. O ensaio resistivo não confirma a vida dos
-   contatos com o solenoide. Com o solenoide autorizado, confirme o
-   pico, a duração do pulso, o transiente de abertura e o decaimento
-   de corrente em D7. Mantenha o intervalo mínimo de 30 s.
+4. **Solenoide real em bancada.** Depois dos ensaios anteriores e
+   da revisão da capacidade de K1, D7 e F3, repita com o solenoide
+   representativo em condição controlada, com fonte limitada.
+   Capture a tensão diferencial COM–NO e a corrente em um dos
+   condutores de J2 no mesmo disparo do osciloscópio. Registre o
+   pico, a corrente no instante da abertura, o transiente e o
+   decaimento após o desligamento. Confirme que K1 abre em cada
+   ciclo, registre temperatura e queda de contato ao longo dos
+   pulsos e mantenha o intervalo mínimo de 30 s. A produção exige
+   qualificação de comutação repetitiva com a carga representativa,
+   incluindo D7 e F3.
 
 Para cada ensaio, registre tensão e limitação das fontes, revisão e
 lote da placa, lote de K1/F3/D7, temperatura ambiente, corrente, quedas,

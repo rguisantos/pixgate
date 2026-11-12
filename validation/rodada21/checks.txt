@@ -169,7 +169,7 @@ Saved DRC Report to validation/drc/rodada21-drc.rpt
 exit=0
 
 $ /usr/bin/python3 hardware/check_routing.py
-==> Rotas encontradas: 802 segmentos
+==> Rotas encontradas: 803 segmentos
   net GND: 41 segs, 70.4 mm
   net CC1: 11 segs, 15.6 mm
   net CC2: 8 segs, 20.1 mm
@@ -198,9 +198,9 @@ $ /usr/bin/python3 hardware/check_routing.py
   net BTN2: 28 segs, 73.2 mm
   net EN: 22 segs, 55.8 mm
   net SW: 21 segs, 29.4 mm
-  net FB: 7 segs, 14.1 mm
+  net FB: 8 segs, 14.8 mm
   net BOOT_C: 6 segs, 3.7 mm
-  net COMP_X: 13 segs, 21.4 mm
+  net COMP_X: 13 segs, 21.7 mm
   net COMP_Y: 2 segs, 1.9 mm
   net LED_K: 7 segs, 27.2 mm
   net +5V: 30 segs, 60.9 mm
@@ -277,21 +277,21 @@ Wrote position data to '/workspace/scratch/0ca8e037e49b/pixgate-r21/hardware/fab
 
 OK — arquivos em /workspace/scratch/0ca8e037e49b/pixgate-r21/hardware/fab:
 total 948
-drwxr-xr-x 2 agent agent   4096 Nov 12 12:15 .
-drwxr-xr-x 4 agent agent   4096 Nov 12 12:15 ..
--rw-r--r-- 1 agent agent   3732 Nov 12 12:15 pixgate-BOM.csv
--rw-r--r-- 1 agent agent  13106 Nov 12 12:15 pixgate-B_Mask.gbs
--rw-r--r-- 1 agent agent  34693 Nov 12 12:15 pixgate-B_Silkscreen.gbo
--rw-r--r-- 1 agent agent    732 Nov 12 12:15 pixgate-Edge_Cuts.gm1
--rw-r--r-- 1 agent agent   4016 Nov 12 12:15 pixgate-F_Mask.gts
--rw-r--r-- 1 agent agent  22119 Nov 12 12:15 pixgate-F_Silkscreen.gto
--rw-r--r-- 1 agent agent 312372 Nov 12 12:15 pixgate-bottom_cu.gbl
--rw-r--r-- 1 agent agent 173955 Nov 12 12:15 pixgate-drl_map.gbr
--rw-r--r-- 1 agent agent   2562 Nov 12 12:15 pixgate-job.gbrjob
--rw-r--r-- 1 agent agent   5751 Nov 12 12:15 pixgate-pos.csv
--rw-r--r-- 1 agent agent 170906 Nov 12 12:15 pixgate-top_cu.gtl
--rw-r--r-- 1 agent agent   4153 Nov 12 12:15 pixgate.drl
--rw-r--r-- 1 agent agent 185157 Nov 12 12:15 pixgate.zip
+drwxr-xr-x 2 agent agent   4096 Nov 12 12:35 .
+drwxr-xr-x 4 agent agent   4096 Nov 12 12:35 ..
+-rw-r--r-- 1 agent agent   3732 Nov 12 12:35 pixgate-BOM.csv
+-rw-r--r-- 1 agent agent  13106 Nov 12 12:35 pixgate-B_Mask.gbs
+-rw-r--r-- 1 agent agent  34693 Nov 12 12:35 pixgate-B_Silkscreen.gbo
+-rw-r--r-- 1 agent agent    732 Nov 12 12:35 pixgate-Edge_Cuts.gm1
+-rw-r--r-- 1 agent agent   4016 Nov 12 12:35 pixgate-F_Mask.gts
+-rw-r--r-- 1 agent agent  22119 Nov 12 12:35 pixgate-F_Silkscreen.gto
+-rw-r--r-- 1 agent agent 313188 Nov 12 12:35 pixgate-bottom_cu.gbl
+-rw-r--r-- 1 agent agent 173955 Nov 12 12:35 pixgate-drl_map.gbr
+-rw-r--r-- 1 agent agent   2562 Nov 12 12:35 pixgate-job.gbrjob
+-rw-r--r-- 1 agent agent   5751 Nov 12 12:35 pixgate-pos.csv
+-rw-r--r-- 1 agent agent 169322 Nov 12 12:35 pixgate-top_cu.gtl
+-rw-r--r-- 1 agent agent   4154 Nov 12 12:35 pixgate.drl
+-rw-r--r-- 1 agent agent 184943 Nov 12 12:35 pixgate.zip
 
 Checklist pós-export:
   [ ] DRC final --severity-all: 0 violações (exceto unconnected=0)
@@ -305,3 +305,5 @@ pixgate-pos.csv: 79 referências, excluídos R26 e TP1–TP3; saída aprovada.
 Gerber ZIP verificado: pixgate-BOM.csv, pixgate-B_Mask.gbs, pixgate-B_Silkscreen.gbo, pixgate-Edge_Cuts.gm1, pixgate-F_Mask.gts, pixgate-F_Silkscreen.gto, pixgate-bottom_cu.gbl, pixgate-drl_map.gbr, pixgate-job.gbrjob, pixgate-pos.csv, pixgate-top_cu.gtl, pixgate.drl
 GND top_cu: 11 contornos preenchidos.
 GND bottom_cu: 18 contornos preenchidos.
+Trilhas ou vias alteradas frente a 7aa57a6: COMP_X, FB
+F3: pads (1.96, 3.15), passo 4.91, vão 2.95, extensão 6.87 mm.

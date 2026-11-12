@@ -39,8 +39,8 @@ Transição GND (65.25, 92.55): 3 vias.
 
 == Geometria do buck ==
 SW: 29.419 mm de trilha.
-FB: 14.057 mm de trilha.
-COMP_X: 21.367 mm de trilha.
+FB: 14.789 mm de trilha.
+COMP_X: 21.737 mm de trilha.
 FB–SW: 2.480 mm entre bordas de cobre em projeção, incluindo vias.
 COMP_X–SW: 1.472 mm entre bordas de cobre em projeção, incluindo vias.
 
@@ -74,11 +74,10 @@ ANTES C8.2 [GND] (78.8, 49.775)
 ANTES: 26 furos em pads SMD soldáveis.
 DEPOIS J6.A4 [USB_VBUS], J6.B9 [USB_VBUS] (26.64, 69.45)
 DEPOIS C3.2 [GND] (64.55, 43.175)
-DEPOIS U2.5 [FB] (67.8, 46.8)
 DEPOIS U2.9 [GND] (70.1, 44.2)
 DEPOIS U2.9 [GND] (70.1, 45.8)
 DEPOIS U2.3 [EN_BK] (72.05, 45.65)
-DEPOIS: 6 furos em pads SMD soldáveis.
+DEPOIS: 5 furos em pads SMD soldáveis.
 VIA MOVIDA GND (26.355, 75.15) → (28.4, 75.8), folga 1.0656 mm
 VIA MOVIDA USB_VBUS (26.64, 74.35) → (28.45, 74.25), folga 1.1200 mm
 VIA MOVIDA USB_VBUS (37.325, 71.575) → (38.25, 71.6), folga 0.2500 mm
@@ -88,6 +87,7 @@ VIA MOVIDA GND (56.1021, 84.242424) → (54.6, 84.25), folga 0.2500 mm
 VIA MOVIDA GND (62.85, 44.7) → (62.7, 43.7), folga 0.2250 mm
 VIA MOVIDA SW (66.3, 43.15) → (65.8, 43.7), folga 0.2051 mm
 VIA MOVIDA COMP_X (67.15, 51.175) → (66.55, 51.2), folga 0.2250 mm
+VIA MOVIDA FB (67.8, 46.8) → (68.15, 47.8), folga 0.3876 mm
 VIA MOVIDA GND (68.9, 44.2) → (68.9, 48.05), folga 0.5566 mm
 VIA MOVIDA GND (68.9, 45.8) → (69.5, 48.05), folga 1.0902 mm
 VIA MOVIDA SW (69.8, 52.0) → (68.6, 53.2), folga 0.2110 mm

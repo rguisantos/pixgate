@@ -115,3 +115,12 @@ Registrar cada bloqueio e como foi resolvido (para não repetir em revisões fut
 [Entrada 21 do WORKLOG](../WORKLOG.md#2026-11-12-21--alimentação-dedicada-da-trava-e-revisão-smt) ·
 [Primeira energização](bring-up.md) ·
 [Evidências](../validation/rodada21)
+
+### Revisão pré-fabricação da rodada 21
+
+- F3 conferido contra o land pattern Littelfuse 452/454.
+- 12 Vcc regulados em J1 e J8, com relé de bobina 12 Vcc.
+- Via de U2.5 fora do pad, com 0,388 mm de folga aos pads SMD.
+  Restam cinco vias em pads, incluindo as duas térmicas de U2.9.
+- DRC zero. Caixa, acabamento das vias e ensaio indutivo seguem
+  pendentes no [checklist](pre-fab-checklist.md).
