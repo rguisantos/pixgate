@@ -252,7 +252,7 @@ def fp_testpad(name):
     fp.append(mkpad(1, 'smd', 'circle', 0, 0, 1.6, 1.6, ['F.Cu', 'F.Mask', 'F.Paste']))
     # label on Fab layer to avoid silk_over_copper
     fp.append(mktext('fp_text', name, 0, 1.6, 'F.Fab', size=0.8, thickness=0.12))
-    fp.append(['attr', 'smd'])
+    fp.append(['attr', 'smd', 'exclude_from_bom', 'exclude_from_pos_files'])
     return fp
 
 def fp_mount_hole():
@@ -411,7 +411,7 @@ for pn in ('A1','B1','A12','B12'): j6.pin(pn, 'GND')
 for pn in ('A4','A9','B4','B9'): j6.pin(pn, 'USB_VBUS')
 j6.pin('A5', 'CC1').pin('B5', 'CC2')
 j6.pin('A6', 'USB_DP').pin('B6', 'USB_DP').pin('A7', 'USB_DN').pin('B7', 'USB_DN')
-j6.pin('A8', '').pin('B8', '')
+j6.pin('A8', '').pin('B8', '').pin('S1', 'GND')
 
 # --- J7: display socket (FRONT) ---
 j7 = P('J7', 'TFT 1.54', fp_display_socket(), 32, 56, 0, side='F')
