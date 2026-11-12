@@ -11,6 +11,8 @@ Executar ANTES de enviar os Gerbers para JLCPCB/PCBWay.
 
 ## Pendências para a primeira placa
 
+- [ ] Resolver a interferência de montagem entre J8 e K1 antes de
+  enviar os arquivos para fabricação.
 - [ ] Qualificar o ramo J8/F3/K1/J2 para 12 V, 5 A por 3 s, com
   intervalo mínimo de 30 s. F1 protege apenas a alimentação lógica.
 - [ ] Confirmar uma seção USB de 90 Ω com o empilhamento de produção.
@@ -78,6 +80,13 @@ Executar ANTES de enviar os Gerbers para JLCPCB/PCBWay.
 - [ ] **TPS54331DDA**: SOIC-8 + EP, pin 9 = GND (thermal via presente)
 
 ## Caixa e chicote
+
+Na revisão `6ff812b`, o centro do furo de J8.1 (72,75; 76,71) mm
+fica sob o corpo de K1 no verso. O centro do furo de K1.A2
+(71,20; 79,50) mm fica sob o corpo de J8 na frente. Os terminais e
+filetes de solda precisam de folga na face oposta. A montagem rente à
+placa está bloqueada até validar a geometria e o acesso à solda.
+[Revisão no PR #5](https://github.com/rguisantos/pixgate/pull/5)
 
 | Peça | Face | Acesso previsto no PCB |
 |---|---|---|

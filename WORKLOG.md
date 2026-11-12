@@ -983,3 +983,18 @@ valor do footprint. A versão N4 tem 4 MB de flash e a pinagem
 da família WROOM-1 usada pela placa. Antes de pedir a montagem,
 conferir a imagem, a tabela de partições e o uso de PSRAM no
 firmware do piloto. O firmware não está neste repositório.
+
+### Revisão mecânica para integração
+
+O PR #6 foi integrado em `rodada-21-potencia` por `6ff812b`.
+O PR #5 mantém aberta a interferência J8/K1. O terminal J8.1 em
+(72,75; 76,71) mm entra na projeção do corpo de K1 no verso, e
+K1.A2 em (71,20; 79,50) mm entra na projeção do corpo de J8
+na frente. O DRC elétrico não detecta esse conflito entre faces.
+
+Foram testadas posições e rotações do J8 com acesso pelo verso
+e J8.1 a até 15 mm de K1.COM. A busca não validou uma posição
+com os dois caminhos exigidos, a alimentação de pelo menos
+2 mm e o retorno local de pelo menos 3 mm. O PCB publicado
+permanece com a interferência. A cotação é preliminar até resolver
+a montagem do borne e do relé. [PR #5](https://github.com/rguisantos/pixgate/pull/5)
