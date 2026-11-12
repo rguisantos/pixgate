@@ -11,10 +11,15 @@ from pathlib import Path
 import pcbnew
 
 LAYERS = {"F": pcbnew.F_Cu, "B": pcbnew.B_Cu}
+UNITS_PER_MM = pcbnew.FromMM(1)
+
+
+def internal_units(value):
+    return round(value * UNITS_PER_MM)
 
 
 def point(coords):
-    return pcbnew.VECTOR2I(*(pcbnew.FromMM(value) for value in coords))
+    return pcbnew.VECTOR2I(*(internal_units(value) for value in coords))
 
 
 def apply(board, plan):
@@ -43,23 +48,23 @@ def apply(board, plan):
             item.SetViaType(pcbnew.VIATYPE_THROUGH)
             item.SetLayerPair(pcbnew.F_Cu, pcbnew.B_Cu)
             item.SetPosition(point(start))
-            item.SetWidth(pcbnew.F_Cu, pcbnew.FromMM(finish))
-            item.SetDrill(pcbnew.FromMM(size))
+            item.SetWidth(pcbnew.F_Cu, internal_units(finish))
+            item.SetDrill(internal_units(size))
         else:
             item = pcbnew.PCB_TRACK(board)
             item.SetLayer(LAYERS[kind])
             item.SetStart(point(start))
             item.SetEnd(point(finish))
-            item.SetWidth(pcbnew.FromMM(size))
+            item.SetWidth(internal_units(size))
         item.SetNet(net)
         item.m_Uuid.Clone(pcbnew.KIID(identifier))
         board.Add(item)
 
     for identifier, (clearance, gap, spoke) in plan["zone_settings"].items():
         zone = zones[identifier]
-        zone.SetLocalClearance(pcbnew.FromMM(clearance))
-        zone.SetThermalReliefGap(pcbnew.FromMM(gap))
-        zone.SetThermalReliefSpokeWidth(pcbnew.FromMM(spoke))
+        zone.SetLocalClearance(internal_units(clearance))
+        zone.SetThermalReliefGap(internal_units(gap))
+        zone.SetThermalReliefSpokeWidth(internal_units(spoke))
 
     for identifier, (reference, number, mode) in plan["pad_zone_connection"].items():
         actual_reference, pad = pads[identifier]
