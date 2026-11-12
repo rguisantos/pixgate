@@ -1,11 +1,24 @@
 # Primeira energização do PixGate
 
-Use duas saídas de 12 Vcc reguladas com limitação de corrente.
-Confira a tensão das fontes em vazio, na partida e sob carga.
-J1 alimenta a lógica, com positivo no centro. J8.1 (+) alimenta o ramo da trava e
-J8.2 (−) é o retorno. Os retornos se unem na placa. Se as saídas
-compartilharem terra fora da placa, registre essa ligação e verifique
-se ela não fecha um caminho paralelo para a corrente da carga.
+Use 12 Vcc regulados com limitação de corrente. Confira a tensão em
+vazio, na partida e sob carga. J1 alimenta a lógica, com positivo no
+centro. Ligue o ramo da trava como abaixo, usando o borne de 0 V da
+mesma fonte que alimenta J8.1.
+
+| Terminal | Ligação externa |
+|---|---|
+| J8.1 (+) | +12 V da fonte da trava |
+| J8.2 (−) | 0 V da fonte da trava, por um fio dedicado |
+| J2.1 (NO) | Fio positivo da trava |
+| J2.2 (GND) | Livre no chicote |
+| Fio negativo da trava | Direto ao borne de 0 V da fonte da trava |
+
+Com K1 fechado, a corrente volta à fonte pelo fio negativo da trava.
+Na abertura de K1, o fio de J8.2 mantém o caminho de recirculação
+pelo D7. Mantenha esse fio curto e dimensionado para a corrente
+transitória da trava. Se J1 compartilhar a fonte, leve seu 0 V ao
+borne da fonte por um fio separado e registre a ligação no ensaio.
+[Texas Instruments, recirculação e grampeamento de solenoides](https://www.ti.com/lit/an/slvae59a/slvae59a.pdf)
 
 J8 tem proteção por fusível, sem proteção ativa contra inversão. A
 serigrafia identifica a polaridade. J2 se destina a solenoide de um
@@ -19,8 +32,8 @@ energizar. Desligue as fontes para mudar as conexões.
    repouso e em TX. Confira se o buck inicia e se EN se mantém dentro
    do limite de 6 V da TI. Observe RLY_GATE e o contato do relé no
    primeiro boot antes de conectar uma carga.
-2. **Carga fantasma.** Com as fontes desligadas, conecte em J2 um
-   resistor de potência de aproximadamente 2,4 Ω, nominal de pelo
+2. **Carga fantasma.** Com as fontes desligadas, conecte entre J2.1
+   e o 0 V da fonte da trava um resistor de aproximadamente 2,4 Ω, nominal de pelo
    menos 60 W com a montagem e refrigeração indicadas pelo fabricante,
    ou uma lâmpada de 12 V com corrente compatível. O resistor dissipa
    60 W a 12 V e pode atingir temperatura elevada. A lâmpada pode
@@ -43,8 +56,8 @@ energizar. Desligue as fontes para mudar as conexões.
 4. **Solenoide real em bancada.** Depois dos ensaios anteriores e
    da revisão da capacidade de K1, D7 e F3, repita com o solenoide
    representativo em condição controlada, com fonte limitada.
-   Capture a tensão diferencial COM–NO e a corrente em um dos
-   condutores de J2 no mesmo disparo do osciloscópio. Registre o
+   Capture a tensão diferencial COM–NO e a corrente no fio de
+   J2.1 ou no negativo da trava no mesmo disparo do osciloscópio. Registre o
    pico, a corrente no instante da abertura, o transiente e o
    decaimento após o desligamento. Confirme que K1 abre em cada
    ciclo, registre temperatura e queda de contato ao longo dos

@@ -998,3 +998,13 @@ com os dois caminhos exigidos, a alimentação de pelo menos
 2 mm e o retorno local de pelo menos 3 mm. O PCB publicado
 permanece com a interferência. A cotação é preliminar até resolver
 a montagem do borne e do relé. [PR #5](https://github.com/rguisantos/pixgate/pull/5)
+
+### Chicote da trava com negativo direto na fonte
+
+O chicote liga o positivo do solenoide a J2.1 (NO) e seu negativo
+diretamente ao 0 V da fonte da trava. J2.2 fica livre. J8.1 recebe
+o +12 V e J8.2 vai ao mesmo 0 V por um fio dedicado, para manter o
+caminho de recirculação por D7 quando K1 abre. O ensaio com carga
+fantasma usa a mesma ligação. A revisão do chicote é documental e a
+interferência J8/K1 segue em aberto no PR #5.
+[Roteiro de bancada](docs/bring-up.md)

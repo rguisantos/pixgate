@@ -38,6 +38,8 @@ Executar ANTES de enviar os Gerbers para JLCPCB/PCBWay.
   médio e surto não repetitivo de 30 A. Medir decaimento e verificar a
   capacidade de pulso repetitivo da peça comprada. D6 (SMBJ16A) limita
   transientes positivos e R23/C24 (100 Ω/100 nF) amortecem a transição.
+  Conferir o fio dedicado de J8.2 ao 0 V da fonte, usado pelo D7
+  quando o negativo da trava retorna direto à fonte.
   D7 recebe a corrente de decaimento depois da comutação. O contato
   ainda abre com a corrente que estiver passando no fim do pulso.
   Medir tensão COM–NO, corrente na carga e temperatura de K1 em
@@ -95,6 +97,9 @@ placa está bloqueada até validar a geometria e o acesso à solda.
 | F3 | F.Cu | Corpo de até 2,94 mm acima da face da placa. |
 | J1 e K1 | B.Cu | Conferir acesso ao plugue de J1 e folga do corpo de K1 no verso. |
 
+- [ ] Montar o chicote com positivo da trava em J2.1 (NO), negativo
+  no 0 V da fonte de J8.1 e J2.2 livre. Conferir as ligações de J8.1
+  e J8.2 no [roteiro de bancada](bring-up.md).
 - [ ] Confirmar código e desenho do borne comprado, passo de 5,08 mm,
   altura instalada, acesso da chave e espaço de dobra do chicote com
   a tampa fechada. O nome comercial KF301 aparece também em peças
