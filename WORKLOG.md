@@ -1052,3 +1052,32 @@ Restam quatro vias em pads, em C3.2, U2.3 e duas em U2.9.
 O DRC elétrico passou. A auditoria de montagem permanece com
 saída 1 por essas quatro vias, pendentes de DFM.
 [Evidências da rodada](validation/rodada23)
+
+## 2026-11-12 (24) — Vias do buck e cotação de montagem
+
+Saíram dos pads soldáveis a via de GND de C3.2 e a via de EN de
+U2.3. A de C3.2 passou para (65,200; 43,000) mm, com folga de
+0,225 mm e conexão de 1,015 mm em B.Cu. O ramal +12V de C3.1
+foi encurtado de 2,434 para 1,778 mm. A via de EN passou para
+(73,460; 45,720) mm, com folga de 0,210 mm. A alimentação do
+buck passou pelo corredor oeste em trilha de 0,65 mm, com
+7,385 mm de cobre novo e uma transição. R26 continua DNP.
+
+As 87 posições e os 262 pads físicos do PCB foram preservados.
+Também ficaram iguais as redes SW, FB, COMP_X, USB_DP e USB_DN
+e as trilhas de potência e retorno da trava. Restam as duas
+vias térmicas de U2.9, com furo de 0,30 mm. O KiCad as exporta
+cobertas em F.Mask. A abertura de solda e a pasta do PowerPAD
+permanecem em B.Cu. Cotar a máscara no lado oposto ao PowerPAD
+com aprovação do DFM e verificar a junta no piloto. A auditoria
+estrita ainda sinaliza as duas vias no pad térmico.
+
+O SS14 de D2/D3 passou a Basic `C2480`, com economia nominal
+de US$ 3,07 de alimentador no Economic. C24 passou ao Samsung
+Basic `C24497`, com o mesmo valor, dielétrico, tolerância,
+tensão e encapsulamento. O catálogo passou a incluir os PTCs
+Littelfuse exatos de F1 e F2, `C3761685` e `C2154056`, como
+opção de compra e montagem em um pedido. A cotação compara o
+fornecimento direto com a compra externa desses dois Extended.
+[Cotação](docs/cotacao-pcba.md#custo-do-piloto) ·
+[Evidências](validation/rodada24)

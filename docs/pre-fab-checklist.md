@@ -17,7 +17,7 @@ Executar ANTES de enviar os Gerbers para JLCPCB/PCBWay.
 - [ ] Confirmar uma seção USB de 90 Ω com o empilhamento de produção.
   O match de comprimento passou, e a estimativa da seção atual ficou
   acima de 90 Ω.
-- [ ] Confirmar caixa, acesso aos bornes e tratamento das quatro vias em
+- [ ] Confirmar caixa, acesso aos bornes e tratamento das duas vias térmicas em
   pads soldáveis conforme as seções abaixo.
 
 [WORKLOG, entrada 20](../WORKLOG.md#2026-11-12-20--passe-manual-do-pixgate-v10)
@@ -114,21 +114,19 @@ com 0,388 mm de folga mínima do anel aos pads SMD e 2,480 mm entre
 o cobre de FB e SW. O nó SW permanece com 29,419 mm de trilha.
 No USB-C, a via de VBUS fica agora em (27,540; 69,810) mm, com
 0,214 mm entre o anel e o pad soldável mais próximo.
+Na rodada 24, a via de C3.2 passou para (65,200; 43,000) mm, com
+0,225 mm de folga. A via de U2.3 (EN_BK) passou para
+(73,460; 45,720) mm, com 0,210 mm de folga.
 
 | Pad | Rede | Centros no KiCad (mm) | Furo |
 |---|---|---|---|
-| C3.2 | GND | (64,550; 43,175) | Ø0,30 mm |
-| U2.3 | EN_BK | (72,050; 45,650) | Ø0,30 mm |
 | U2.9 | GND | (70,100; 44,200) e (70,100; 45,800) | Ø0,30 mm cada |
 
-- [ ] Pedir confirmação da fabricação de duas camadas com
-  preenchimento e capeamento em cobre das vias acima (IPC-4761
-  Tipo VII), com superfície plana e soldável no verso. Identificar
-  as quatro posições no desenho e confirmar o tratamento nos arquivos
-  de produção. As vias de C3 e EN precisam preservar a
-  superfície de solda. As duas vias de U2.9 são térmicas intencionais.
-  Para esse par, a TI também descreve a cobertura no lado oposto ao
-  PowerPAD, com o processo de pasta aprovado pela montadora.
+- [ ] Cotar fabricação de duas camadas com as vias de U2.9 cobertas
+  integralmente na face oposta ao PowerPAD (F.Mask). Confirmar
+  cobertura, pasta e refusão no DFM da montadora e verificar a junta
+  do piloto por raio X. Se o fornecedor exigir preenchimento e
+  capeamento (IPC-4761 Tipo VII), cotar essa opção.
   [JLCPCB, acabamentos de via](https://jlcpcb.com/help/article/pcb-via-covering) ·
   [TI, montagem do PowerPAD](https://www.ti.com/lit/an/slma004b/slma004b.pdf)
 

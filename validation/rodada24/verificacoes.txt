@@ -1,0 +1,110 @@
+9.0.2
+nets defined: 55
+parts: 87
+U1 pads sample: (61.0, 34.49) (61.0, 35.76) (43.5, 43.38)
+J6 A6: (26.354999999999997, 71.65) A7: (26.354999999999997, 72.15)
+J1 pads: (32.0, 85.0) (32.0, 91.0) (27.299999999999997, 88.0)
+OPT1 pads: (36.65, 74.5) (39.19, 74.5) (39.19, 82.12) (36.65, 82.12)
+== POLARIDADE (convencao: pad 1 = catodo K, pad 2 = anodo A):
+  ref   pad1(K)      pad2(A)      ok?
+  D1    +12V         F12V         OK   serie J1->F1->D1->rail +12V: K no rail
+  D2    +5V          USB_5V_F     OK   or-ing USB->+5V: K no rail
+  D3    +12V         RELAY_COIL   OK   flyback da bobina do K1 (Q1 low-side): K no +12V, A no noh do dreno
+  D4    +12V         GND          OK   TVS SMBJ18A do rail +12V: K no positivo
+  D5    SW           GND          OK   freewheel do buck TPS54331: K no noh SW, A no GND
+  D6    TRAVA_NO     GND_LOCK     OK   TVS SMBJ16A da saída da trava: K no positivo
+  D7    TRAVA_NO     GND_LOCK     OK   Roda livre da trava: K no positivo
+  LED1  LED_K        LED_A        OK   status: +3V3->R19 1k->LED(A->K)->GPIO25 (U1 pino 26) — R19 em serie com o anodo, GPIO25 direto no catodo; LOW acende (~1,3 mA), HIGH desliga
+
+== PINAGENS (J1/U4/Q1):
+  J1: 1=+12V_IN, 2=GND, 3=GND  ->  OK
+      (DC-005/PJ-102A (BarrelJack_Horizontal): 1=ponta, 2=luva, 3=lado da chave — luva e chave ambos em GND (duplo GND; chave NC contra a luva, lib 9.0.2))
+  U4: 1=USB_DP, 2=GND, 3=USB_DN, 4=USB_DN, 5=USB_VBUS, 6=USB_DP  ->  OK
+      (USBLC6-2SC6: linha 1 = pinos (1,6)=I/O1, linha 2 = (3,4)=I/O2, VBUS=5, GND=2)
+  Q1: 1=RLY_GATE, 2=GND, 3=RELAY_COIL  ->  OK
+      (AO3400A SOT-23: 1=G, 2=S (GND), 3=D (RELAY_COIL) — driver low-side do rele)
+
+== netmaps com pad inexistente no footprint:
+  (nenhum)
+
+== nets com menos de 2 pads (suspeitas):
+  (nenhuma)
+
+== total de nets declaradas: 54
+== nets com 2+ pads: 54
+== RESULTADO: LIMPO
+nets defined: 55
+parts: 87
+U1 pads sample: (61.0, 34.49) (61.0, 35.76) (43.5, 43.38)
+J6 A6: (26.354999999999997, 71.65) A7: (26.354999999999997, 72.15)
+J1 pads: (32.0, 85.0) (32.0, 91.0) (27.299999999999997, 88.0)
+OPT1 pads: (36.65, 74.5) (39.19, 74.5) (39.19, 82.12) (36.65, 82.12)
+
+✅ Sincronizado — gen_board.PARTS == pixgate.kicad_pcb
+Pads no gerador: 262. Pads na placa: 262.
+Registros divergentes de pads: 0 ausentes e 0 extras.
+Footprints no gerador: 87. Na placa: 87.
+==> Rotas encontradas: 805 segmentos
+  net GND: 28 segs, 38.2 mm
+  net CC1: 12 segs, 15.6 mm
+  net CC2: 8 segs, 20.1 mm
+  net RELAY_COIL: 4 segs, 13.2 mm
+  net TRAVA_NO: 18 segs, 51.0 mm
+  net RLY_GATE: 8 segs, 7.1 mm
+  net RLY_DRV: 16 segs, 63.5 mm
+  net IN_NOTE: 18 segs, 57.3 mm
+  net IN_COIN: 25 segs, 82.4 mm
+  net IN_BTN: 35 segs, 90.3 mm
+  net NOTE_A: 7 segs, 12.3 mm
+  net +12V_IN: 4 segs, 11.8 mm
+  net NOTE_SIG: 7 segs, 19.8 mm
+  net COIN_A: 6 segs, 12.1 mm
+  net COIN_SIG: 4 segs, 16.7 mm
+  net BTN_A: 5 segs, 8.9 mm
+  net BTN_SIG: 3 segs, 17.6 mm
+  net SCK_D: 6 segs, 12.5 mm
+  net MOSI_D: 4 segs, 12.6 mm
+  net DISP_DC: 9 segs, 38.2 mm
+  net DISP_CS: 8 segs, 39.4 mm
+  net DISP_RST: 7 segs, 16.6 mm
+  net +12V: 86 segs, 223.1 mm
+  net DISP_BL: 7 segs, 21.3 mm
+  net BTN1: 27 segs, 44.1 mm
+  net BTN2: 28 segs, 73.2 mm
+  net EN: 22 segs, 55.8 mm
+  net SW: 21 segs, 29.4 mm
+  net FB: 8 segs, 14.8 mm
+  net BOOT_C: 6 segs, 3.7 mm
+  net COMP_X: 13 segs, 21.7 mm
+  net COMP_Y: 2 segs, 1.9 mm
+  net LED_K: 7 segs, 27.2 mm
+  net +5V: 30 segs, 60.9 mm
+  net TX0: 4 segs, 8.9 mm
+  net RX0: 12 segs, 11.3 mm
+  net IO7_PU: 10 segs, 8.9 mm
+  net IO26_PU: 10 segs, 22.9 mm
+  net IO27_PU: 11 segs, 14.9 mm
+  net SCK_M: 12 segs, 24.3 mm
+  net MOSI_M: 12 segs, 37.8 mm
+  net EN_BK: 13 segs, 24.9 mm
+  net SS_C: 2 segs, 5.0 mm
+  net F12V: 3 segs, 8.9 mm
+  net USB_VBUS: 25 segs, 38.2 mm
+  net TRAVA_NO2: 7 segs, 11.3 mm
+  net LED_A: 2 segs, 2.6 mm
+  net +12V_LOCK_IN: 8 segs, 17.2 mm
+  net +12V_LOCK: 2 segs, 5.3 mm
+  net GND_LOCK: 12 segs, 28.3 mm
+  net USB_5V_F: 3 segs, 5.9 mm
+  net +3V3: 76 segs, 217.5 mm
+  net USB_DN: 43 segs, 53.4 mm
+  net USB_DP: 39 segs, 53.4 mm
+
+==> Larguras
+==> SW length
+==> FB length + distância do SW
+==> USB diff pair
+  USB diff pair: DP=53.37 DN=53.37 diff=0 µm ✓
+==> Optos isolamento
+
+✅ Todos os checks passaram

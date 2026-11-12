@@ -1,0 +1,8 @@
+Base imediata 06cb65e. 87 footprints e 262 pads idênticos.
+Alterações de roteamento: +12V, EN_BK, GND.
+Cobre de SW, FB, COMP_X, USB_DP, USB_DN, potência e proteção da trava idêntico.
+Via EN_BK: (72.05, 45.65) → (73.46, 45.72) mm.
+Via GND: (64.55, 43.175) → (65.2, 43.0) mm.
+U2.9 (70.100; 44.200) mm: furo Ø0,30 sem abertura no Gerber F.Mask.
+U2.9 (70.100; 45.800) mm: furo Ø0,30 sem abertura no Gerber F.Mask.
+PowerPAD de U2 continua aberto no Gerber B.Mask.

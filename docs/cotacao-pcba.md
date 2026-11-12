@@ -40,7 +40,7 @@ o jack J1, os parafusos de J2 e o acionador de J8.
 | U1 | `ESP32-C5-WROOM-1-N4`, 4 MB de flash, sem PSRAM, antena integrada. Código JLCPCB `C51950745`. | Confirmar o binário e a tabela de partições em 4 MB, incluindo os slots de OTA se usados e as áreas persistentes. O repositório de hardware não contém o firmware. A peça consta para Economic e Standard, sujeita ao estoque e à elegibilidade do restante do pedido. |
 | L1 | Candidato GLE `GCRH73-6R8MC`, `C439496`, de 6,8 µH ±20%, anunciado com 2 A e 62 mΩ. | O footprint KiCad tem corpo nominal de 7,3 × 7,3 × 3,5 mm, dois pads de 1,50 × 2,20 mm e passo de 6,40 mm. Confirmar terminais, altura, curvas de saturação e aquecimento com a ficha do lote. |
 | U3, C11 e C12 | Cotar o AMS1117-3.3 `C6186` e especificar os capacitores de saída junto com o regulador. | A ficha do AMS1117 apresenta 22 µF de tântalo como referência de estabilidade. Verificar a capacitância efetiva, ESR, proximidade e resposta a degrau com a configuração real. Se C12 for polarizado, o positivo é o pad 2. |
-| F1 e F2 | Cotações externas para Littelfuse `1206L110/16WR` e `1206L050/24WR`. | Confirmar fornecimento ou consignação. F1 protege a lógica de 12 V, F2 protege o USB. |
+| F1 e F2 | Littelfuse `1206L110/16WR` (`C3761685`) e `1206L050/24WR` (`C2154056`). | Os PTCs exatos constam no catálogo JLCPCB. Comparar montagem direta com fornecimento externo quando houver diferença de estoque ou preço. |
 | J1, J2 e J7 | Cotar pela geometria do desenho e da caixa. | Confirmar o contato comutado de J1, o passo de 5,08 mm em J2 e o soquete J7 1×8 de 2,54 mm. O display é um item separado. |
 | J8 | WAGO de 9 A `2060-451/998-404`, `C2765054`. | Confirmar o acesso ao chicote e o processo de refusão no lado frontal. A WAGO recomenda estêncil de 150 µm com a geometria dos pads. |
 | D7, K1 e F3 | SS54 SMA `C22439152` também usado em D1/D5, relé de 12 V `C30431` e fusível `C179008`. | Qualificar a combinação com a trava real a 5 A por 3 s. Medir o aquecimento de D7 e o tempo de retorno da trava. |
@@ -73,18 +73,32 @@ taxas de referência, sem montagem local, frete ou tributos.
 [Tabela de preços da JLCPCB](https://jlcpcb.com/help/article/pcb-assembly-price) ·
 [Ficha do borne WAGO](https://uk.misumi-ec.com/pdf/vona/el/WAG1/WAG1_2060-451_998-404_Datasheet_en_1.pdf)
 
+Na rodada 24, D2/D3 passam do SS14 Extended `C727050` para o
+SS14 Basic `C2480`. São duas posições e um único tipo de peça,
+com redução nominal de US$ 3,07 por pedido Economic na taxa de
+alimentador. C24 passa ao Samsung Basic `C24497` de 100 nF,
+50 V, X7R e 1206. O Cal-Chip anterior aparecia sem estoque na
+consulta. Os dois PTCs mapeados são Extended e podem acrescentar
+até US$ 6,14 em alimentadores se vierem da JLCPCB. Compare o
+total com o custo de comprar, enviar e montar os PTCs à parte.
+No Standard, a troca de Extended por Basic tem a mesma taxa de
+alimentador publicada. Confirmar estoque, taxas e preço por lote.
+[SS14 anterior](https://jlcpcb.com/partdetail/SS14/C727050) ·
+[SS14 Basic](https://jlcpcb.com/partdetail/C2480) ·
+[C24 Basic](https://jlcpcb.com/partdetail/CL31B104KBCNNNC/C24497)
+
 ## Confirmação de montagem nas duas camadas
 
-Anexe estas quatro posições à consulta de DFM. Todos os furos têm
-Ø0,30 mm e ficam em áreas soldáveis do verso. As duas vias U2.9
-são térmicas. Peça confirmação de preenchimento e capeamento em
-cobre, IPC-4761 Tipo VII, para **esta placa de duas camadas**,
-com inspeção do arquivo de produção.
+Anexe as duas vias térmicas de U2.9 à consulta de DFM.
+Ficam no PowerPAD soldável de B.Cu e têm furo de Ø0,30 mm.
+Para cotar a opção de duas camadas com processo padrão, peça
+validação da cobertura integral no lado oposto (F.Mask) e do
+estêncil de B.Paste, conforme a orientação de montagem do PowerPAD
+da TI. Se a montadora exigir preenchimento e capeamento,
+cote separadamente o processo IPC-4761 Tipo VII nessas coordenadas.
 
 | Pad | X no KiCad (mm) | Y no KiCad (mm) |
 |---|---:|---:|
-| C3.2 | 64,550 | 43,175 |
-| U2.3 | 72,050 | 45,650 |
 | U2.9 | 70,100 | 44,200 |
 | U2.9 | 70,100 | 45,800 |
 
@@ -93,6 +107,7 @@ usa a convenção Y invertida. A aprovação do processo, a inspeção
 da caixa e o ensaio com a carga indutiva continuam em aberto.
 O par USB também precisa de confirmação no empilhamento de produção.
 [Acabamentos de via da JLCPCB](https://jlcpcb.com/help/article/pcb-via-covering)
+· [TI, montagem do PowerPAD](https://www.ti.com/lit/an/slma004b/slma004b.pdf)
 
 ## Reprodução
 

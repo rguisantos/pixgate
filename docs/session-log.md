@@ -143,3 +143,12 @@ Registrar cada bloqueio e como foi resolvido (para não repetir em revisões fut
   J6 saiu da área soldável. Restam quatro vias em pads no verso.
 - O checklist mantém em aberto o DFM das vias, a caixa e o
   ensaio com a trava. [Evidências](../validation/rodada23)
+
+### Rodada 24 — vias do buck e custo do piloto
+
+- As vias de C3.2 e U2.3 saíram dos pads. As duas vias térmicas
+  do PowerPAD de U2.9 ficaram para validação de processo.
+- D2/D3 e C24 passam a itens Basic. F1 e F2 entram na cotação
+  com seus códigos exatos de catálogo.
+- O orçamento de montagem compara os alimentadores e o custo
+  de fornecer os PTCs à parte. [Evidências](../validation/rodada24)

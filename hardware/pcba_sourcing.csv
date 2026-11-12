@@ -9,20 +9,20 @@ C11,10uF,C_0805_2012Metric,validar,,,,10 µF 0805 junto à saída de U3. Especif
 C12,22uF,C_1206_3216Metric,validar,,,,"22 µF 1206 no rail de 3,3 V. Confirmar tecnologia e estabilidade de U3 com C11. Se polarizado, positivo no pad 2.",https://datasheet.lcsc.com/lcsc/1810231814_Advanced-Monolithic-Systems-AMS1117-1-2_C14529.pdf
 C14 C16 C18,10uF,C_0805_2012Metric,catalogo,CCTC,TCC0805X7R106K160FT,C380347,10 µF 16 V X7R 0805.,https://jlcpcb.com/partdetail/CCTC-TCC0805X7R106K160FT/C380347
 C23,1uF,C_0603_1608Metric,catalogo,Murata,GCM188R71E105KA64D,C85862,1 µF 25 V X7R 0603.,https://jlcpcb.com/partdetail/MurataElectronics-GCM188R71E105KA64D/C85862
-C24,100nF,C_1206_3216Metric_NoSilk,catalogo,Cal-Chip Electronics,GMC31X7R104K50NTD,C17345928,100 nF 50 V X7R 1206. Confirmar transiente com o solenoide.,https://jlcpcb.com/partdetail/18475092-GMC31X7R104K50NTD/C17345928
+C24,100nF,C_1206_3216Metric_NoSilk,catalogo,Samsung Electro-Mechanics,CL31B104KBCNNNC,C24497,"Basic, 100 nF 50 V X7R ±10% 1206. Confirmar transiente com o solenoide.",https://jlcpcb.com/partdetail/CL31B104KBCNNNC/C24497
 D1 D5 D7,SS54,D_SMA,catalogo,SINEDEVICE,SS54,C22439152,"Schottky 5 A 40 V SMA. Conferir cátodo e temperatura no buck. Em D7, qualificar a recirculação repetitiva e medir o tempo de retorno da trava.",https://jlcpcb.com/partdetail/SINEDEVICE-SS54/C22439152
-D2 D3,SS14,D_SMA,catalogo,TWGMC,SS14,C727050,Schottky 1 A 40 V SMA. Conferir cátodo.,https://jlcpcb.com/partdetail/SS14/C727050
+D2 D3,SS14,D_SMA,catalogo,MDD Microdiode Semiconductor,SS14,C2480,"Basic, Schottky 1 A 40 V SMA. Conferir cátodo.",https://jlcpcb.com/partdetail/C2480
 D4,SMBJ18A,D_SMB,catalogo,BORN,SMBJ18A,C152104,"TVS unidirecional 18 V SMB, cátodo no positivo.",https://jlcpcb.com/partdetail/BORN-SMBJ18A/C152104
 D6,SMBJ16A,D_SMB,catalogo,BORN,SMBJ16A,C151923,"TVS unidirecional 16 V SMB, cátodo em TRAVA_NO.",https://jlcpcb.com/partdetail/BORN-SMBJ16A/C151923
-F1,1206L110/16,Fuse_1206_3216Metric,externo,Littelfuse,1206L110/16WR,,"PPTC 16 V 1,10 A hold, 1206. Preservar a curva de derating do projeto.",https://www.digikey.com/en/products/detail/littelfuse-inc/1206L110-16WR/10671937
-F2,1206L050/24,Fuse_1206_3216Metric,externo,Littelfuse,1206L050/24WR,,"PPTC 24 V 0,50 A hold, 1206, para USB. Confirmar fornecimento ou consignação.",https://www.digikey.com/en/products/detail/littelfuse-inc/1206L050-24WR/6346988
+F1,1206L110/16,Fuse_1206_3216Metric,catalogo,Littelfuse,1206L110/16WR,C3761685,"PPTC exato, 16 V, 1,10 A hold, 1206. Conferir preço e estoque no carrinho.",https://jlcpcb.com/partdetail/Littelfuse-1206L11016WR/C3761685
+F2,1206L050/24,Fuse_1206_3216Metric,catalogo,Littelfuse,1206L050/24WR,C2154056,"PPTC exato, 24 V, 0,50 A hold, 1206, para USB. Conferir preço e estoque no carrinho.",https://jlcpcb.com/partdetail/Littelfuse-1206L05024WR/C2154056
 F3,0454007.MR,Fuse_Littelfuse-NANO2-451_453,catalogo,Littelfuse,0454007.MR,C179008,"Fusível 7 A de ação retardada, 75 V, 2410.",https://jlcpcb.com/partdetail/Littelfuse-0454007MR/C179008
 J1,DC-005 12V,BarrelJack_Horizontal,validar,JLCPCB Assembly,DC005(5.5X2.1),C9900024795,"Candidato DC-005 horizontal 5,5 × 2,1 mm. Conferir pino central positivo, contatos de luva/chave e encaixe na caixa.",https://jlcpcb.com/partdetail/JLCPCBAssembly-DC005_5_5X2_1/C9900024795
 J2,KF301 TRAVA,TerminalBlock_KF301-2P-5.08mm,validar,,,,"Borne horizontal KF301 2 polos, passo exato de 5,08 mm. Conferir desenho, altura e 5 A.",
 J3,JST-XH NOTEIRO,JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal,catalogo,JST,S2B-XH-A,C20089266,"JST XH horizontal, 2 polos, 2,50 mm.",https://jlcpcb.com/partdetail/JST_SALES_AMERICA_INC-S2B_XHA/C20089266
 J4,JST-XH MOEDEIRO,JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal,catalogo,JST,S2B-XH-A,C20089266,"JST XH horizontal, 2 polos, 2,50 mm.",https://jlcpcb.com/partdetail/JST_SALES_AMERICA_INC-S2B_XHA/C20089266
 J5,JST-XH BOTAO,JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal,catalogo,JST,S2B-XH-A,C20089266,"JST XH horizontal, 2 polos, 2,50 mm.",https://jlcpcb.com/partdetail/JST_SALES_AMERICA_INC-S2B_XHA/C20089266
-J6,USB-C,USB_C_Receptacle_HRO_TYPE-C-31-M-12,catalogo,HRO,TYPE-C-31-M-12,C165948,USB-C exato. Conferir a via no pad e a solda das fixações da blindagem.,https://jlcpcb.com/partdetail/C165948
+J6,USB-C,USB_C_Receptacle_HRO_TYPE-C-31-M-12,catalogo,HRO,TYPE-C-31-M-12,C165948,USB-C exato. Conferir a solda das fixações da blindagem.,https://jlcpcb.com/partdetail/C165948
 J7,TFT 1.54,DisplaySocket_1x08_P2.54mm,validar,,,,"Soquete fêmea reto 1×8 passo 2,54 mm. Display ST7789 1,54 polegada comprado à parte, conferir pinagem e altura.",
 J8,2060-451/998-404,TerminalBlock_WAGO_2060-451_1P,catalogo,WAGO,2060-451/998-404,C2765054,"Borne SMD de 9 A. Aplicar o perfil de refusão da WAGO. O fio de 0 V da proteção entra em J2.2.",https://jlcpcb.com/partdetail/WAGO-2060_451_998404/C2765054
 K1,SRD-12VDC-SL-C,Relay_SPDT_Songle_SRD,catalogo,Songle,SRD-12VDC-SL-C,C30431,"Bobina 12 Vcc, Form C. Validar contatos com a carga indutiva real.",https://jlcpcb.com/partdetail/SRD-12VDC-SL-C/C30431
