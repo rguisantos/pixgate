@@ -44,6 +44,7 @@ def build_silk_section():
     texts = [
         # frente: embaixo, entre os furos M3
         G.gr_text('PIX-GATE v1.0', 52.5, 97.5, 'F.SilkS', size=1.5, thickness=0.22),
+        G.gr_text('0V', 68.55, 97.14, 'B.SilkS', size=0.8, thickness=0.12),
         # verso: lateral esquerda, vertical - na camada Fab para evitar DRC silk
         G.gr_text('PIX-GATE v1.0  rguisantos 2026  CC-BY-SA', 38, 40, 'B.Fab',
                   size=1.0, thickness=0.15, rot=90),

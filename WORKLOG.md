@@ -764,3 +764,354 @@ checagem de endpoints existente.
 a placa de `ec2ead3`, usando a saída de cada passo como entrada do
 seguinte. Relatório de DRC em
 [`validation/drc/manual-routing-drc.rpt`](validation/drc/manual-routing-drc.rpt).
+
+## 2026-11-12 (21) — Alimentação dedicada da trava e revisão SMT
+
+Base `main@2a5701e`, branch `rodada-21-potencia`. Requisito de
+bancada de 12 V, pico de 5 A por 3 s, até um pulso a cada 30 s.
+Os 85 footprints existentes ficaram nas mesmas coordenadas, no
+mesmo lado e com a mesma rotação. D5 e L1 seguem congelados.
+
+### Alimentação da trava
+
+Adotada a opção A. J8 é um KF301 de dois polos, passo de 5,08 mm, na
+frente, com a identificação `12V TRAVA IN +/-` e sinais de
+polaridade ao lado dos pinos. A distância de centro a centro de
+J8.1 (72,75; 76,71) a K1.COM (73,20; 73,50) é 3,24 mm.
+J8.1 leva `+12V_LOCK_IN` até F3.1, antes do fusível. F3.2 leva
+`+12V_LOCK` a K1.COM. K1.A1, o buck e os demais consumidores
+continuam em `+12V`, via J1, F1 e D1. O capacitor DNP opcional
+foi omitido. As fontes compartilham a referência na placa.
+
+| Caminho | Resultado medido |
+|---|---|
+| J8.1 → F3.1, `+12V_LOCK_IN` | 2,00 mm, F.Cu |
+| F3.2 → K1.COM, `+12V_LOCK` | 2,00 mm, F.Cu |
+| K1.NO → J2.1 e derivações de D6/D7/R23, `TRAVA_NO` | 2,00 mm, F.Cu/B.Cu, quatro transições com três vias de 0,85/0,40 mm cada |
+| J2.2 → J8.2, incluindo D6.2/D7.2/C24.2 | 3,00 mm, F.Cu/B.Cu, duas transições com três vias de 0,85/0,40 mm cada |
+| Retorno local → plano de GND principal | Ligação única de 0,80 mm em F.Cu junto de J8.2, fora da rota do pulso de 5 A |
+| R23.2 → C24.1, `TRAVA_NO2` | 0,90 mm no ramo RC, separado do caminho de potência |
+
+A área `LOCK_RETURN_GAP` impede o preenchimento em volta do
+retorno nas duas camadas. A verificação de conectividade removeu
+a ligação única em memória e confirmou que J8.2, J2.2, D6.2, D7.2
+e C24.2 permanecem unidos e isolados do restante do GND. O circuito
+RC foi roteado pelo lado da frente no corredor de D7/C24 para
+liberar os 3 mm de retorno no verso. Uma costura separada mantém
+C23 no GND da lógica.
+
+**F3.** Selecionado Littelfuse `0454007.MR`, 454 NANO² Slo-Blo,
+7 A (+40% sobre 5 A) e 75 V. O corpo 6,10 × 2,69 mm é da classe
+2410. O footprint oficial `Fuse_Littelfuse-NANO2-451_453` tem pads
+de 1,96 × 3,15 mm, passo de 4,91 mm e vão de 2,95 mm, iguais ao
+land pattern publicado para o 454 dentro do arredondamento do
+desenho. A tabela especifica abertura em no mínimo 4 h a 100% da
+corrente nominal nas condições de teste. O pico de 5 A é 71,4%
+da nominal. A ficha indica aplicar redução térmica além dos 25%
+de derating para operação contínua. O cálculo do pulso retangular
+dá 5² × 3 = 75 A²s. O I²t nominal de 123,83 A²s foi obtido a
+8 ms e serve como referência de fusão rápida. Para o pulso de 3 s,
+o ponto de partida é a corrente versus tempo e o derating. A
+qualificação repetitiva no ambiente real, a capacidade de
+interrupção com a fonte escolhida e a coordenação em falha
+continuam pendentes de bancada.
+[Ficha Littelfuse 452/454](https://www.littelfuse.com/assetdocs/fuse-452-and-454-datasheet?assetguid=8c87aa93-80a7-4ea8-8749-a19ba03901c2)
+
+**F1 e orçamento da lógica.** Estimativa conservadora com USB
+desconectado, relé e três optos ativos, rádio em TX e backlight
+ligado. A corrente de 3,3 V entra quase inteira na carga de 5 V
+por U3, que é linear.
+
+| Carga | Hipótese para o orçamento |
+|---|---|
+| ESP32-C5-WROOM-1 | 403 mA de pico em TX de 5 GHz, 313 mA em 2,4 GHz |
+| Display e backlight | Reserva de 100 mA em 3,3 V. A documentação do módulo consultado não publica consumo máximo, portanto medir o lote |
+| Corrente de repouso de U3, LED e demais consumos de baixa tensão | Reserva conjunta de 20 mA |
+| Buck TPS54331 | 523 mA a 5 V. Hipóteses de 80% de eficiência e 10,5 V no rail de entrada após F1/D1 |
+| Bobina K1 | 30 mA nominais para L de 0,36 W. Usados 37,5 mA no orçamento como margem |
+| Três LEDs dos PC817 | Aproximadamente 14,7 mA com 2,2 kΩ por entrada e Vf típica de 1,2 V. Limite conservador sem Vf de 16,4 mA |
+
+Corrente de entrada estimada: (5 × 0,523)/(0,80 × 10,5) + 0,0375
++ 0,0147 ≈ **0,364 A**. O 1206L050/24 anterior cai de 0,50 A de
+hold a 20 °C para 0,35 A a 60 °C, com o limiar de 60% passando de
+0,30 A para 0,21 A. F1 passa a Littelfuse `1206L110/16` no mesmo
+footprint 1206. A ficha dá 1,10 A de hold a 20 °C, 0,80 A a 60 °C
+e 0,65 A a 70 °C. A 70 °C a estimativa fica em 56% do hold.
+J1 requer 12 V regulados. O limite de tensão de F1 é 16 V.
+Confirmar eficiência, picos e temperaturas na primeira placa.
+[Espressif, tabelas 6-4 e 6-5](https://documentation.espressif.com/esp32-c5-wroom-1_wroom-1u_datasheet_en.html) ·
+[Sharp PC817](https://altronics.cl/uploads/Sharp_Microelectronics-PC817-datasheet.pdf) ·
+[Songle SRD](https://datasheet4u.com/pdf-down/S/R/D/SRD-12VDC-xx-x_ETC.pdf) ·
+[Littelfuse 1206L, tabela de derating](https://www.littelfuse.cn/assetdocs/resettable-ptcs-1206l-datasheet?assetguid=2b6a1515-d4ee-4c83-8bd4-152b4901b8f5)
+
+### EN, montagem e proteções
+
+R26 ficou DNP e saiu do BOM e do CPL. U2.3 e R26.2 continuam em
+`EN_BK`. Com R26 ausente, a fonte de corrente interna habilita o
+TPS54331 por padrão. O máximo absoluto de EN é 6 V. Os três
+test points TP1–TP3 saíram do BOM e do CPL por atributo do
+footprint. Q1.1 mantém `RLY_GATE` com R4 de 10 kΩ para GND.
+[Texas Instruments TPS54331, §§6.1 e 7.3.2](https://www.ti.com/lit/ds/symlink/tps54331.pdf)
+
+Os quatro S1 de J6 vão diretamente ao GND. Isso dá ao escudo um
+caminho de descarga pelo cobre da placa. Uma descarga pode
+injetar ruído de modo comum no plano da lógica, que não tem
+chassi isolado. A imunidade ESD permanece por verificar no
+protótipo. O par USB preservou o casamento. A qualificação de
+90 Ω da rodada 20 continua aberta.
+
+Dos 26 furos iniciais em pads SMD soldáveis, 20 foram retirados
+dos pads com folga mínima de 0,20 mm entre a borda do anel da
+via e o pad. Seis ficaram abertos para revisão de montagem.
+
+| Pad | Rede | Centro da via (mm) | Motivo para manter aberto |
+|---|---|---|---|
+| J6.A4/B9 | USB_VBUS | (26,640; 69,450) | Escape fica entre a borda, os contatos intercalados e as fixações de J6. As rotas testadas não deram saída com a folga exigida. |
+| C3.2 | GND | (64,550; 43,175) | A via curta fecha o desacoplamento do buck. O único desvio testado que passou no DRC levava 6,19 mm até outra costura; não apareceu posição de via próxima com folga de 0,20 mm e contato com o plano. |
+| U2.3 | EN_BK | (72,050; 45,650) | O escape bilateral no entorno de U2 não fechou com a folga exigida. |
+| U2.5 | FB | (67,800; 46,800) | A alternativa com via fora do pad passou no DRC mas reduziu a separação FB–SW de 2,48 para 0,63 mm. Foi descartada para manter a separação do buck. |
+| U2.9 | GND | (70,100; 44,200) e (70,100; 45,800) | As duas vias térmicas centrais restantes mantêm o acoplamento direto do pad exposto. Os escapes externos testados não deram geometria equivalente. |
+
+Verificar tratamento de via em pad e compatibilidade com a pasta
+antes do lote SMT, inclusive no USB-C e no pad térmico de U2.
+O relatório registra ref/pad, net e posição antes e depois.
+O comprimento de SW passou de 27,407 para 29,419 mm com as saídas
+das vias de U2.8, C4.2 e L1.1. FB ficou em 14,057 mm e a menor
+distância de cobre FB–SW projetada ficou em 2,480 mm.
+COMP_X–SW ficou em 1,472 mm. As posições de D5 e L1 foram
+preservadas. Nenhum limite de `check_routing.py` foi alterado.
+Os valores históricos e a justificativa permanecem na entrada 20.
+
+A ficha Songle especifica 3 A indutivos a 28 VDC e L/R = 7 ms
+para o Form C. O K1 atual permanece no projeto, com a
+qualificação de 5 A indutivos pendente. D7 precisa suportar a
+corrente inicial de recirculação. A confirmação do display de
+oito vias e as condições de teste da trava estão no
+[checklist](docs/pre-fab-checklist.md) e no
+[roteiro de energização](docs/bring-up.md). Riscos de uso
+registrados: J8 invertido tem apenas o fusível como proteção,
+e J2 é para solenoide de um sentido.
+
+### Validação
+
+| Verificação | Resultado |
+|---|---|
+| Diff por pad contra `2a5701e` | 258 → 262 pads, zero diferenças inesperadas e zero footprints existentes movidos |
+| `net_audit.py`, `check_sync.py` e comparação integral de pads | 53 redes válidas, 87 footprints sincronizados, 262/262 pads e zero divergências |
+| `place_check.py` | Quatro sobreposições por projeção de caixas de cobre de lados opostos e uma sobreposição de bounding box OPT1/J1 preexistente |
+| KiCad 9.0.2, DRC com todas as severidades e erros de trilha | 0 violações, 0 desconectados, 0 vias pendentes e 0 erros de footprint |
+| Cobre de potência e retorno único | Passou pela medição e pelo teste de continuidade em memória |
+| `check_routing.py`, `validate_prefab.sh`, `export_gerbers.sh` | Exit 0 |
+| BOM/CPL | R26, TP1, TP2 e TP3 ausentes de ambos |
+| Vias em área soldável e qualificação da carga | Seis furos e os ensaios de K1/D7/F3 em aberto. Rodada sem liberação de fabricação em série |
+
+O `place_check.py` aproxima cada footprint por uma caixa de cobre,
+sem distinguir as camadas dos pads na projeção. Os quatro pares
+são K1/F3, K1/J8, F3/C13 e F3/C10. A caixa cobre áreas vazias
+entre pads, enquanto o DRC usa cobre, furos e contornos reais.
+A indicação OPT1/J1 de −0,170 mm já constava no baseline e o DRC
+não apontou sobreposição de courtyard. Conferir folga dos corpos
+do lote no primeiro protótipo. Há ainda 13 pares de courtyards em
+lados opostos listados como informativos pelo script.
+
+Saídas em [`validation/rodada21`](validation/rodada21), com logs de
+colocação antes e depois de cada item. A auditoria
+[`check_rodada21.py`](validation/check_rodada21.py) retorna 1
+enquanto houver via em pad SMD soldável.
+
+### Revisão pré-fabricação após a conferência de `7aa57a6`
+
+A aplicação usa 12 Vcc regulados em J1 e J8 e K1 de bobina 12 Vcc.
+Mantidos o Songle SRD-12VDC-SL-C e o PPTC F1 de 16 V para a entrada
+de 12 V especificada. O ensaio do contato e de D7 ficou explícito no
+roteiro de bancada. A ficha da Songle dá 7 A resistivos em 28 VDC
+para o Form C. A proteção em roda livre reduz a tensão de abertura
+e permite medir a comutação no circuito real.
+
+O desenho Littelfuse 452/454 e o cobre medido do footprint de F3
+coincidem em tamanho de pad e vão. A extensão de ponta a ponta mede
+6,87 mm no KiCad, diferença de 0,01 mm para a cota arredondada do
+fabricante. J8 e F3 ficam em F.Cu. A boca de J8 aponta para a borda
+direita e a de J2 aponta para o interior pelo verso. A altura do
+borne de 5,08 mm e a folga da caixa dependem do lote e do gabinete.
+A seção de caixa e chicote do checklist registra o que medir.
+
+A via de FB já estava em U2.5 no commit `2a5701e`, em
+(67,80; 46,80) mm. Foi deslocada para (68,15; 47,80) mm, com
+0,388 mm de folga mínima entre o anel e pads SMD. O ajuste das
+trilhas de FB e COMP_X preservou a distância projetada de
+2,480 mm de FB a SW e 1,472 mm de COMP_X a SW. FB passou de
+14,057 para 14,789 mm. SW permanece com 29,419 mm. D5 e L1
+mantêm suas posições. Se a bancada mostrar ruído ou EMI, revisar
+a colocação de D5/L1 em torno de U2 e encurtar a malha SW.
+
+A auditoria aponta cinco vias em pads, três em J6.A4/B9, C3.2
+e U2.3 e duas térmicas em U2.9. As posições e os furos para a
+consulta à montadora estão no [checklist pré-fabricação](docs/pre-fab-checklist.md).
+O tratamento das vias em duas camadas, a caixa e a qualificação
+do circuito de 5 A permanecem pendentes. O gate de vias continua
+retornando 1. O DRC KiCad 9.0.2 permanece em zero violações,
+zero desconectados e zero erros de footprint.
+
+## 2026-11-12 (22) — Arquivos para cotar a montagem
+
+Base elétrica `972d7fd`. O pacote usa o mesmo PCB e separa o
+perfil completo de 79 posições do híbrido com 65 posições no verso.
+Na opção híbrida, 14 posições são finalizadas no Brasil. A exportação
+agora inclui as camadas de pasta e um CPL SMT do verso. O gerador da
+cotação cruza os dois CPLs, o BOM do projeto e a lista de compras,
+mantendo os valores e a rotação exportada pelo KiCad.
+
+A lista de compras cobre todas as posições. Sessenta posições do
+perfil completo e 54 do híbrido têm código de catálogo. Para o
+restante, o pacote registra a seleção manual, fornecimento externo
+ou confirmação exigida para o componente. O ESP32-C5-WROOM-1-N8R8
+é o candidato para os 8 MB de flash, com o pad 19 sem rede nesta
+placa. A montagem precisa confirmar o sufixo e a imagem de firmware.
+L1 tem candidato de 6,8 µH e dimensões nominais registradas. A
+estabilidade do AMS1117 com C11/C12 entra no roteiro de validação.
+
+O pacote serve para comparar fornecedores. A confirmação de DFM
+das cinco vias em pads, a caixa, a impedância USB e a qualificação
+com a carga real continuam no checklist. [Cotação de montagem](docs/cotacao-pcba.md)
+
+### Cotação do piloto com ESP32-C5 de 4 MB
+
+U1 passa a `ESP32-C5-WROOM-1-N4`, código JLCPCB `C51950745`,
+para cotar o piloto. A alteração do PCB se limita ao texto de
+valor do footprint. A versão N4 tem 4 MB de flash e a pinagem
+da família WROOM-1 usada pela placa. Antes de pedir a montagem,
+conferir a imagem, a tabela de partições e o uso de PSRAM no
+firmware do piloto. O firmware não está neste repositório.
+
+### Revisão mecânica para integração
+
+O PR #6 foi integrado em `rodada-21-potencia` por `6ff812b`.
+O PR #5 mantém aberta a interferência J8/K1. O terminal J8.1 em
+(72,75; 76,71) mm entra na projeção do corpo de K1 no verso, e
+K1.A2 em (71,20; 79,50) mm entra na projeção do corpo de J8
+na frente. O DRC elétrico não detecta esse conflito entre faces.
+
+Foram testadas posições e rotações do J8 com acesso pelo verso
+e J8.1 a até 15 mm de K1.COM. A busca não validou uma posição
+com os dois caminhos exigidos, a alimentação de pelo menos
+2 mm e o retorno local de pelo menos 3 mm. O PCB publicado
+permanece com a interferência. A cotação é preliminar até resolver
+a montagem do borne e do relé. [PR #5](https://github.com/rguisantos/pixgate/pull/5)
+
+### Chicote da trava com negativo direto na fonte
+
+O chicote liga o positivo do solenoide a J2.1 (NO) e seu negativo
+diretamente ao 0 V da fonte da trava. J2.2 fica livre. J8.1 recebe
+o +12 V e J8.2 vai ao mesmo 0 V por um fio dedicado, para manter o
+caminho de recirculação por D7 quando K1 abre. O ensaio com carga
+fantasma usa a mesma ligação. A revisão do chicote é documental e a
+interferência J8/K1 segue em aberto no PR #5.
+[Roteiro de bancada](docs/bring-up.md)
+
+### Acionamento pelo botão de liberação
+
+O botão de contato seco em J5 comanda o pulso de 12 V da trava.
+O firmware deve usar 3 s como padrão, com duração configurável.
+O solenoide recolhe a trava enquanto energizado. Quando K1 abre,
+a mola faz o retorno à posição inicial. O roteiro de bancada
+passa a medir o tempo de acionamento e o retorno mecânico. A
+validação do firmware e os ensaios da trava seguem pendentes.
+[Roteiro de bancada](docs/bring-up.md#acionamento-da-trava)
+
+## 2026-11-12 (23) — Montagem do J8 e custo do piloto
+
+O WAGO 2060-451/998-404 substitui o KF301 de dois polos em J8.
+O novo corpo SMD de 9 A, com 4,5 mm de altura, fica em (67,50; 72,00)
+mm na frente. Os dois terminais de solda do único polo usam pads de
+2,50 × 2,60 mm, separados por 11,60 mm entre centros, conforme o
+desenho da WAGO. O cobre liga ambos os pads a F3.1. A menor folga
+entre o corpo de J8 e um pad de solda de K1 na face oposta mede
+0,700 mm. O acesso ao chicote na caixa precisa de conferência física.
+[Desenho WAGO](https://uk.misumi-ec.com/pdf/vona/el/WAG1/WAG1_2060-451_998-404_Datasheet_en_1.pdf)
+
+J8 recebe só o positivo. O negativo da trava vai direto à fonte.
+J2.2 passa a ser o retorno dedicado de D6, D7 e C24, ligado ao
+mesmo 0 V da fonte por um fio do chicote. A rede GND_LOCK fica
+separada do GND da lógica no PCB, com separação mínima medida de
+0,250 mm. Os três caminhos de potência mantêm 2,00 mm. O retorno
+J2.2 → D6/D7/C24 mantém 3,00 mm. As transições usam três vias
+cada. A entrada J8 a F3 ganhou três dessas transições.
+
+D7 passa de M7 para o SS54 SMA de D1/D5, 5 A e 40 V. A peça
+compartilhada reduz um tipo de diodo na montagem. O ensaio com
+a carga real precisa medir o aquecimento, o decaimento de corrente
+e o tempo de retorno pela mola. A hipótese de economia de
+alimentador e o comparativo de montagem de uma e duas faces
+estão na [cotação](docs/cotacao-pcba.md#custo-do-piloto).
+
+A via de VBUS saiu dos pads de J6 para (27,540; 69,810) mm,
+com folga de 0,214 mm à área soldável. Foi necessário desviar
+localmente CC1. A geometria de USB_DP e USB_DN permaneceu igual.
+Restam quatro vias em pads, em C3.2, U2.3 e duas em U2.9.
+O DRC elétrico passou. A auditoria de montagem permanece com
+saída 1 por essas quatro vias, pendentes de DFM.
+[Evidências da rodada](validation/rodada23)
+
+## 2026-11-12 (24) — Vias do buck e cotação de montagem
+
+Saíram dos pads soldáveis a via de GND de C3.2 e a via de EN de
+U2.3. A de C3.2 passou para (65,200; 43,000) mm, com folga de
+0,225 mm e conexão de 1,015 mm em B.Cu. O ramal +12V de C3.1
+foi encurtado de 2,434 para 1,778 mm. A via de EN passou para
+(73,460; 45,720) mm, com folga de 0,210 mm. A alimentação do
+buck passou pelo corredor oeste em trilha de 0,65 mm, com
+7,385 mm de cobre novo e uma transição. R26 continua DNP.
+
+As 87 posições e os 262 pads físicos do PCB foram preservados.
+Também ficaram iguais as redes SW, FB, COMP_X, USB_DP e USB_DN
+e as trilhas de potência e retorno da trava. Restam as duas
+vias térmicas de U2.9, com furo de 0,30 mm. O KiCad as exporta
+cobertas em F.Mask. A abertura de solda e a pasta do PowerPAD
+permanecem em B.Cu. Cotar a máscara no lado oposto ao PowerPAD
+com aprovação do DFM e verificar a junta no piloto. A auditoria
+estrita ainda sinaliza as duas vias no pad térmico.
+
+O SS14 de D2/D3 passou a Basic `C2480`, com economia nominal
+de US$ 3,07 de alimentador no Economic. C24 passou ao Samsung
+Basic `C24497`, com o mesmo valor, dielétrico, tolerância,
+tensão e encapsulamento. O catálogo passou a incluir os PTCs
+Littelfuse exatos de F1 e F2, `C3761685` e `C2154056`, como
+opção de compra e montagem em um pedido. A cotação compara o
+fornecimento direto com a compra externa desses dois Extended.
+[Cotação](docs/cotacao-pcba.md#custo-do-piloto) ·
+[Evidências](validation/rodada24)
+
+## 2026-11-12 (25) — BOM de cotação e processo do PowerPAD
+
+U3 passa a TI TLV1117LV33DCYR, de 3,3 V. A pinagem SOT-223
+mantém GND no pino 1, saída no pino 2 e na aba e entrada no
+pino 3. A ficha prevê saída cerâmica com pelo menos 1 µF
+nominal e mais de 0,5 µF efetivo. C11 local de 10 µF passa a
+compartilhar o MPN de C14/C16/C18. C12 de 22 µF compartilha o
+MPN de C10. As duas posições aproveitam os alimentadores já
+previstos. O piloto deve registrar partida, temperatura e
+resposta em TX nos dois modos de alimentação, com até 5,5 V
+na entrada de U3.
+[Ficha TI](https://www.ti.com/lit/ds/symlink/tlv1117lv.pdf)
+
+SW1–SW3 usam o mesmo código C&K de terminal G e atuador de
+7 mm, conferido contra os pads. R23 entra como Panasonic
+ERJ-P08D1000V de 100 Ω e 0,66 W, com curva de pulso para
+qualificar no ensaio da trava. A cobertura de catálogo passa
+de 58 para 64 das 65 posições híbridas e de 65 para 71 das
+79 posições completas. L1 segue em aberto no híbrido, por
+falta de desenho de terminais e dados de saturação validados.
+O preço de amostra do ESP32-C5 de 4 MB e o ponto de equilíbrio
+do custo fixo por lote estão na [cotação](docs/cotacao-pcba.md).
+
+O diff do PCB altera somente o valor de U3. Os 87 footprints,
+os 262 pads e toda a geometria de fabricação foram preservados.
+O KiCad 9.0.2 retorna 0 violações, 0 desconectados e 0 erros de
+footprint. Os gates e a exportação passam. O `place_check`
+repete os apontamentos geométricos da base. A auditoria estrita
+continua em saída 1 pelas duas vias térmicas de U2.9. A
+[consulta DFM](docs/dfm-piloto.md) identifica a cobertura em
+F.Mask e a coincidência com as aberturas de B.Paste para a
+montadora avaliar o processo de duas camadas.
+[Evidências](validation/rodada25)

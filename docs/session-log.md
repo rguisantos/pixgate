@@ -102,3 +102,65 @@ Registrar cada bloqueio e como foi resolvido (para não repetir em revisões fut
 - [ ] Selecionar a seção do par USB para 90 Ω e conferir o processo para vias em pads antes do lote.
 
 [Entrada 20 do WORKLOG](../WORKLOG.md#2026-11-12-20--passe-manual-do-pixgate-v10)
+
+## Rodada 21 — Ramo da trava e montagem
+
+| Área | Resultado |
+|---|---|
+| Potência | J8 e F3 alimentam K1.COM. Ida de 2 mm e retorno local de 3 mm, ligado ao plano principal em um ponto. |
+| Lógica | F1 de 1,10 A nominal no ramo J1. R26 DNP. Pull-down de 10 kΩ preservado em RLY_GATE. |
+| SMT e USB | TP1–TP3 fora de BOM/CPL. Quatro pads de blindagem de J6 ligados ao GND. Seis vias em pads soldáveis permanecem documentadas. |
+| Validação | Zero violações, desconectados e erros de footprint no KiCad 9.0.2. Gate de montagem e ensaio indutivo continuam abertos. |
+
+[Entrada 21 do WORKLOG](../WORKLOG.md#2026-11-12-21--alimentação-dedicada-da-trava-e-revisão-smt) ·
+[Primeira energização](bring-up.md) ·
+[Evidências](../validation/rodada21)
+
+### Revisão pré-fabricação da rodada 21
+
+- F3 conferido contra o land pattern Littelfuse 452/454.
+- 12 Vcc regulados em J1 e J8, com relé de bobina 12 Vcc.
+- Via de U2.5 fora do pad, com 0,388 mm de folga aos pads SMD.
+  Restam cinco vias em pads, incluindo as duas térmicas de U2.9.
+- DRC zero. Caixa, acabamento das vias e ensaio indutivo seguem
+  pendentes no [checklist](pre-fab-checklist.md).
+
+### Rodada 22 — cotação de montagem
+
+- Gerbers com pasta nas duas faces e dois pares de BOM/CPL para
+  comparar montagem completa e híbrida.
+- A lista por referência documenta peças mapeadas, candidatos e
+  compras externas. A escolha final depende do estoque, do DFM
+  e das conferências da [cotação](cotacao-pcba.md).
+
+### Rodada 23 — borne da trava e custo do piloto
+
+- J8 usa o borne SMD WAGO de 9 A. A geometria deixa livre a solda
+  de K1, com 0,700 mm de folga mínima medida no PCB.
+- O positivo entra em J8.1 e o fio de retorno da proteção sai em
+  J2.2. O negativo da trava retorna direto à fonte de 12 V.
+- O BOM compartilha o SS54 entre D1, D5 e D7. A via de VBUS de
+  J6 saiu da área soldável. Restam quatro vias em pads no verso.
+- O checklist mantém em aberto o DFM das vias, a caixa e o
+  ensaio com a trava. [Evidências](../validation/rodada23)
+
+### Rodada 24 — vias do buck e custo do piloto
+
+- As vias de C3.2 e U2.3 saíram dos pads. As duas vias térmicas
+  do PowerPAD de U2.9 ficaram para validação de processo.
+- D2/D3 e C24 passam a itens Basic. F1 e F2 entram na cotação
+  com seus códigos exatos de catálogo.
+- O orçamento de montagem compara os alimentadores e o custo
+  de fornecer os PTCs à parte. [Evidências](../validation/rodada24)
+
+### Rodada 25 — BOM de cotação e processo do PowerPAD
+
+- U3 passa ao TLV1117LV33DCYR. C11 e C12 passam a compartilhar
+  dois códigos já previstos no BOM.
+- R23 tem código antissurto exato. SW1–SW3 usam um código C&K
+  compatível com os pads. O híbrido tem 64 de 65 posições com
+  código de catálogo. L1 continua em seleção.
+- O DRC passa e a geometria de fabricação é idêntica à da
+  rodada 24. A [consulta DFM](dfm-piloto.md) descreve a máscara
+  e a pasta sobre as duas vias térmicas de U2.9.
+  [Evidências](../validation/rodada25)

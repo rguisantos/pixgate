@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Gera Gerbers, drill, posição e BOM do PixGate para JLCPCB/PCBWay.
 #
-# Uso: ./hardware/export_gerbers.sh
+# Uso: ./hardware/export_gerbers.sh [diretório de saída]
 # Saída: hardware/fab/
 #
 # Requer: kicad-cli 9.x no PATH, python3.
@@ -10,7 +10,7 @@ set -euo pipefail
 
 HW="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PCB="$HW/pixgate.kicad_pcb"
-FAB="$HW/fab"
+FAB="${1:-$HW/fab}"
 
 if [[ ! -f "$PCB" ]]; then
   echo "ERRO: $PCB não existe" >&2
@@ -23,11 +23,12 @@ if ! command -v kicad-cli &> /dev/null; then
 fi
 
 mkdir -p "$FAB"
+FAB="$(cd "$FAB" && pwd)"
 
 echo "==> Gerbers"
 kicad-cli pcb export gerbers \
   --output "$FAB/" \
-  --layers "F.Cu,B.Cu,F.SilkS,B.SilkS,F.Mask,B.Mask,Edge.Cuts" \
+  --layers "F.Cu,B.Cu,F.SilkS,B.SilkS,F.Mask,B.Mask,F.Paste,B.Paste,Edge.Cuts" \
   --no-x2 --subtract-soldermask \
   "$PCB"
 
@@ -48,6 +49,17 @@ kicad-cli pcb export pos \
   --units mm \
   --use-drill-file-origin \
   --side both \
+  --exclude-dnp \
+  "$PCB"
+
+kicad-cli pcb export pos \
+  --output "$FAB/pixgate-pos-bottom-smt.csv" \
+  --format csv \
+  --units mm \
+  --use-drill-file-origin \
+  --side back \
+  --smd-only \
+  --exclude-dnp \
   "$PCB"
 
 echo "==> BOM"

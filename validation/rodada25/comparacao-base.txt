@@ -1,0 +1,2 @@
+Base imediata c691758. Diferença única no PCB: propriedade Value de U3.
+87 footprints, 262 pads, netlist, trilhas, vias, zonas, máscara e pasta idênticos.

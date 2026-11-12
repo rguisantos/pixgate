@@ -1,0 +1,17 @@
+Base imediata 2671ede. 87 footprints, 262 pads, alterações previstas.
+Antes
+  C24.2 (64.900, 94.500) GND ×1
+  D6.2 (73.950, 87.000) GND ×1
+  D7.2 (64.000, 91.000) GND ×1
+  J2.2 (74.800, 97.140) GND ×1
+  J8.1 (72.750, 76.710) +12V_LOCK_IN ×1
+  J8.2 (72.750, 81.790) GND ×1
+Depois
+  C24.2 (64.900, 94.500) GND_LOCK ×1
+  D6.2 (73.950, 87.000) GND_LOCK ×1
+  D7.2 (64.000, 91.000) GND_LOCK ×1
+  J2.2 (74.800, 97.140) GND_LOCK ×1
+  J8.1 (67.500, 66.200) +12V_LOCK_IN ×1
+  J8.1 (67.500, 77.800) +12V_LOCK_IN ×1
+J8 foi o único footprint reposicionado. D7 conserva footprint e posição.
+SW, FB, COMP_X, USB_DP e USB_DN têm as mesmas trilhas e vias.

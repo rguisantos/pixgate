@@ -1,0 +1,19 @@
+==> DRC --severity-all
+Found 0 violations
+Found 0 unconnected items
+Saved DRC Report to /tmp/drc-prefab.rpt
+==> Validação pré-fab
+  unconnected_items:  0  (esperado 0)
+  via_dangling:       0  (esperado 0)
+  shorting_items:     0  (esperado 0)
+  clearance:          0  (esperado 0)
+  hole_clearance:     0  (esperado 0)
+  hole_to_hole:       0  (esperado 0)
+  copper_edge:        0  (esperado 0)
+  courtyards_overlap: 0  (esperado 0)
+  silk_overlap:       0  (esperado 0)
+  silk_over_copper:   0  (esperado 0)
+  silk_edge_clearance: 0  (esperado 0)
+  nonmirrored_text:    0  (esperado 0)
+
+✅ Pronto para export_gerbers.sh
