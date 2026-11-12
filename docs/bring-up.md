@@ -25,6 +25,20 @@ serigrafia identifica a polaridade. J2 se destina a solenoide de um
 sentido. Confirme a orientação dos cabos com o multímetro antes de
 energizar. Desligue as fontes para mudar as conexões.
 
+## Acionamento da trava
+
+Ligue o botão de liberação como contato seco normalmente aberto entre
+J5.1 (BTN_SIG) e J5.2 (GND). Ao apertar o botão, o firmware deve
+acionar K1 e aplicar 12 Vcc ao solenoide pelo tempo configurado,
+com padrão de 3 s. A trava recolhe enquanto o solenoide está
+energizado. Ao fim do pulso, K1 abre e a mola leva a trava de volta
+à posição inicial. Em repouso, o solenoide fica desenergizado.
+
+O ensaio de potência usa 3 s e pelo menos 30 s entre inícios.
+Durações maiores que 3 s ficam sujeitas a qualificação própria.
+
+## Ensaios
+
 1. **Lógica isolada.** Deixe J8, J2 e USB desconectados e confirme que
    R26 está ausente. Alimente somente J1 com 12 V regulados. Meça
    +12V após D1, +5V, +3V3 e EN em U2.3 com uma ponta de alta
@@ -33,14 +47,15 @@ energizar. Desligue as fontes para mudar as conexões.
    do limite de 6 V da TI. Observe RLY_GATE e o contato do relé no
    primeiro boot antes de conectar uma carga.
 2. **Carga fantasma.** Com as fontes desligadas, conecte entre J2.1
-   e o 0 V da fonte da trava um resistor de aproximadamente 2,4 Ω, nominal de pelo
-   menos 60 W com a montagem e refrigeração indicadas pelo fabricante,
+   e o 0 V da fonte da trava um resistor de aproximadamente 2,4 Ω,
+   nominal de pelo menos 60 W com a montagem e refrigeração indicadas pelo fabricante,
    ou uma lâmpada de 12 V com corrente compatível. O resistor dissipa
    60 W a 12 V e pode atingir temperatura elevada. A lâmpada pode
    exceder 5 A na partida a frio. Alimente J8 com a polaridade
-   indicada e aplique um pulso de 3 s, com intervalo de pelo menos
-   30 s entre inícios. Registre corrente de pico e de regime, queda
-   de tensão em F3, no contato de K1, nas trilhas e nos terminais.
+   indicada e pressione o botão em J5. Meça se o tempo energizado
+   acompanha a configuração em 3 s e em um valor menor de teste.
+   Respeite pelo menos 30 s entre inícios. Registre corrente de pico
+   e de regime, e a queda de tensão em F3, no contato de K1, nas trilhas e nos terminais.
    Registre as temperaturas de F3, K1, bornes, trilhas e vias ao
    longo dos pulsos. Capture no osciloscópio a queda e o ripple
    pico a pico de +5V e +3V3 antes, durante e depois do pulso.
@@ -57,10 +72,12 @@ energizar. Desligue as fontes para mudar as conexões.
    da revisão da capacidade de K1, D7 e F3, repita com o solenoide
    representativo em condição controlada, com fonte limitada.
    Capture a tensão diferencial COM–NO e a corrente no fio de
-   J2.1 ou no negativo da trava no mesmo disparo do osciloscópio. Registre o
-   pico, a corrente no instante da abertura, o transiente e o
-   decaimento após o desligamento. Confirme que K1 abre em cada
-   ciclo, registre temperatura e queda de contato ao longo dos
+   J2.1 ou no negativo da trava no mesmo disparo do osciloscópio.
+   Registre o pico, a corrente no instante da abertura, o transiente e o
+   decaimento após o desligamento. Confirme que a trava recolhe
+   durante o pulso e volta à posição inicial pela ação da mola.
+   Meça o tempo entre a abertura de K1 e o retorno completo.
+   Registre temperatura e queda de contato ao longo dos
    pulsos e mantenha o intervalo mínimo de 30 s. A produção exige
    qualificação de comutação repetitiva com a carga representativa,
    incluindo D7 e F3.

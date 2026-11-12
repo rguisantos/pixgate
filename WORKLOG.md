@@ -1008,3 +1008,13 @@ caminho de recirculação por D7 quando K1 abre. O ensaio com carga
 fantasma usa a mesma ligação. A revisão do chicote é documental e a
 interferência J8/K1 segue em aberto no PR #5.
 [Roteiro de bancada](docs/bring-up.md)
+
+### Acionamento pelo botão de liberação
+
+O botão de contato seco em J5 comanda o pulso de 12 V da trava.
+O firmware deve usar 3 s como padrão, com duração configurável.
+O solenoide recolhe a trava enquanto energizado. Quando K1 abre,
+a mola faz o retorno à posição inicial. O roteiro de bancada
+passa a medir o tempo de acionamento e o retorno mecânico. A
+validação do firmware e os ensaios da trava seguem pendentes.
+[Roteiro de bancada](docs/bring-up.md#acionamento-da-trava)
