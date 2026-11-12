@@ -316,8 +316,8 @@ def P(ref, value, lib_fp, x, y, rot=0, side='B'):
     PARTS.append(p)
     return p
 
-# --- U1: ESP32-C5-WROOM-1-N8 (back, antenna at top edge) ---
-u1 = P('U1', 'ESP32-C5-WROOM-1-N8', ('__esp__', 'ESP32-C5-WROOM-1'), 52.5, 40.25, 0)
+# --- U1: ESP32-C5-WROOM-1-N4 (back, antenna at top edge) ---
+u1 = P('U1', 'ESP32-C5-WROOM-1-N4', ('__esp__', 'ESP32-C5-WROOM-1'), 52.5, 40.25, 0)
 u1.ref_pos(0, 12)  # move ref up from -15 to +12 (was at y=25.25, edge at 25)
 U1_NETS = {1:'GND', 2:'+3V3', 3:'EN', 5:'BTN2', 6:'RLY_DRV', 7:'IN_BTN',
            8:'SCK_M', 9:'IO7_PU', 10:'MOSI_M', 11:'DISP_DC', 12:'DISP_CS', 13:'USB_DN', 14:'USB_DP',

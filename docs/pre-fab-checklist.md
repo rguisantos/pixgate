@@ -72,7 +72,7 @@ Executar ANTES de enviar os Gerbers para JLCPCB/PCBWay.
   | 7 | CS | DISP_CS |
   | 8 | BLK | DISP_BL |
 
-- [ ] **ESP32-C5-WROOM-1-N8**: GPIO7 = pino 9 (R10 pull-up presente)
+- [ ] **ESP32-C5-WROOM-1-N4**: GPIO7 = pino 9 (R10 pull-up presente)
 - [ ] **PC817** DIP-4, pin 1 = ânodo (chanfro no pad 1)
 - [ ] **AMS1117-3.3** SOT-223: pin 1 = GND, pin 2 = OUT (tab), pin 3 = IN
 - [ ] **TPS54331DDA**: SOIC-8 + EP, pin 9 = GND (thermal via presente)
@@ -129,6 +129,7 @@ o cobre de FB e SW. O nó SW permanece com 29,419 mm de trilha.
 
 ## BOM
 
+- [ ] Usar os perfis e a lista de compras da [cotação de montagem](cotacao-pcba.md).
 - [ ] `pixgate-BOM.csv` com Reference/Value/Footprint/Side/X/Y/Rotation
 - [ ] Conferir que `H1..H4` estão fora e que R26 e TP1–TP3 estão ausentes do BOM e do CPL
 - [ ] Conferir que R24 e R25 não existem (numeração histórica R1..R23, R26)

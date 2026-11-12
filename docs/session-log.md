@@ -124,3 +124,11 @@ Registrar cada bloqueio e como foi resolvido (para não repetir em revisões fut
   Restam cinco vias em pads, incluindo as duas térmicas de U2.9.
 - DRC zero. Caixa, acabamento das vias e ensaio indutivo seguem
   pendentes no [checklist](pre-fab-checklist.md).
+
+### Rodada 22 — cotação de montagem
+
+- Gerbers com pasta nas duas faces e dois pares de BOM/CPL para
+  comparar montagem completa e híbrida.
+- A lista por referência documenta peças mapeadas, candidatos e
+  compras externas. A escolha final depende do estoque, do DFM
+  e das conferências da [cotação](cotacao-pcba.md).

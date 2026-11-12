@@ -952,3 +952,34 @@ O tratamento das vias em duas camadas, a caixa e a qualificação
 do circuito de 5 A permanecem pendentes. O gate de vias continua
 retornando 1. O DRC KiCad 9.0.2 permanece em zero violações,
 zero desconectados e zero erros de footprint.
+
+## 2026-11-12 (22) — Arquivos para cotar a montagem
+
+Base elétrica `972d7fd`. O pacote usa o mesmo PCB e separa o
+perfil completo de 79 posições do híbrido com 65 posições no verso.
+Na opção híbrida, 14 posições são finalizadas no Brasil. A exportação
+agora inclui as camadas de pasta e um CPL SMT do verso. O gerador da
+cotação cruza os dois CPLs, o BOM do projeto e a lista de compras,
+mantendo os valores e a rotação exportada pelo KiCad.
+
+A lista de compras cobre todas as posições. Sessenta posições do
+perfil completo e 54 do híbrido têm código de catálogo. Para o
+restante, o pacote registra a seleção manual, fornecimento externo
+ou confirmação exigida para o componente. O ESP32-C5-WROOM-1-N8R8
+é o candidato para os 8 MB de flash, com o pad 19 sem rede nesta
+placa. A montagem precisa confirmar o sufixo e a imagem de firmware.
+L1 tem candidato de 6,8 µH e dimensões nominais registradas. A
+estabilidade do AMS1117 com C11/C12 entra no roteiro de validação.
+
+O pacote serve para comparar fornecedores. A confirmação de DFM
+das cinco vias em pads, a caixa, a impedância USB e a qualificação
+com a carga real continuam no checklist. [Cotação de montagem](docs/cotacao-pcba.md)
+
+### Cotação do piloto com ESP32-C5 de 4 MB
+
+U1 passa a `ESP32-C5-WROOM-1-N4`, código JLCPCB `C51950745`,
+para cotar o piloto. A alteração do PCB se limita ao texto de
+valor do footprint. A versão N4 tem 4 MB de flash e a pinagem
+da família WROOM-1 usada pela placa. Antes de pedir a montagem,
+conferir a imagem, a tabela de partições e o uso de PSRAM no
+firmware do piloto. O firmware não está neste repositório.

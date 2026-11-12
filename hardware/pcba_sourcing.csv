@@ -1,0 +1,49 @@
+Referencias,Valor_PCB,Footprint,Estado,Fabricante,MPN,Codigo,Conferencia,Fonte
+C1 C2,10uF/25V,C_1206_3216Metric,catalogo,Taiyo Yuden,MCAST31LAB7106MTNA01,C6590646,10 µF 25 V X7R 1206. Confirmar capacitância sob tensão no protótipo.,https://jlcpcb.com/partdetail/TaiyoYuden-MCAST31LAB7106MTNA01/C6590646
+C3 C4 C9 C13 C15 C17 C19 C20 C21 C22,100nF,C_0603_1608Metric,catalogo,Yageo,CC0603KRX7R9BB104,C14663,100 nF 50 V X7R 0603.,https://jlcpcb.com/partdetail/C14663
+C5 C6,33uF/10V,C_1206_3216Metric,catalogo,TDK,C3216X5R1C336MTJ00N,C76658,33 µF 16 V X5R 1206. Conferir capacitância efetiva em 5 V e ripple do buck.,https://jlcpcb.com/partdetail/TDK-C3216X5R1C336MTJ00N/C76658
+C7,4.7nF,C_0603_1608Metric,catalogo,KEMET,C0603C472J5GACAUTO,C3904926,"4,7 nF 50 V C0G 0603, compensação.",https://jlcpcb.com/partdetail/KEMET-C0603C472J5GACAUTO/C3904926
+C8,39pF,C_0603_1608Metric,catalogo,KEMET,CBR06C390F5GAC,C2265581,"39 pF 50 V C0G 0603, compensação.",https://jlcpcb.com/partdetail/KEMET-CBR06C390F5GAC/C2265581
+C10,22uF,C_1206_3216Metric,catalogo,TDK,C3216X5R1C226M160AB,C2167693,"22 µF 16 V X5R 1206, no rail de 5 V.",https://jlcpcb.com/partdetail/TDK-C3216X5R1C226M160AB/C2167693
+C11,10uF,C_0805_2012Metric,validar,,,,10 µF 0805 junto à saída de U3. Especificar capacitância efetiva e ESR com o LDO comprado.,https://datasheet.lcsc.com/lcsc/1810231814_Advanced-Monolithic-Systems-AMS1117-1-2_C14529.pdf
+C12,22uF,C_1206_3216Metric,validar,,,,"22 µF 1206 no rail de 3,3 V. Confirmar tecnologia e estabilidade de U3 com C11. Se polarizado, positivo no pad 2.",https://datasheet.lcsc.com/lcsc/1810231814_Advanced-Monolithic-Systems-AMS1117-1-2_C14529.pdf
+C14 C16 C18,10uF,C_0805_2012Metric,catalogo,CCTC,TCC0805X7R106K160FT,C380347,10 µF 16 V X7R 0805.,https://jlcpcb.com/partdetail/CCTC-TCC0805X7R106K160FT/C380347
+C23,1uF,C_0603_1608Metric,catalogo,Murata,GCM188R71E105KA64D,C85862,1 µF 25 V X7R 0603.,https://jlcpcb.com/partdetail/MurataElectronics-GCM188R71E105KA64D/C85862
+C24,100nF,C_1206_3216Metric_NoSilk,catalogo,Cal-Chip Electronics,GMC31X7R104K50NTD,C17345928,100 nF 50 V X7R 1206. Confirmar transiente com o solenoide.,https://jlcpcb.com/partdetail/18475092-GMC31X7R104K50NTD/C17345928
+D1 D5,SS54,D_SMA,catalogo,SINEDEVICE,SS54,C22439152,Schottky 5 A 40 V SMA. Conferir cátodo e temperatura no buck.,https://jlcpcb.com/partdetail/SINEDEVICE-SS54/C22439152
+D2 D3,SS14,D_SMA,catalogo,TWGMC,SS14,C727050,Schottky 1 A 40 V SMA. Conferir cátodo.,https://jlcpcb.com/partdetail/SS14/C727050
+D4,SMBJ18A,D_SMB,catalogo,BORN,SMBJ18A,C152104,"TVS unidirecional 18 V SMB, cátodo no positivo.",https://jlcpcb.com/partdetail/BORN-SMBJ18A/C152104
+D6,SMBJ16A,D_SMB,catalogo,BORN,SMBJ16A,C151923,"TVS unidirecional 16 V SMB, cátodo em TRAVA_NO.",https://jlcpcb.com/partdetail/BORN-SMBJ16A/C151923
+D7,M7,D_SMA,validar,BORN,M7,C266550,Candidato SMA. Qualificar a corrente e a energia repetitivas de recirculação no desligamento da trava.,https://jlcpcb.com/partdetail/Born-M7/C266550
+F1,1206L110/16,Fuse_1206_3216Metric,externo,Littelfuse,1206L110/16WR,,"PPTC 16 V 1,10 A hold, 1206. Preservar a curva de derating do projeto.",https://www.digikey.com/en/products/detail/littelfuse-inc/1206L110-16WR/10671937
+F2,1206L050/24,Fuse_1206_3216Metric,externo,Littelfuse,1206L050/24WR,,"PPTC 24 V 0,50 A hold, 1206, para USB. Confirmar fornecimento ou consignação.",https://www.digikey.com/en/products/detail/littelfuse-inc/1206L050-24WR/6346988
+F3,0454007.MR,Fuse_Littelfuse-NANO2-451_453,catalogo,Littelfuse,0454007.MR,C179008,"Fusível 7 A de ação retardada, 75 V, 2410.",https://jlcpcb.com/partdetail/Littelfuse-0454007MR/C179008
+J1,DC-005 12V,BarrelJack_Horizontal,validar,JLCPCB Assembly,DC005(5.5X2.1),C9900024795,"Candidato DC-005 horizontal 5,5 × 2,1 mm. Conferir pino central positivo, contatos de luva/chave e encaixe na caixa.",https://jlcpcb.com/partdetail/JLCPCBAssembly-DC005_5_5X2_1/C9900024795
+J2,KF301 TRAVA,TerminalBlock_KF301-2P-5.08mm,validar,,,,"Borne horizontal KF301 2 polos, passo exato de 5,08 mm. Conferir desenho, altura e 5 A.",
+J3,JST-XH NOTEIRO,JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal,catalogo,JST,S2B-XH-A,C20089266,"JST XH horizontal, 2 polos, 2,50 mm.",https://jlcpcb.com/partdetail/JST_SALES_AMERICA_INC-S2B_XHA/C20089266
+J4,JST-XH MOEDEIRO,JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal,catalogo,JST,S2B-XH-A,C20089266,"JST XH horizontal, 2 polos, 2,50 mm.",https://jlcpcb.com/partdetail/JST_SALES_AMERICA_INC-S2B_XHA/C20089266
+J5,JST-XH BOTAO,JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal,catalogo,JST,S2B-XH-A,C20089266,"JST XH horizontal, 2 polos, 2,50 mm.",https://jlcpcb.com/partdetail/JST_SALES_AMERICA_INC-S2B_XHA/C20089266
+J6,USB-C,USB_C_Receptacle_HRO_TYPE-C-31-M-12,catalogo,HRO,TYPE-C-31-M-12,C165948,USB-C exato. Conferir a via no pad e a solda das fixações da blindagem.,https://jlcpcb.com/partdetail/C165948
+J7,TFT 1.54,DisplaySocket_1x08_P2.54mm,validar,,,,"Soquete fêmea reto 1×8 passo 2,54 mm. Display ST7789 1,54 polegada comprado à parte, conferir pinagem e altura.",
+J8,KF301 12V TRAVA IN,TerminalBlock_KF301-2P-5.08mm,validar,,,,"Borne horizontal KF301 2 polos, passo exato de 5,08 mm. Conferir desenho, altura e 5 A.",
+K1,SRD-12VDC-SL-C,Relay_SPDT_Songle_SRD,catalogo,Songle,SRD-12VDC-SL-C,C30431,"Bobina 12 Vcc, Form C. Validar contatos com a carga indutiva real.",https://jlcpcb.com/partdetail/SRD-12VDC-SL-C/C30431
+L1,6.8uH,L_7.3x7.3_H3.5,validar,GLE,GCRH73-6R8MC,C439496,"Candidato blindado 6,8 µH. Confirmar desenho de terminais, altura, Isat e Irms em temperatura antes de comprar.",https://jlcpcb.com/partdetail/GLE-GCRH736R8MC/C439496
+LED1,STATUS,LED_0805_2012Metric,validar,Lite-On,LTST-C170KGKT,C98221,"Candidato verde-amarelo 0805. Aprovar cor/brilho a cerca de 1,3 mA e revisar polaridade.",https://jlcpcb.com/partdetail/LiteOn-LTSTC170KGKT/C98221
+OPT1 OPT2 OPT3,PC817,DIP-4_W7.62mm,validar,KTP,PC817-B-F-AW(KTP),C50380039,"Candidato PC817 DIP-4, rank B. Confirmar CTR na corrente real de entrada.",https://jlcpcb.com/partdetail/KTP-PC817_B_F_AW_KTP/C50380039
+Q1,AO3400A,SOT-23,catalogo,Alpha & Omega,AO3400A,C20917,"MOSFET canal N SOT-23, conferir pinagem G/S/D.",https://jlcpcb.com/partdetail/Alpha_OmegaSemicon-AO3400A/C20917
+R1 R2,5.1k,R_0603_1608Metric,catalogo,Uni-Royal,0603WAF5101T5E,C23186,"5,1 kΩ 1% 0603, resistores Rd do USB-C.",https://jlcpcb.com/partdetail/0603WAF5101T5E/C23186
+R3,100R,R_0603_1608Metric,catalogo,Uni-Royal,0603WAF1000T5E,C22775,100 Ω 1% 0603.,https://jlcpcb.com/partdetail/C22775
+R4 R7 R8 R9 R10 R11 R12 R13 R14 R15 R20,10k,R_0603_1608Metric,catalogo,Uni-Royal,0603WAF1002T5E,C25804,10 kΩ 1% 0603.,https://jlcpcb.com/partdetail/C25804
+R5 R6,33R,R_0603_1608Metric,catalogo,Uni-Royal,0603WAF330JT5E,C23140,33 Ω 1% 0603.,https://jlcpcb.com/partdetail/0603WAF330JT5E/C23140
+R16 R17 R18,2.2k,R_0603_1608Metric,catalogo,Uni-Royal,0603WAF2201T5E,C4190,"2,2 kΩ 1% 0603.",https://jlcpcb.com/partdetail/C4190
+R19,1k,R_0603_1608Metric,catalogo,Uni-Royal,0603WAF1001T5E,C21190,1 kΩ 1% 0603.,https://jlcpcb.com/partdetail/C21190
+R21,1.91k,R_0603_1608Metric,catalogo,Yageo,RT0603BRD071K91L,C861211,"1,91 kΩ 0,1% 0603, divisor de 5 V.",https://jlcpcb.com/partdetail/YAGEO-RT0603BRD071K91L/C861211
+R22,49.9k,R_0603_1608Metric,catalogo,Uni-Royal,0603WAF4992T5E,C23184,"49,9 kΩ 1% 0603, compensação.",https://jlcpcb.com/partdetail/0603WAF4992T5E/C23184
+R23,100R,R_1206_3216Metric,validar,Uni-Royal,1206W4F1000T5E,C17901,100 Ω 1% 1206. Validar capacidade de pulso do snubber.,https://lcsc.com/product-detail/Chip-Resistor-Surface-Mount_Uniroyal-Elec-1206W4F1000T5E_C17901.html
+SW1,RST,SW_SPST_PTS645,validar,C&K,PTS645SM70SMTR92LFS,C221883,"Candidato PTS645 SMD. Conferir pads, altura do atuador e acesso na caixa.",https://jlcpcb.com/partdetail/CK-PTS645SM70SMTR92LFS/C221883
+SW2,BOOT,SW_SPST_PTS645,validar,C&K,PTS645SM70SMTR92LFS,C221883,"Candidato PTS645 SMD. Conferir pads, altura do atuador e acesso na caixa.",https://jlcpcb.com/partdetail/CK-PTS645SM70SMTR92LFS/C221883
+SW3,CFG,SW_SPST_PTS645,validar,C&K,PTS645SM70SMTR92LFS,C221883,"Candidato PTS645 SMD. Conferir pads, altura do atuador e acesso na caixa.",https://jlcpcb.com/partdetail/CK-PTS645SM70SMTR92LFS/C221883
+U1,ESP32-C5-WROOM-1-N4,ESP32-C5-WROOM-1,catalogo,Espressif,ESP32-C5-WROOM-1-N4,C51950745,"4 MB de flash, antena integrada, sem PSRAM. Confirmar o binário e as partições do firmware em 4 MB antes do lote.",https://jlcpcb.com/partdetail/54676332-ESP32_C5_WROOM_1N4/C51950745
+U2,TPS54331DDA,SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.41x3.3mm,catalogo,Texas Instruments,TPS54331DDAR,C90761,"SO PowerPAD DDA. Conferir pino 1, abertura da pasta e tratamento do pad exposto.",https://jlcpcb.com/partdetail/TexasInstruments-TPS54331DDAR/C90761
+U3,AMS1117-3.3,SOT-223-3_TabPin2,catalogo,Advanced Monolithic Systems,AMS1117-3.3,C6186,"SOT-223, aba no pino 2. Qualificar estabilidade com C11/C12.",https://jlcpcb.com/partdetail/C6186
+U4,USBLC6-2SC6,SOT-23-6,catalogo,STMicroelectronics,USBLC6-2SC6,C7519,Proteção USB em SOT-23-6.,https://jlcpcb.com/partdetail/C7519
