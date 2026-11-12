@@ -1,8 +1,8 @@
 # PixGate v1.0 — Cotação de montagem
 
-Placa de referência `972d7fd`. A alimentação de J1 e J8 é de 12 Vcc
-regulados. A documentação de cotação usa a posição exportada do PCB
-KiCad e preserva o footprint, as trilhas e o netlist desta revisão.
+A alimentação de J1 e J8 é de 12 Vcc regulados. A documentação de
+cotação usa a posição exportada pelo KiCad. O módulo U1 de 4 MB usa
+a mesma pinagem, footprint e roteamento da placa de referência `972d7fd`.
 
 ## Arquivos para cotar
 
@@ -36,7 +36,7 @@ o jack J1 e o acesso aos parafusos de J2 e J8.
 
 | Referência | Decisão para cotação | Conferência para o piloto |
 |---|---|---|
-| U1 | Usar `ESP32-C5-WROOM-1-N8R8` como candidato de 8 MB de flash e 8 MB de PSRAM, com antena integrada. | O pad 19 está sem rede no PCB, compatível com a reserva do pino pela PSRAM. Confirmar o sufixo com o fornecedor e a imagem de firmware, flash e partições de 8 MB. O código JLCPCB `C42441836` descreve a família sem declarar o sufixo. |
+| U1 | `ESP32-C5-WROOM-1-N4`, 4 MB de flash, sem PSRAM, antena integrada. Código JLCPCB `C51950745`. | Confirmar o binário e a tabela de partições em 4 MB, incluindo os slots de OTA se usados e as áreas persistentes. O repositório de hardware não contém o firmware. A peça consta para Economic e Standard, sujeita ao estoque e à elegibilidade do restante do pedido. |
 | L1 | Candidato GLE `GCRH73-6R8MC`, `C439496`, de 6,8 µH ±20%, anunciado com 2 A e 62 mΩ. | O footprint KiCad tem corpo nominal de 7,3 × 7,3 × 3,5 mm, dois pads de 1,50 × 2,20 mm e passo de 6,40 mm. Confirmar terminais, altura, curvas de saturação e aquecimento com a ficha do lote. |
 | U3, C11 e C12 | Cotar o AMS1117-3.3 `C6186` e especificar os capacitores de saída junto com o regulador. | A ficha do AMS1117 apresenta 22 µF de tântalo como referência de estabilidade. Verificar a capacitância efetiva, ESR, proximidade e resposta a degrau com a configuração real. Se C12 for polarizado, o positivo é o pad 2. |
 | F1 e F2 | Cotações externas para Littelfuse `1206L110/16WR` e `1206L050/24WR`. | Confirmar fornecimento ou consignação. F1 protege a lógica de 12 V, F2 protege o USB. |
@@ -52,6 +52,7 @@ ideal em condução descontínua, `Ipk = √(2 × Iout × ΔI)` dá
 cerca de 1,11 A. A seleção ainda depende das medições de partida,
 carga e temperatura.
 [Espressif, módulos C5](https://www.espressif.com/en/products/modules/esp32/ordering-information) ·
+[JLCPCB C51950745](https://jlcpcb.com/partdetail/54676332-ESP32_C5_WROOM_1N4/C51950745) ·
 [TPS54331, §§6.6 e 8.2.2](https://www.ti.com/lit/ds/symlink/tps54331.pdf) ·
 [GLE GCRH73-6R8MC](https://jlcpcb.com/partdetail/GLE-GCRH736R8MC/C439496) ·
 [AMS1117](https://datasheet.lcsc.com/lcsc/1810231814_Advanced-Monolithic-Systems-AMS1117-1-2_C14529.pdf)

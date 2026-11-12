@@ -72,7 +72,7 @@ Executar ANTES de enviar os Gerbers para JLCPCB/PCBWay.
   | 7 | CS | DISP_CS |
   | 8 | BLK | DISP_BL |
 
-- [ ] **ESP32-C5-WROOM-1-N8**: GPIO7 = pino 9 (R10 pull-up presente)
+- [ ] **ESP32-C5-WROOM-1-N4**: GPIO7 = pino 9 (R10 pull-up presente)
 - [ ] **PC817** DIP-4, pin 1 = ânodo (chanfro no pad 1)
 - [ ] **AMS1117-3.3** SOT-223: pin 1 = GND, pin 2 = OUT (tab), pin 3 = IN
 - [ ] **TPS54331DDA**: SOIC-8 + EP, pin 9 = GND (thermal via presente)

@@ -18764,7 +18764,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "ESP32-C5-WROOM-1-N8"
+		(property "Value" "ESP32-C5-WROOM-1-N4"
 			(at 0 15.6 180)
 			(layer "B.Fab")
 			(uuid "783caf9d-4324-476e-a13f-fdc754e21b09")

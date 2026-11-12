@@ -974,3 +974,12 @@ estabilidade do AMS1117 com C11/C12 entra no roteiro de validação.
 O pacote serve para comparar fornecedores. A confirmação de DFM
 das cinco vias em pads, a caixa, a impedância USB e a qualificação
 com a carga real continuam no checklist. [Cotação de montagem](docs/cotacao-pcba.md)
+
+### Cotação do piloto com ESP32-C5 de 4 MB
+
+U1 passa a `ESP32-C5-WROOM-1-N4`, código JLCPCB `C51950745`,
+para cotar o piloto. A alteração do PCB se limita ao texto de
+valor do footprint. A versão N4 tem 4 MB de flash e a pinagem
+da família WROOM-1 usada pela placa. Antes de pedir a montagem,
+conferir a imagem, a tabela de partições e o uso de PSRAM no
+firmware do piloto. O firmware não está neste repositório.

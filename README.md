@@ -10,7 +10,7 @@ Projeto de hardware **open** desenvolvido de forma programática: toda a placa (
 
 ## Como funciona
 
-1. O **ESP32-C5-WROOM-1-N8** (Wi-Fi 6 dual-band + BLE 5) conecta-se à internet e consulta o status de um pagamento Pix (API/PSP — parte de firmware).
+1. O **ESP32-C5-WROOM-1-N4** (Wi-Fi 6 dual-band + BLE 5) conecta-se à internet e consulta o status de um pagamento Pix (API/PSP — parte de firmware).
 2. Pagamento confirmado → o firmware aciona o transistor **AO3400A**, que energiza a bobina do relé **Songle SRD-12VDC-SL-C** (contato NO 10 A).
 3. O contato do relé fecha o circuito da **trava elétrica 12 V** ligada ao bornier **KF301**, com snubber RC e TVS na saída.
 4. Entradas de dinheiro físico chegam isoladas por **3× PC817**: noteiro, moedeiro e botão externo (12 V, conectores JST-XH).
@@ -25,7 +25,7 @@ Projeto de hardware **open** desenvolvido de forma programática: toda a placa (
 | Alimentação | 12 V DC via jack DC-005 |
 | Buck 12 V → 5 V | TPS54331DDA (SOIC-8 EP), 3 A, L 6,8 µH |
 | LDO 5 V → 3,3 V | AMS1117-3.3 (SOT-223) |
-| MCU | ESP32-C5-WROOM-1-N8 (antena na borda superior) |
+| MCU | ESP32-C5-WROOM-1-N4 (antena na borda superior) |
 | Saída a relé | SRD-12VDC-SL-C, contato NO 10 A @ 12 V |
 | Entradas isoladas | 3× PC817 (noteiro / moedeiro / botão) |
 | USB | USB-C (USBLC6-2SC6 + PTC 1206L + diodo SS14) |
@@ -50,7 +50,7 @@ Checklist completo de compra, montagem e primeira energização em [docs/confere
 
 | Bloco | Componentes | Função |
 | --- | --- | --- |
-| MCU + RF | U1 ESP32-C5-WROOM-1-N8, C18/C19, R7, C20 | Cérebro Wi-Fi 6; EN com RC de reset |
+| MCU + RF | U1 ESP32-C5-WROOM-1-N4, C18/C19, R7, C20 | Cérebro Wi-Fi 6; EN com RC de reset |
 | Buck 12→5 V | U2 TPS54331DDA, L1 6,8 µH, D5 SS54, C1–C9, R20/R21/R22, R26 | Regulação de 5 V, compensação e soft-start dimensionados |
 | LDO 3,3 V | U3 AMS1117-3.3, C10–C13 | Rails de 3,3 V digital |
 | Driver do relé | Q1 AO3400A, R3 100R, R4 10k, D3 SS14 (flyback), K1 | Bobina 12 V chaveada por GPIO |
