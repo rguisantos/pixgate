@@ -1,0 +1,48 @@
+==> Gerbers
+Plotted to '/workspace/scratch/0ca8e037e49b/r28-fab/pixgate-top_cu.gtl'.
+Plotted to '/workspace/scratch/0ca8e037e49b/r28-fab/pixgate-bottom_cu.gbl'.
+Plotted to '/workspace/scratch/0ca8e037e49b/r28-fab/pixgate-F_Paste.gtp'.
+Plotted to '/workspace/scratch/0ca8e037e49b/r28-fab/pixgate-B_Paste.gbp'.
+Plotted to '/workspace/scratch/0ca8e037e49b/r28-fab/pixgate-F_Silkscreen.gto'.
+Plotted to '/workspace/scratch/0ca8e037e49b/r28-fab/pixgate-B_Silkscreen.gbo'.
+Plotted to '/workspace/scratch/0ca8e037e49b/r28-fab/pixgate-F_Mask.gts'.
+Plotted to '/workspace/scratch/0ca8e037e49b/r28-fab/pixgate-B_Mask.gbs'.
+Plotted to '/workspace/scratch/0ca8e037e49b/r28-fab/pixgate-Edge_Cuts.gm1'.
+==> Drill
+Created file '/workspace/scratch/0ca8e037e49b/r28-fab/pixgate.drl'
+Created file '/workspace/scratch/0ca8e037e49b/r28-fab/pixgate-drl_map.gbr'.
+Done.
+==> Posição (pick-and-place)
+Wrote position data to '/workspace/scratch/0ca8e037e49b/r28-fab/pixgate-pos.csv'.
+Wrote position data to '/workspace/scratch/0ca8e037e49b/r28-fab/pixgate-pos-bottom-smt.csv'.
+==> BOM
+==> Job file
+==> Zip para o portal do fabricante
+
+OK — arquivos em /workspace/scratch/0ca8e037e49b/r28-fab:
+total 1004
+drwxr-xr-x  2 agent agent   4096 Nov 12 17:48 .
+drwxr-xr-x 43 agent agent  32768 Nov 12 17:48 ..
+-rw-r--r--  1 agent agent   3735 Nov 12 17:48 pixgate-BOM.csv
+-rw-r--r--  1 agent agent  13019 Nov 12 17:48 pixgate-B_Mask.gbs
+-rw-r--r--  1 agent agent  10824 Nov 12 17:48 pixgate-B_Paste.gbp
+-rw-r--r--  1 agent agent  35667 Nov 12 17:48 pixgate-B_Silkscreen.gbo
+-rw-r--r--  1 agent agent    732 Nov 12 17:48 pixgate-Edge_Cuts.gm1
+-rw-r--r--  1 agent agent   4039 Nov 12 17:48 pixgate-F_Mask.gts
+-rw-r--r--  1 agent agent   1642 Nov 12 17:48 pixgate-F_Paste.gtp
+-rw-r--r--  1 agent agent  21897 Nov 12 17:48 pixgate-F_Silkscreen.gto
+-rw-r--r--  1 agent agent 313155 Nov 12 17:48 pixgate-bottom_cu.gbl
+-rw-r--r--  1 agent agent 175694 Nov 12 17:48 pixgate-drl_map.gbr
+-rw-r--r--  1 agent agent   2810 Nov 12 17:48 pixgate-job.gbrjob
+-rw-r--r--  1 agent agent   4600 Nov 12 17:48 pixgate-pos-bottom-smt.csv
+-rw-r--r--  1 agent agent   5754 Nov 12 17:48 pixgate-pos.csv
+-rw-r--r--  1 agent agent 171245 Nov 12 17:48 pixgate-top_cu.gtl
+-rw-r--r--  1 agent agent   4231 Nov 12 17:48 pixgate.drl
+-rw-r--r--  1 agent agent 189358 Nov 12 17:48 pixgate.zip
+
+Checklist pós-export:
+  [ ] DRC final --severity-all: 0 violações (exceto unconnected=0)
+  [ ] inspecionar visualmente os gerbers no gerbv ou KiCad Gerber Viewer
+  [ ] abrir pixgate-BOM.csv e conferir contra o datasheet dos componentes
+  [ ] pixgate-pos.csv: pick-and-place coerente com o layout
+  [ ] se JLCPCB: importar zip de /workspace/scratch/0ca8e037e49b/r28-fab/ no portal, revisar preview 3D

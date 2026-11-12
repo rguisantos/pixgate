@@ -353,8 +353,8 @@ u2.ref_pos(0, -6)  # move ref down from default
 u2.pin(1, 'BOOT_C').pin(2, '+12V').pin(3, 'EN_BK').pin(4, 'SS_C')
 u2.pin(5, 'FB').pin(6, 'COMP_X').pin(7, 'GND').pin(8, 'SW').pin(9, 'GND')
 
-# --- U3: AMS1117-3.3 (back) ---
-u3 = P('U3', 'AMS1117-3.3', ('Package_TO_SOT_SMD', 'SOT-223-3_TabPin2'), 72, 59.6, 0)
+# --- U3: TLV1117LV33DCYR (back) ---
+u3 = P('U3', 'TLV1117LV33DCYR', ('Package_TO_SOT_SMD', 'SOT-223-3_TabPin2'), 72, 59.6, 0)
 u3.pin(1, 'GND').pin(2, '+3V3').pin(3, '+5V')
 
 # --- U4: USBLC6-2SC6 (back) ---

@@ -77,7 +77,11 @@ Executar ANTES de enviar os Gerbers para JLCPCB/PCBWay.
 
 - [ ] **ESP32-C5-WROOM-1-N4**: GPIO7 = pino 9 (R10 pull-up presente)
 - [ ] **PC817** DIP-4, pin 1 = ânodo (chanfro no pad 1)
-- [ ] **AMS1117-3.3** SOT-223: pin 1 = GND, pin 2 = OUT (tab), pin 3 = IN
+- [ ] **TLV1117LV33DCYR** SOT-223, pino 1 GND, pino 2 e aba OUT,
+  pino 3 IN. Confirmar C11 e C12 cerâmicos conforme o BOM. Medir
+  a partida, a resposta em TX e a temperatura em J1 e em USB.
+  A entrada de U3 tem limite operacional de 5,5 V.
+  [Ficha TI](https://www.ti.com/lit/ds/symlink/tlv1117lv.pdf)
 - [ ] **TPS54331DDA**: SOIC-8 + EP, pin 9 = GND (thermal via presente)
 
 ## Caixa e chicote
@@ -127,6 +131,7 @@ Na rodada 24, a via de C3.2 passou para (65,200; 43,000) mm, com
   cobertura, pasta e refusão no DFM da montadora e verificar a junta
   do piloto por raio X. Se o fornecedor exigir preenchimento e
   capeamento (IPC-4761 Tipo VII), cotar essa opção.
+  [Consulta DFM para a montadora](dfm-piloto.md) ·
   [JLCPCB, acabamentos de via](https://jlcpcb.com/help/article/pcb-via-covering) ·
   [TI, montagem do PowerPAD](https://www.ti.com/lit/an/slma004b/slma004b.pdf)
 

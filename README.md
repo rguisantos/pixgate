@@ -24,7 +24,7 @@ Projeto de hardware **open** desenvolvido de forma programática: toda a placa (
 | Camadas | 2 (F.Cu / B.Cu), 1,6 mm |
 | Alimentação | 12 V DC via jack DC-005 |
 | Buck 12 V → 5 V | TPS54331DDA (SOIC-8 EP), 3 A, L 6,8 µH |
-| LDO 5 V → 3,3 V | AMS1117-3.3 (SOT-223) |
+| LDO 5 V → 3,3 V | TLV1117LV33DCYR (SOT-223) |
 | MCU | ESP32-C5-WROOM-1-N4 (antena na borda superior) |
 | Saída a relé | SRD-12VDC-SL-C, contato NO 10 A @ 12 V |
 | Entradas isoladas | 3× PC817 (noteiro / moedeiro / botão) |
@@ -52,7 +52,7 @@ Checklist completo de compra, montagem e primeira energização em [docs/confere
 | --- | --- | --- |
 | MCU + RF | U1 ESP32-C5-WROOM-1-N4, C18/C19, R7, C20 | Cérebro Wi-Fi 6; EN com RC de reset |
 | Buck 12→5 V | U2 TPS54331DDA, L1 6,8 µH, D5 SS54, C1–C9, R20/R21/R22, R26 | Regulação de 5 V, compensação e soft-start dimensionados |
-| LDO 3,3 V | U3 AMS1117-3.3, C10–C13 | Rails de 3,3 V digital |
+| LDO 3,3 V | U3 TLV1117LV33DCYR, C10–C13 | Rails de 3,3 V digital |
 | Driver do relé | Q1 AO3400A, R3 100R, R4 10k, D3 SS14 (flyback), K1 | Bobina 12 V chaveada por GPIO |
 | Saída protegida | R23 100R + C24 100nF (snubber), D6 SMBJ16A (TVS), D7 SS54 | Proteção do contato NO da trava |
 | Entradas isoladas | OPT1–3 PC817, R13–R15 10k, R16–R18 2,2k | 12 V → 3,3 V com isolamento galvânico |

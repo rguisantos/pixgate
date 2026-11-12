@@ -16968,7 +16968,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "AMS1117-3.3"
+		(property "Value" "TLV1117LV33DCYR"
 			(at 0 4.5 180)
 			(layer "B.Fab")
 			(uuid "a763838d-1dc3-4eda-bbc0-fbcf1edf1449")

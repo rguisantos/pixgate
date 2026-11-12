@@ -1,0 +1,7 @@
+hibrida: 65 posições BOM/CPL coincidentes, 64 com código, pendências: L1.
+completa: 79 posições BOM/CPL coincidentes, 71 com código, pendências: J1, J2, J7, L1, LED1, OPT1, OPT2, OPT3.
+Nove Gerbers e arquivo de furação iguais à rodada 24, exceto a data de exportação.
+R26 e TP1–TP3 excluídos dos dois BOM/CPL.
+C11/C12 reaproveitam os códigos de componentes existentes e SW1–SW3 compartilham um código.
+B.Paste: flashes D23 em (70,100; -44,175) e (70,100; -45,825) mm.
+Os centros de furação em (70,100; -44,200) e (70,100; -45,800) mm ficam a 0,025 mm dos centros das aberturas de pasta.

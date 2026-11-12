@@ -46,6 +46,10 @@ Durações maiores que 3 s ficam sujeitas a qualificação própria.
    repouso e em TX. Confira se o buck inicia e se EN se mantém dentro
    do limite de 6 V da TI. Observe RLY_GATE e o contato do relé no
    primeiro boot antes de conectar uma carga.
+   Capture a partida e os picos em U3.3 (+5V) e U3.2 (+3V3)
+   com o rádio em TX e o display ligado. Registre a temperatura
+   de U3 e verifique o limite de operação de 5,5 V na entrada.
+   Repita com J1 desligado e a lógica alimentada somente por USB.
 2. **Carga fantasma.** Com as fontes desligadas, conecte entre J2.1
    e o 0 V da fonte da trava um resistor de aproximadamente 2,4 Ω,
    nominal de pelo menos 60 W com a montagem e refrigeração indicadas pelo fabricante,
@@ -78,13 +82,16 @@ Durações maiores que 3 s ficam sujeitas a qualificação própria.
    durante o pulso e volta à posição inicial pela ação da mola.
    Meça o tempo entre a abertura de K1 e o retorno completo.
    Registre temperatura e queda de contato ao longo dos
-   pulsos e mantenha o intervalo mínimo de 30 s. A produção exige
-   qualificação de comutação repetitiva com a carga representativa,
-   incluindo D7 e F3.
+   pulsos e mantenha o intervalo mínimo de 30 s. Use ponta
+   diferencial para capturar a tensão nos terminais de R23 e
+   conferir a potência e a duração do pulso com a ficha Panasonic.
+   A produção exige qualificação de comutação repetitiva com a
+   carga representativa, incluindo D7 e F3.
 
 Para cada ensaio, registre tensão e limitação das fontes, revisão e
 lote da placa, lote de K1/F3/D7, temperatura ambiente, corrente, quedas,
 ripple, temperaturas máximas e comportamento no boot e reset.
 
 [Ficha do TPS54331, §§6.1 e 7.3.2](https://www.ti.com/lit/ds/symlink/tps54331.pdf) ·
+[Ficha do TLV1117LV, §§6.3 e 8.1](https://www.ti.com/lit/ds/symlink/tlv1117lv.pdf) ·
 [Checklist pré-fabricação](pre-fab-checklist.md)

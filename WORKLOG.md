@@ -1081,3 +1081,37 @@ opção de compra e montagem em um pedido. A cotação compara o
 fornecimento direto com a compra externa desses dois Extended.
 [Cotação](docs/cotacao-pcba.md#custo-do-piloto) ·
 [Evidências](validation/rodada24)
+
+## 2026-11-12 (25) — BOM de cotação e processo do PowerPAD
+
+U3 passa a TI TLV1117LV33DCYR, de 3,3 V. A pinagem SOT-223
+mantém GND no pino 1, saída no pino 2 e na aba e entrada no
+pino 3. A ficha prevê saída cerâmica com pelo menos 1 µF
+nominal e mais de 0,5 µF efetivo. C11 local de 10 µF passa a
+compartilhar o MPN de C14/C16/C18. C12 de 22 µF compartilha o
+MPN de C10. As duas posições aproveitam os alimentadores já
+previstos. O piloto deve registrar partida, temperatura e
+resposta em TX nos dois modos de alimentação, com até 5,5 V
+na entrada de U3.
+[Ficha TI](https://www.ti.com/lit/ds/symlink/tlv1117lv.pdf)
+
+SW1–SW3 usam o mesmo código C&K de terminal G e atuador de
+7 mm, conferido contra os pads. R23 entra como Panasonic
+ERJ-P08D1000V de 100 Ω e 0,66 W, com curva de pulso para
+qualificar no ensaio da trava. A cobertura de catálogo passa
+de 58 para 64 das 65 posições híbridas e de 65 para 71 das
+79 posições completas. L1 segue em aberto no híbrido, por
+falta de desenho de terminais e dados de saturação validados.
+O preço de amostra do ESP32-C5 de 4 MB e o ponto de equilíbrio
+do custo fixo por lote estão na [cotação](docs/cotacao-pcba.md).
+
+O diff do PCB altera somente o valor de U3. Os 87 footprints,
+os 262 pads e toda a geometria de fabricação foram preservados.
+O KiCad 9.0.2 retorna 0 violações, 0 desconectados e 0 erros de
+footprint. Os gates e a exportação passam. O `place_check`
+repete os apontamentos geométricos da base. A auditoria estrita
+continua em saída 1 pelas duas vias térmicas de U2.9. A
+[consulta DFM](docs/dfm-piloto.md) identifica a cobertura em
+F.Mask e a coincidência com as aberturas de B.Paste para a
+montadora avaliar o processo de duas camadas.
+[Evidências](validation/rodada25)

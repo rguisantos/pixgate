@@ -152,3 +152,15 @@ Registrar cada bloqueio e como foi resolvido (para não repetir em revisões fut
   com seus códigos exatos de catálogo.
 - O orçamento de montagem compara os alimentadores e o custo
   de fornecer os PTCs à parte. [Evidências](../validation/rodada24)
+
+### Rodada 25 — BOM de cotação e processo do PowerPAD
+
+- U3 passa ao TLV1117LV33DCYR. C11 e C12 passam a compartilhar
+  dois códigos já previstos no BOM.
+- R23 tem código antissurto exato. SW1–SW3 usam um código C&K
+  compatível com os pads. O híbrido tem 64 de 65 posições com
+  código de catálogo. L1 continua em seleção.
+- O DRC passa e a geometria de fabricação é idêntica à da
+  rodada 24. A [consulta DFM](dfm-piloto.md) descreve a máscara
+  e a pasta sobre as duas vias térmicas de U2.9.
+  [Evidências](../validation/rodada25)

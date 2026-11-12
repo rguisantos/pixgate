@@ -4,10 +4,8 @@ C3 C4 C9 C13 C15 C17 C19 C20 C21 C22,100nF,C_0603_1608Metric,catalogo,Yageo,CC06
 C5 C6,33uF/10V,C_1206_3216Metric,catalogo,TDK,C3216X5R1C336MTJ00N,C76658,33 µF 16 V X5R 1206. Conferir capacitância efetiva em 5 V e ripple do buck.,https://jlcpcb.com/partdetail/TDK-C3216X5R1C336MTJ00N/C76658
 C7,4.7nF,C_0603_1608Metric,catalogo,KEMET,C0603C472J5GACAUTO,C3904926,"4,7 nF 50 V C0G 0603, compensação.",https://jlcpcb.com/partdetail/KEMET-C0603C472J5GACAUTO/C3904926
 C8,39pF,C_0603_1608Metric,catalogo,KEMET,CBR06C390F5GAC,C2265581,"39 pF 50 V C0G 0603, compensação.",https://jlcpcb.com/partdetail/KEMET-CBR06C390F5GAC/C2265581
-C10,22uF,C_1206_3216Metric,catalogo,TDK,C3216X5R1C226M160AB,C2167693,"22 µF 16 V X5R 1206, no rail de 5 V.",https://jlcpcb.com/partdetail/TDK-C3216X5R1C226M160AB/C2167693
-C11,10uF,C_0805_2012Metric,validar,,,,10 µF 0805 junto à saída de U3. Especificar capacitância efetiva e ESR com o LDO comprado.,https://datasheet.lcsc.com/lcsc/1810231814_Advanced-Monolithic-Systems-AMS1117-1-2_C14529.pdf
-C12,22uF,C_1206_3216Metric,validar,,,,"22 µF 1206 no rail de 3,3 V. Confirmar tecnologia e estabilidade de U3 com C11. Se polarizado, positivo no pad 2.",https://datasheet.lcsc.com/lcsc/1810231814_Advanced-Monolithic-Systems-AMS1117-1-2_C14529.pdf
-C14 C16 C18,10uF,C_0805_2012Metric,catalogo,CCTC,TCC0805X7R106K160FT,C380347,10 µF 16 V X7R 0805.,https://jlcpcb.com/partdetail/CCTC-TCC0805X7R106K160FT/C380347
+C10 C12,22uF,C_1206_3216Metric,catalogo,TDK,C3216X5R1C226M160AB,C2167693,"22 µF 16 V X5R 1206. C10 no rail de 5 V e C12 no de 3,3 V.",https://jlcpcb.com/partdetail/TDK-C3216X5R1C226M160AB/C2167693
+C11 C14 C16 C18,10uF,C_0805_2012Metric,catalogo,CCTC,TCC0805X7R106K160FT,C380347,10 µF 16 V X7R 0805. C11 é o capacitor local de saída de U3.,https://jlcpcb.com/partdetail/CCTC-TCC0805X7R106K160FT/C380347
 C23,1uF,C_0603_1608Metric,catalogo,Murata,GCM188R71E105KA64D,C85862,1 µF 25 V X7R 0603.,https://jlcpcb.com/partdetail/MurataElectronics-GCM188R71E105KA64D/C85862
 C24,100nF,C_1206_3216Metric_NoSilk,catalogo,Samsung Electro-Mechanics,CL31B104KBCNNNC,C24497,"Basic, 100 nF 50 V X7R ±10% 1206. Confirmar transiente com o solenoide.",https://jlcpcb.com/partdetail/CL31B104KBCNNNC/C24497
 D1 D5 D7,SS54,D_SMA,catalogo,SINEDEVICE,SS54,C22439152,"Schottky 5 A 40 V SMA. Conferir cátodo e temperatura no buck. Em D7, qualificar a recirculação repetitiva e medir o tempo de retorno da trava.",https://jlcpcb.com/partdetail/SINEDEVICE-SS54/C22439152
@@ -38,11 +36,11 @@ R16 R17 R18,2.2k,R_0603_1608Metric,catalogo,Uni-Royal,0603WAF2201T5E,C4190,"2,2 
 R19,1k,R_0603_1608Metric,catalogo,Uni-Royal,0603WAF1001T5E,C21190,1 kΩ 1% 0603.,https://jlcpcb.com/partdetail/C21190
 R21,1.91k,R_0603_1608Metric,catalogo,Yageo,RT0603BRD071K91L,C861211,"1,91 kΩ 0,1% 0603, divisor de 5 V.",https://jlcpcb.com/partdetail/YAGEO-RT0603BRD071K91L/C861211
 R22,49.9k,R_0603_1608Metric,catalogo,Uni-Royal,0603WAF4992T5E,C23184,"49,9 kΩ 1% 0603, compensação.",https://jlcpcb.com/partdetail/0603WAF4992T5E/C23184
-R23,100R,R_1206_3216Metric,validar,Uni-Royal,1206W4F1000T5E,C17901,100 Ω 1% 1206. Validar capacidade de pulso do snubber.,https://lcsc.com/product-detail/Chip-Resistor-Surface-Mount_Uniroyal-Elec-1206W4F1000T5E_C17901.html
-SW1,RST,SW_SPST_PTS645,validar,C&K,PTS645SM70SMTR92LFS,C221883,"Candidato PTS645 SMD. Conferir pads, altura do atuador e acesso na caixa.",https://jlcpcb.com/partdetail/CK-PTS645SM70SMTR92LFS/C221883
-SW2,BOOT,SW_SPST_PTS645,validar,C&K,PTS645SM70SMTR92LFS,C221883,"Candidato PTS645 SMD. Conferir pads, altura do atuador e acesso na caixa.",https://jlcpcb.com/partdetail/CK-PTS645SM70SMTR92LFS/C221883
-SW3,CFG,SW_SPST_PTS645,validar,C&K,PTS645SM70SMTR92LFS,C221883,"Candidato PTS645 SMD. Conferir pads, altura do atuador e acesso na caixa.",https://jlcpcb.com/partdetail/CK-PTS645SM70SMTR92LFS/C221883
+R23,100R,R_1206_3216Metric,catalogo,Panasonic,ERJ-P08D1000V,C4340214,"100 Ω 0,5% 1206 antissurto. Medir os pulsos do snubber no piloto.",https://jlcpcb.com/partdetail/PANASONIC-ERJP08D1000V/C4340214
+SW1,RST,SW_SPST_PTS645,catalogo,C&K,PTS645SM70SMTR92LFS,C221883,"PTS645 com terminal G, atuador de 7 mm e 1,6 N. Conferir acesso na caixa.",https://jlcpcb.com/partdetail/CK-PTS645SM70SMTR92LFS/C221883
+SW2,BOOT,SW_SPST_PTS645,catalogo,C&K,PTS645SM70SMTR92LFS,C221883,"PTS645 com terminal G, atuador de 7 mm e 1,6 N. Conferir acesso na caixa.",https://jlcpcb.com/partdetail/CK-PTS645SM70SMTR92LFS/C221883
+SW3,CFG,SW_SPST_PTS645,catalogo,C&K,PTS645SM70SMTR92LFS,C221883,"PTS645 com terminal G, atuador de 7 mm e 1,6 N. Conferir acesso na caixa.",https://jlcpcb.com/partdetail/CK-PTS645SM70SMTR92LFS/C221883
 U1,ESP32-C5-WROOM-1-N4,ESP32-C5-WROOM-1,catalogo,Espressif,ESP32-C5-WROOM-1-N4,C51950745,"4 MB de flash, antena integrada, sem PSRAM. Confirmar o binário e as partições do firmware em 4 MB antes do lote.",https://jlcpcb.com/partdetail/54676332-ESP32_C5_WROOM_1N4/C51950745
 U2,TPS54331DDA,SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.41x3.3mm,catalogo,Texas Instruments,TPS54331DDAR,C90761,"SO PowerPAD DDA. Conferir pino 1, abertura da pasta e tratamento do pad exposto.",https://jlcpcb.com/partdetail/TexasInstruments-TPS54331DDAR/C90761
-U3,AMS1117-3.3,SOT-223-3_TabPin2,catalogo,Advanced Monolithic Systems,AMS1117-3.3,C6186,"SOT-223, aba no pino 2. Qualificar estabilidade com C11/C12.",https://jlcpcb.com/partdetail/C6186
+U3,TLV1117LV33DCYR,SOT-223-3_TabPin2,catalogo,Texas Instruments,TLV1117LV33DCYR,C15578,"SOT-223 com aba no pino 2, estável com cerâmico. Confirmar partida e carga nos dois modos de alimentação.",https://jlcpcb.com/partdetail/TLV1117LV33DCYR/C15578
 U4,USBLC6-2SC6,SOT-23-6,catalogo,STMicroelectronics,USBLC6-2SC6,C7519,Proteção USB em SOT-23-6.,https://jlcpcb.com/partdetail/C7519
