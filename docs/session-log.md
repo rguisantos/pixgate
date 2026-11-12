@@ -87,3 +87,18 @@ Registrar cada bloqueio e como foi resolvido (para não repetir em revisões fut
 | Sessão | Trava | Solução |
 |---|---|---|
 | 9 | USB D+/D- não fecha por causa do U4 | Roteado em 2 segmentos com 1 via cada, match ajustado |
+## Passe manual (2026-11-12, WORKLOG 20)
+
+| Sessão | Resultado |
+|---|---|
+| 1 e 5, alimentação e relé | J1–F1–D1 1,75 mm, D1–K1.COM 2,00 mm, K1.NO–J2 2,25 mm e retorno GND 2,50 mm. Bobina 1,00 mm e snubber 1,25 mm. |
+| 4 e 10, buck | SW 27,407 mm, FB 14,057 mm, afastamento de cobre FB–SW 2,480 mm e COMP_X–SW 2,051 mm. Via junto de R21.2. |
+| 9, USB | VBUS e A7/B7 fechados. D+ e D− com Δ de 0,0222 mm nas duas orientações do cabo. O alvo de 90 Ω continua pendente. |
+| GND | Duas zonas preenchidas. Resolvidos os itens desconectados, as vias pendentes e os alívios térmicos incompletos. |
+
+- [x] KiCad 9.0.2 DRC com todas as severidades e erros de trilha. Zero violações e zero desconectados.
+- [x] `net_audit.py`, `check_sync.py`, comparação dos 258 pads, `check_routing.py` e `validate_prefab.sh`.
+- [ ] Qualificar F1 e a cadeia da trava para um pulso de até 4,5 A por 3 s.
+- [ ] Selecionar a seção do par USB para 90 Ω e conferir o processo para vias em pads antes do lote.
+
+[Entrada 20 do WORKLOG](../WORKLOG.md#2026-11-12-20--passe-manual-do-pixgate-v10)

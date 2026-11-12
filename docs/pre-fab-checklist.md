@@ -9,6 +9,19 @@ Executar ANTES de enviar os Gerbers para JLCPCB/PCBWay.
 - [ ] `via_dangling = 0` (após refill)
 - [ ] Zonas GND preenchidas e salvas (`F.Cu` + `B.Cu`)
 
+## Pendências da rodada 20
+
+- [ ] Qualificar o caminho da trava para o acionamento de até 4,5 A por
+  3 s. O F1 de 0,50 A de manutenção e 1,00 A de disparo fica em série
+  com a carga.
+- [ ] Confirmar uma seção USB de 90 Ω com o empilhamento de produção.
+  O match de comprimento passou, e a estimativa da seção atual ficou
+  acima de 90 Ω.
+- [ ] Confirmar com o fornecedor o processo de preenchimento/cobertura
+  para furos em áreas soldáveis antes do lote SMT.
+
+[WORKLOG, entrada 20](../WORKLOG.md#2026-11-12-20--passe-manual-do-pixgate-v10)
+
 ## Confirmação contra datasheet (crítico)
 
 - [ ] **Relé Songle SRD-12VDC-SL-C**: comparar o lote físico com a

@@ -632,3 +632,135 @@ O usuário delegou o roteamento à sessão. Pipeline construído em `tools/autor
 **Suíte final:** `net_audit` LIMPO (51 nets) · `check_sync` ✅ (85 parts, o board roteado continua igual ao gerador em footprints) · `check_routing` ✅ exit 0 — **USB diff pair DP=52,50 DN=52,51 (7 µm!)** · `place_check` COPRE 0 / COURTYARD 1 (artefato OPT1↔J1 de sempre) · `validate_prefab` bloqueado SÓ por unconnected (gate honesto: o passe manual do canto USB fecha).
 
 **Pendências:** passe manual no pcbnew da lista acima (canto USB + stitching GND) → `validate_prefab.sh` verde → `export_gerbers.sh` → pedido JLCPCB. Polimento opcional: SW/FB. Checklist físico inalterado (relé, display 8 pinos, jack).
+
+---
+
+## 2026-11-12 (20) — Passe manual do PixGate v1.0
+
+Base `ec2ead3`, branch local `main`. Passe de cobre aplicado com pcbnew 9.0.2.
+Comparação completa com a serialização de `gen_board.py`: **258 pads físicos,
+85 footprints e zero divergências**. A contagem inclui pads repetidos,
+mecânicos e sem net. Gerador, associação pad/net, geometria dos pads e
+posições dos footprints foram preservados.
+
+### Fechamento do cobre
+
+- **USB-C.** Os contatos VBUS duplicados A4/B9 e A9/B4 chegam à árvore
+  C16/C17/F2. U4.5 e C16.1 estão conectados. A7/B7 fechados em B.Cu.
+  Deslocamentos locais de IN_COIN e CC2 abriram os corredores sem mover
+  componentes. No tronco U4–U1, os trechos acoplados usam 0,25 mm de
+  largura e 0,25 mm de folga nominal. Há transições e desacoplamento no
+  fan-out de J6 e do U4.
+- **GND.** Refill nas duas camadas, vias de costura entre ilhas e rotas
+  locais para os pads isolados. O GND de U4.2, em (39,5375; 69,0000) mm,
+  usa uma via após deslocar CC2 em F.Cu. Via junto de R21.2 em
+  (78,2000; 43,1250) mm. Folga de preenchimento GND de 0,508 para
+  0,25 mm, gap térmico de 0,50 para 0,25 mm e largura dos raios de
+  0,50 para 0,32 mm. Foram usadas conexões sólidas locais nos pads
+  com alívio térmico incompleto. As regras globais do DRC foram mantidas.
+- **Buck.** SW 32,498 → **27,407 mm** de segmentos planares, incluindo
+  o ramo de bootstrap. Largura **0,75–1,00 mm**. O ramo U2.8–C4.2–D5.1
+  ficou com 9,306 mm planares e o ramo em direção a L1.1 com 18,101 mm.
+  A projeção XY das trilhas e vias de SW fica a **2,480 mm** de FB e a
+  **2,051 mm** de COMP_X, medidos cobre a cobre. FB encurtou de 17,051
+  para **14,057 mm**, com chegada direta ao divisor. Incluindo os pads
+  congelados, as mínimas passam a 1,182 mm para FB e 0,952 mm para
+  COMP_X. COMP_Y e EN_BK têm folgas de trilha/via de 0,550 e 0,425 mm.
+  A checagem de sobreposição em projeção não encontrou cruzamento do SW
+  com FB, COMP_X/Y, EN_BK, SS_C ou o par USB.
+
+O limite de **10 mm de SW** fica abaixo do piso geométrico para esta
+colocação. Os centros dos pads U2.8 (67,025; 43,095), L1.1
+(69,800; 52,000) e D5.1 (75,500; 42,500) estão separados por 9,327,
+8,496 e 11,079 mm. Mesmo admitindo os retângulos envolventes dos pads
+expandidos em 0,50 mm para o raio da trilha e ignorando C4, vias e
+obstáculos, a menor soma de distâncias a um ponto de ramificação é
+**11,191 mm**. A alternativa de usar um dos próprios pads como
+junção custa pelo menos 12,105 mm nesse modelo. Para uma revisão
+voltada ao alvo, é preciso aproximar o pad SW de L1 e o cátodo de D5
+do pino 8 de U2 e refazer as folgas do buck.
+
+### Alimentação da trava
+
+O usuário informou 2,5–4,5 A de pico por atuador e comando de 3 s.
+O passe adotou **4,5 A por até 3 s para um atuador** como cenário de
+dimensionamento do caminho, até medir a forma de onda real. O retorno
+da carga foi reforçado junto com a ida.
+
+| Caminho | Cobre final |
+|---|---|
+| J1.1 → F1.1, `+12V_IN` | 1,75 mm em B.Cu |
+| F1.2 → D1.2, `F12V` | 1,75 mm em B.Cu/F.Cu, duas vias de 0,80/0,40 mm por transição |
+| D1.1 → K1.COM, `+12V` | Tronco adicional de 2,00 mm em B.Cu/F.Cu, transição com duas vias de 0,80/0,40 mm |
+| K1.COM → K1.A1, `+12V` | 1,25 mm em F.Cu |
+| K1.NO → J2.1, `TRAVA_NO` | Caminho de 2,25 mm em F.Cu/B.Cu, duas vias de 0,80/0,40 mm por transição |
+| Ramificações de `TRAVA_NO` | 0,75 e 0,80 mm nos corredores de R23/D7, 1,20–1,60 mm nos demais segmentos |
+| R23.2 → C24.1, `TRAVA_NO2` | 1,25 mm em B.Cu |
+| K1.A2 / D3.2 / Q1.3, `RELAY_COIL` | 1,00 mm em B.Cu |
+| J2.2 → J1.2, retorno GND | 2,50 mm em F.Cu em paralelo com os preenchimentos |
+
+Os trechos de 0,40–0,70 mm de `+12V` que restam pertencem às
+ramificações antigas ou a caminhos paralelos ao tronco novo. J5 foi
+conferido na placa e no gerador. É a entrada do botão com BTN_SIG/GND.
+J2 é o conector da carga.
+
+**Bloqueio elétrico para 4,5 A.** F1 é o PPTC 1206L050/24. O
+fabricante declara **0,50 A de manutenção e 1,00 A de disparo**.
+O tempo máximo de 0,10 s da tabela é medido a 8 A e não fornece
+uma especificação de 4,5 A por 3 s. F1 fica em série com o motor.
+Antes de liberar a placa para essa carga, medir corrente e tensão
+na partida, durante os 3 s e no desligamento, e revisar F1 junto da
+capacidade térmica de D1, dos contatos DC indutivos de K1, dos
+conectores e do pulso de roda livre em D7. Foi mantida a lista
+congelada de componentes.
+[Datasheet Littelfuse 1206L](https://www.littelfuse.com/assetdocs/resettable-ptcs-1206l-datasheet?assetguid=2b6a1515-d4ee-4c83-8bd4-152b4901b8f5)
+
+### Validação da rodada
+
+| Verificação | Resultado |
+|---|---|
+| `net_audit.py` / `check_sync.py` | LIMPO, 51 redes / sincronizado, 85 footprints |
+| `check_pad_freeze.py` | 258 × 258 pads, 0 ausentes, 0 extras, 0 diferenças de posicionamento |
+| DRC KiCad 9.0.2 `--severity-all --all-track-errors --exit-code-violations` | **0 violações, 0 desconectados, 0 vias pendentes e 0 alívios incompletos** |
+| Zonas GND preenchidas | F.Cu 9 polígonos e B.Cu 18 polígonos |
+| `check_routing.py` / `validate_prefab.sh` | Exit 0 / exit 0 |
+| USB, soma dos segmentos | DP 53,3723 mm, DN 53,3723 mm, Δ < 0,001 mm |
+| USB, percurso J6 A → U1 | D+ 51,6697 mm, D− 51,6475 mm, Δ **0,0222 mm** |
+| USB, percurso J6 B → U1 | D+ 50,7607 mm, D− 50,7385 mm, Δ **0,0222 mm** |
+
+Cada percurso ativo USB tem seis travessias de camada em cada
+condutor. Os comprimentos acima são planares, medidos pelo grafo de
+segmentos e centros de pads. A igualdade da contagem de travessias
+evita um desbalanceamento de comprimento vertical entre D+ e D−.
+
+**Impedância USB ainda fora do alvo.** O guia pede 90 Ω diferenciais.
+A seção nominal de 0,25/0,25 mm no empilhamento da placa (núcleo
+1,51 mm, εr 4,5 e cobre 35 µm) ficou em **121–122 Ω** na estimativa 2D
+com GND lateral ideal a 0,25 mm, e **131–133 Ω** sem esse GND lateral.
+O modelo omite máscara, vias e interrupções de plano. O DRC valida a
+folga de cobre e o gate valida comprimento. A qualificação dos 90 Ω
+depende de selecionar um empilhamento e uma seção compatíveis,
+repassar o par e confirmar o resultado com o fabricante ou por TDR.
+[Modelo da rodada](validation/estimate_usb_impedance.py) ·
+[Orientação da JLCPCB para duas camadas](https://jlcpcb.com/blog/pcb-impedance-testing)
+
+**Montagem USB.** Os furos nos pads de VBUS de J6 e próximos aos
+pads de U4/C4 precisam ser revisados com o fornecedor antes do
+lote SMT, incluindo o tratamento dos furos que interceptam áreas
+soldáveis e a disponibilidade para duas camadas.
+[Capacidades de fabricação JLCPCB](https://jlcpcb.com/pt/capabilities/Capabilities)
+
+**Limites históricos do gate.** A entrada 19 registrou SW 5 → 35 mm
+e FB 13 → 18 mm para o posicionamento congelado, FB–SW 2 → 0,6 mm
+para acomodar o desvio do autorrouter, e neckdown de 75% da largura
+nominal, 50% em SW, com exceção para stubs até 1,5 mm respeitando
+o piso de 0,125 mm. O arquivo `hardware/check_routing.py` segue
+idêntico a `ec2ead3`. A medição de FB–SW acima usa a menor distância
+entre formas de cobre em projeção e inclui vias, complementando a
+checagem de endpoints existente.
+
+**Reprodução.** Aplique com `tools/manual-routing/apply.py` os planos
+`buck.json`, `potencia.json`, `usb.json` e `gnd.json` nessa ordem sobre
+a placa de `ec2ead3`, usando a saída de cada passo como entrada do
+seguinte. Relatório de DRC em
+[`validation/drc/manual-routing-drc.rpt`](validation/drc/manual-routing-drc.rpt).
