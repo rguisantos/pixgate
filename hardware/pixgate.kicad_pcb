@@ -5520,7 +5520,7 @@
 			)
 		)
 		(property ki_fp_filters "*")
-		(attr smd)
+		(attr smd exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start 0.237258 -0.5225)
 			(end -0.237258 -0.5225)

@@ -11,11 +11,10 @@ import io, contextlib
 with contextlib.redirect_stdout(io.StringIO()):
     import gen_board as G
 
-EXCLUDE_REFS = {'H1', 'H2', 'H3', 'H4'}  # mounting holes: exclude_from_bom
-
 rows = []
 for p in G.PARTS:
-    if p.ref in EXCLUDE_REFS:
+    attrs = G.getlist(p.fp, 'attr')
+    if attrs and {'dnp', 'exclude_from_bom'}.intersection(attrs[0]):
         continue
     # Get footprint name from the footprint list (second element is the name)
     fp_name = ''

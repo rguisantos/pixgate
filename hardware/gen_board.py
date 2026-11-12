@@ -484,7 +484,8 @@ RR('R20', '10k', 78.2, 45.91, 90, 'FB', '+5V')  # lote 5: gira e sobe — sai do
 RR('R21', '1.91k', 78.2, 42.9, 90, 'FB', 'GND')  # lote 5: sai dos courtyards de L1/C8 — divisor FB agora vertical na borda direita (ver WORKLOG: rotear FB curto)
 RR('R22', '49.9k', 67.5, 52, 90, 'COMP_X', 'COMP_Y')
 RR('R23', '100R', 63.9, 86.9, 90, 'TRAVA_NO', 'TRAVA_NO2', pkg='R_1206_3216Metric')  # lote 6: x-0.6 (64.5->63.9) — abre espaco p/ o D3 | lote 5: gira e desce
-RR('R26', '100k', 64.0, 49.5, 0, '+12V', 'EN_BK')  # resolve R22<->R26
+r26 = RR('R26', '100k', 64.0, 49.5, 0, '+12V', 'EN_BK')
+getlist(r26.fp, 'attr')[0].extend(('dnp', 'exclude_from_bom', 'exclude_from_pos_files'))
 
 # --- Capacitors (back) ---
 def CC(ref, val, x, y, rot, n1, n2, pkg='C_0603_1608Metric'):

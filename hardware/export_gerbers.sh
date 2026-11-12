@@ -48,6 +48,7 @@ kicad-cli pcb export pos \
   --units mm \
   --use-drill-file-origin \
   --side both \
+  --exclude-dnp \
   "$PCB"
 
 echo "==> BOM"
