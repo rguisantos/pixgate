@@ -36,6 +36,7 @@ N = {n: net(n) for n in [
     'IO7_PU', 'IO26_PU', 'IO27_PU',
     'SCK_M', 'MOSI_M', 'EN_BK', 'SS_C', 'F12V', 'TRAVA_NO2',
     'LED_A',  # netfix3 (fechamento item 2): no R19.2/LED1.2 — R19 em serie com o anodo; no fim da lista para nao renumerar as nets existentes
+    '+12V_LOCK_IN', '+12V_LOCK',
 ]}
 NETIDX = {n: i for i, n in enumerate(NETS)}
 def NN(name):  # (idx, name) tuple for pad assignment
@@ -211,11 +212,11 @@ def fp_relay_srd():
     for l, mx, my in (('F.SilkS', 9.7, 7.9), ('F.CrtYd', 9.8, 8.0)):
         fp.append(mkline(l, -mx, -my, mx, -my, 0.05))   # topo
         fp.append(mkline(l, mx, -my, mx, my, 0.05))     # direita
-        fp.append(mkline(l, mx, my, -mx, my, 0.05))     # baixo
+        fp.append(mkline(l, mx if l != 'F.SilkS' else -5.9, my, -mx, my, 0.05))
         fp.append(mkline(l, -mx, my, -mx, -my, 0.05))   # esquerda
     # marcador de pino 1: tick no silk junto ao A1 (fora do cobre do pad)
     fp.append(mkline('F.SilkS', -7.3, -7.4, -6.3, -7.4, 0.3))
-    fp.append(mktext('fp_text', 'TRAVA 12V 10A', 0, 0, 'F.SilkS', size=1.0, thickness=0.15))
+    fp.append(mktext('fp_text', 'TRAVA 12V', 0, 0, 'F.SilkS', size=1.0, thickness=0.15))
     fp.append(['attr', 'through_hole'])
     return fp
 
@@ -354,7 +355,7 @@ opt3.pin(1, 'BTN_A').pin(2, 'BTN_SIG').pin(3, 'GND').pin(4, 'IN_BTN')  # fix net
 
 # --- K1: relay SRD-12VDC-SL-C (back) ---
 k1 = P('K1', 'SRD-12VDC-SL-C', fp_relay_srd(), 65.1, 73.5, 0)  # x+0.6 + fileira -1.35: resolve colisao FISICA OPT3/K1 (0.86mm) com folga ~0.6mm dos 2 lados
-k1.pin('A1', '+12V').pin('A2', 'RELAY_COIL').pin('COM', '+12V').pin('NC', '').pin('NO', 'TRAVA_NO')
+k1.pin('A1', '+12V').pin('A2', 'RELAY_COIL').pin('COM', '+12V_LOCK').pin('NC', '').pin('NO', 'TRAVA_NO')
 
 # --- Diodes (back) ---
 d1 = P('D1', 'SS54', ('Diode_SMD', 'D_SMA'), 47.5, 84.93, 0).pin(1, '+12V').pin(2, 'F12V')  # lote 4: encaixe na faixa livre real [83.17..86.69] (3.52mm); y=84.95 invadiria J3/J4 em 0.01 — fix netlist: pino 1 = catodo (D_SMA), serie J1->F1->D1->rail: K no rail
@@ -367,8 +368,10 @@ d7 = P('D7', 'M7', ('Diode_SMD', 'D_SMA'), 66, 91, 0).pin(1, 'TRAVA_NO').pin(2, 
 d7.ref_pos(0, -4)
 
 # --- Fuses (back) ---
-f1 = P('F1', '1206L050/24', ('Fuse', 'Fuse_1206_3216Metric'), 41.5, 84.4, 0).pin(1, '+12V_IN').pin(2, 'F12V')  # lote 4: y+0.4 libera OPT1/OPT2 (gap 0.10)
+f1 = P('F1', '1206L110/16', ('Fuse', 'Fuse_1206_3216Metric'), 41.5, 84.4, 0).pin(1, '+12V_IN').pin(2, 'F12V')  # lote 4: y+0.4 libera OPT1/OPT2 (gap 0.10)
 f2 = P('F2', '1206L050/24', ('Fuse', 'Fuse_1206_3216Metric'), 43.5, 71, 0).pin(1, 'USB_VBUS').pin(2, 'USB_5V_F')
+f3 = P('F3', '0454007.MR', ('Fuse', 'Fuse_Littelfuse-NANO2-451_453'),
+       75, 70.5, 0, side='F').pin(1, '+12V_LOCK_IN').pin(2, '+12V_LOCK')
 
 # --- L1 buck inductor (back) ---
 l1 = P('L1', '6.8uH', ('Inductor_SMD', 'L_7.3x7.3_H3.5'), 73, 52, 180).pin(1, 'SW').pin(2, '+5V')
@@ -384,6 +387,17 @@ j1 = P('J1', 'DC-005 12V', ('Connector_BarrelJack', 'BarrelJack_Horizontal'), 32
 j1.pin(1, '+12V_IN').pin(2, 'GND').pin(3, 'GND')  # netfix3 (fechamento item 1): luva (pad 2) junto da chave (pad 3) em GND — duplo GND seguro nas 2 familias de pinout do PJ-102A (chave NC contra a luva, Barrel_Jack_Switch lib 9.0.2: folha a 0.254 da luva e 4.191 da ponta; ou 2a luva Pin3Ring); a unica familia destrutiva (NC contra a ponta) nao e atribuida ao PJ-102A e o passo 3 do roteiro de bancada detecta fisicamente — fallback de bancada: pin(3, '')
 j2 = P('J2', 'KF301 TRAVA', fp_kf301(), 74.8, 94.6, 90).pin(1, 'TRAVA_NO').pin(2, 'GND')
 j2.ref_pos(0, -6)
+j8_fp = [
+    item for item in fp_kf301()
+    if not (isinstance(item, list) and item[0] == 'fp_line'
+            and getlist(item, 'layer')[0][1] == 'F.SilkS')
+]
+j8_fp.append(mktext('fp_text', '12V TRAVA IN +/-', 0, -5.7, 'F.SilkS',
+                    size=0.8, thickness=0.13))
+j8_fp.append(mktext('fp_text', '+', -2.54, 5.9, 'F.SilkS', size=1, thickness=0.15))
+j8_fp.append(mktext('fp_text', '-', 2.54, 5.9, 'F.SilkS', size=1, thickness=0.15))
+j8 = P('J8', 'KF301 12V TRAVA IN', j8_fp, 72.75, 79.25, 270, side='F')
+j8.pin(1, '+12V_LOCK_IN').pin(2, 'GND')
 j3 = P('J3', 'JST-XH NOTEIRO', ('Connector_JST', 'JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal'), 42.3, 89.5, 0)  # lote 6: x-1.2 — fileira JST desloca p/ esquerda (J3<->J4, J1<->J3)
 j3.pin(1, 'NOTE_SIG').pin(2, 'GND')
 j4 = P('J4', 'JST-XH MOEDEIRO', ('Connector_JST', 'JST_XH_S2B-XH-A_1x02_P2.50mm_Horizontal'), 50.85, 89.5, 0)  # lote 6: x-0.65 — J4<->J5/J3
