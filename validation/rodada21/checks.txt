@@ -1,0 +1,307 @@
+
+$ kicad-cli version
+9.0.2
+exit=0
+
+$ dpkg-deb -f ../kicad-footprints_9.0.2-1_all.deb Package Version
+Package: kicad-footprints
+Version: 9.0.2-1
+exit=0
+
+$ git -C ../esp-kicad rev-parse HEAD
+dd76561812ab300351234ba6e0ec1295641796f0
+exit=0
+
+$ /usr/bin/python3 hardware/net_audit.py
+nets defined: 54
+parts: 87
+U1 pads sample: (61.0, 34.49) (61.0, 35.76) (43.5, 43.38)
+J6 A6: (26.354999999999997, 71.65) A7: (26.354999999999997, 72.15)
+J1 pads: (32.0, 85.0) (32.0, 91.0) (27.299999999999997, 88.0)
+OPT1 pads: (36.65, 74.5) (39.19, 74.5) (39.19, 82.12) (36.65, 82.12)
+== POLARIDADE (convencao: pad 1 = catodo K, pad 2 = anodo A):
+  ref   pad1(K)      pad2(A)      ok?
+  D1    +12V         F12V         OK   serie J1->F1->D1->rail +12V: K no rail
+  D2    +5V          USB_5V_F     OK   or-ing USB->+5V: K no rail
+  D3    +12V         RELAY_COIL   OK   flyback da bobina do K1 (Q1 low-side): K no +12V, A no noh do dreno
+  D4    +12V         GND          OK   TVS SMBJ18A do rail +12V: K no positivo
+  D5    SW           GND          OK   freewheel do buck TPS54331: K no noh SW, A no GND
+  D6    TRAVA_NO     GND          OK   TVS SMBJ16A da saida TRAVA_NO: K no positivo
+  D7    TRAVA_NO     GND          OK   freewheel da carga indutiva da trava (via J2): K no positivo
+  LED1  LED_K        LED_A        OK   status: +3V3->R19 1k->LED(A->K)->GPIO25 (U1 pino 26) — R19 em serie com o anodo, GPIO25 direto no catodo; LOW acende (~1,3 mA), HIGH desliga
+
+== PINAGENS (J1/U4/Q1):
+  J1: 1=+12V_IN, 2=GND, 3=GND  ->  OK
+      (DC-005/PJ-102A (BarrelJack_Horizontal): 1=ponta, 2=luva, 3=lado da chave — luva e chave ambos em GND (duplo GND; chave NC contra a luva, lib 9.0.2))
+  U4: 1=USB_DP, 2=GND, 3=USB_DN, 4=USB_DN, 5=USB_VBUS, 6=USB_DP  ->  OK
+      (USBLC6-2SC6: linha 1 = pinos (1,6)=I/O1, linha 2 = (3,4)=I/O2, VBUS=5, GND=2)
+  Q1: 1=RLY_GATE, 2=GND, 3=RELAY_COIL  ->  OK
+      (AO3400A SOT-23: 1=G, 2=S (GND), 3=D (RELAY_COIL) — driver low-side do rele)
+
+== netmaps com pad inexistente no footprint:
+  (nenhum)
+
+== nets com menos de 2 pads (suspeitas):
+  (nenhuma)
+
+== total de nets declaradas: 53
+== nets com 2+ pads: 53
+== RESULTADO: LIMPO
+exit=0
+
+$ /usr/bin/python3 hardware/check_sync.py
+nets defined: 54
+parts: 87
+U1 pads sample: (61.0, 34.49) (61.0, 35.76) (43.5, 43.38)
+J6 A6: (26.354999999999997, 71.65) A7: (26.354999999999997, 72.15)
+J1 pads: (32.0, 85.0) (32.0, 91.0) (27.299999999999997, 88.0)
+OPT1 pads: (36.65, 74.5) (39.19, 74.5) (39.19, 82.12) (36.65, 82.12)
+
+✅ Sincronizado — gen_board.PARTS == pixgate.kicad_pcb
+exit=0
+
+$ /usr/bin/python3 hardware/check_pads.py
+nets defined: 54
+parts: 87
+U1 pads sample: (61.0, 34.49) (61.0, 35.76) (43.5, 43.38)
+J6 A6: (26.354999999999997, 71.65) A7: (26.354999999999997, 72.15)
+J1 pads: (32.0, 85.0) (32.0, 91.0) (27.299999999999997, 88.0)
+OPT1 pads: (36.65, 74.5) (39.19, 74.5) (39.19, 82.12) (36.65, 82.12)
+== U1 (ESP32-C5-WROOM-1-N8) fp= pos=(52.5,40.25) rot=0 lado=tras
+   pad   1: world=(   61.00,   34.49) net='GND'
+   pad   2: world=(   61.00,   35.76) net='+3V3'
+   pad   3: world=(   61.00,   37.03) net='EN'
+   pad   4: world=(   61.00,   38.30) net=''
+   pad   5: world=(   61.00,   39.57) net='BTN2'
+   pad   6: world=(   61.00,   40.84) net='RLY_DRV'
+   pad   7: world=(   61.00,   42.11) net='IN_BTN'
+   pad   8: world=(   61.00,   43.38) net='SCK_M'
+   pad   9: world=(   61.00,   44.65) net='IO7_PU'
+   pad  10: world=(   61.00,   45.92) net='MOSI_M'
+   pad  11: world=(   61.00,   47.19) net='DISP_DC'
+   pad  12: world=(   61.00,   48.46) net='DISP_CS'
+   pad  13: world=(   61.00,   49.73) net='USB_DN'
+   pad  14: world=(   61.00,   51.00) net='USB_DP'
+   pad  15: world=(   43.50,   51.00) net='BTN1'
+   pad  16: world=(   43.50,   49.73) net='DISP_BL'
+   pad  17: world=(   43.50,   48.46) net='DISP_RST'
+   pad  18: world=(   43.50,   47.19) net='IO27_PU'
+   pad  19: world=(   43.50,   45.92) net=''
+   pad  20: world=(   43.50,   44.65) net=''
+   pad  21: world=(   43.50,   43.38) net='IN_NOTE'
+   pad  22: world=(   43.50,   42.11) net=''
+   pad  23: world=(   43.50,   40.84) net='IN_COIN'
+   pad  24: world=(   43.50,   39.57) net='RX0'
+   pad  25: world=(   43.50,   38.30) net='TX0'
+   pad  26: world=(   43.50,   37.03) net='LED_K'
+   pad  27: world=(   43.50,   35.76) net='IO26_PU'
+   pad  28: world=(   43.50,   34.49) net='GND'
+   pad  29: world=(   53.12,   41.38) net='GND'
+   pad  29: world=(   53.12,   41.38) net='GND'
+   pad  29: world=(   53.12,   41.38) net='GND'
+   pad  29: world=(   53.12,   41.38) net='GND'
+   pad  29: world=(   53.12,   41.38) net='GND'
+   pad  29: world=(   53.12,   41.38) net='GND'
+   pad  29: world=(   53.12,   41.38) net='GND'
+   pad  29: world=(   53.12,   41.38) net='GND'
+   pad  29: world=(   53.12,   41.38) net='GND'
+
+== K1 (SRD-12VDC-SL-C) fp= pos=(65.1,73.5) rot=0 lado=tras
+   pad  A1: world=(   71.20,   67.50) net='+12V'
+   pad COM: world=(   73.20,   73.50) net='+12V_LOCK'
+   pad  A2: world=(   71.20,   79.50) net='RELAY_COIL'
+   pad  NC: world=(   59.00,   67.50) net=''
+   pad  NO: world=(   59.00,   79.50) net='TRAVA_NO'
+
+== OPT1 (PC817) fp= pos=(36.65,74.5) rot=90 lado=tras
+   pad   1: world=(   36.65,   74.50) net='NOTE_A'
+   pad   2: world=(   39.19,   74.50) net='NOTE_SIG'
+   pad   3: world=(   39.19,   82.12) net='GND'
+   pad   4: world=(   36.65,   82.12) net='IN_NOTE'
+
+== OPT2 (PC817) fp= pos=(44.15,74.5) rot=90 lado=tras
+   pad   1: world=(   44.15,   74.50) net='COIN_A'
+   pad   2: world=(   46.69,   74.50) net='COIN_SIG'
+   pad   3: world=(   46.69,   82.12) net='GND'
+   pad   4: world=(   44.15,   82.12) net='IN_COIN'
+
+== OPT3 (PC817) fp= pos=(50.65,74.5) rot=90 lado=tras
+   pad   1: world=(   50.65,   74.50) net='BTN_A'
+   pad   2: world=(   53.19,   74.50) net='BTN_SIG'
+   pad   3: world=(   53.19,   82.12) net='GND'
+   pad   4: world=(   50.65,   82.12) net='IN_BTN'
+
+== J7 (TFT 1.54) fp= pos=(32,56) rot=0 lado=frente
+   pad   1: world=(   32.00,   47.11) net='GND'
+   pad   2: world=(   32.00,   49.64) net='+3V3'
+   pad   3: world=(   32.00,   52.19) net='SCK_D'
+   pad   4: world=(   32.00,   54.73) net='MOSI_D'
+   pad   5: world=(   32.00,   57.27) net='DISP_RST'
+   pad   6: world=(   32.00,   59.80) net='DISP_DC'
+   pad   7: world=(   32.00,   62.34) net='DISP_CS'
+   pad   8: world=(   32.00,   64.89) net='DISP_BL'
+
+== J1 (DC-005 12V) fp= pos=(32,85) rot=270 lado=tras
+   pad   1: world=(   32.00,   85.00) net='+12V_IN'
+   pad   2: world=(   32.00,   91.00) net='GND'
+   pad   3: world=(   27.30,   88.00) net='GND'
+
+== LED1 (STATUS) fp= pos=(68.5,29.5) rot=0 lado=frente
+   pad   1: world=(   67.56,   29.50) net='LED_K'
+   pad   2: world=(   69.44,   29.50) net='LED_A'
+
+== R19 (1k) fp= pos=(68.5,32.5) rot=90 lado=frente
+   pad   1: world=(   68.50,   33.33) net='+3V3'
+   pad   2: world=(   68.50,   31.68) net='LED_A'
+
+exit=0
+
+$ /usr/bin/python3 tools/manual-routing/check_pad_freeze.py
+Pads no gerador: 262. Pads na placa: 262.
+Registros divergentes de pads: 0 ausentes e 0 extras.
+Footprints no gerador: 87. Na placa: 87.
+exit=0
+
+$ kicad-cli pcb drc --severity-all --all-track-errors --exit-code-violations --output validation/drc/rodada21-drc.rpt hardware/pixgate.kicad_pcb
+Found 0 violations
+Found 0 unconnected items
+Saved DRC Report to validation/drc/rodada21-drc.rpt
+exit=0
+
+$ /usr/bin/python3 hardware/check_routing.py
+==> Rotas encontradas: 802 segmentos
+  net GND: 41 segs, 70.4 mm
+  net CC1: 11 segs, 15.6 mm
+  net CC2: 8 segs, 20.1 mm
+  net RELAY_COIL: 4 segs, 13.2 mm
+  net TRAVA_NO: 18 segs, 51.0 mm
+  net RLY_GATE: 8 segs, 7.1 mm
+  net RLY_DRV: 16 segs, 63.5 mm
+  net IN_NOTE: 18 segs, 57.3 mm
+  net IN_COIN: 25 segs, 82.4 mm
+  net IN_BTN: 35 segs, 90.3 mm
+  net NOTE_A: 7 segs, 12.3 mm
+  net +12V_IN: 4 segs, 11.8 mm
+  net NOTE_SIG: 7 segs, 19.8 mm
+  net COIN_A: 6 segs, 12.1 mm
+  net COIN_SIG: 4 segs, 16.7 mm
+  net BTN_A: 5 segs, 8.9 mm
+  net BTN_SIG: 3 segs, 17.6 mm
+  net SCK_D: 6 segs, 12.5 mm
+  net MOSI_D: 4 segs, 12.6 mm
+  net DISP_DC: 9 segs, 38.2 mm
+  net DISP_CS: 8 segs, 39.4 mm
+  net DISP_RST: 7 segs, 16.6 mm
+  net +12V: 91 segs, 229.7 mm
+  net DISP_BL: 7 segs, 21.3 mm
+  net BTN1: 27 segs, 44.1 mm
+  net BTN2: 28 segs, 73.2 mm
+  net EN: 22 segs, 55.8 mm
+  net SW: 21 segs, 29.4 mm
+  net FB: 7 segs, 14.1 mm
+  net BOOT_C: 6 segs, 3.7 mm
+  net COMP_X: 13 segs, 21.4 mm
+  net COMP_Y: 2 segs, 1.9 mm
+  net LED_K: 7 segs, 27.2 mm
+  net +5V: 30 segs, 60.9 mm
+  net TX0: 4 segs, 8.9 mm
+  net RX0: 12 segs, 11.3 mm
+  net IO7_PU: 10 segs, 8.9 mm
+  net IO26_PU: 10 segs, 22.9 mm
+  net IO27_PU: 11 segs, 14.9 mm
+  net SCK_M: 12 segs, 24.3 mm
+  net MOSI_M: 12 segs, 37.8 mm
+  net EN_BK: 13 segs, 24.7 mm
+  net SS_C: 2 segs, 5.0 mm
+  net F12V: 3 segs, 8.9 mm
+  net USB_VBUS: 22 segs, 37.2 mm
+  net TRAVA_NO2: 7 segs, 11.3 mm
+  net LED_A: 2 segs, 2.6 mm
+  net +12V_LOCK_IN: 4 segs, 7.4 mm
+  net +12V_LOCK: 2 segs, 5.3 mm
+  net USB_5V_F: 3 segs, 5.9 mm
+  net +3V3: 76 segs, 217.5 mm
+  net USB_DN: 43 segs, 53.4 mm
+  net USB_DP: 39 segs, 53.4 mm
+
+==> Larguras
+==> SW length
+==> FB length + distância do SW
+==> USB diff pair
+  USB diff pair: DP=53.37 DN=53.37 diff=0 µm ✓
+==> Optos isolamento
+
+✅ Todos os checks passaram
+exit=0
+
+$ bash hardware/validate_prefab.sh
+==> DRC --severity-all
+Found 0 violations
+Found 0 unconnected items
+Saved DRC Report to /tmp/drc-prefab.rpt
+==> Validação pré-fab
+  unconnected_items:  0  (esperado 0)
+  via_dangling:       0  (esperado 0)
+  shorting_items:     0  (esperado 0)
+  clearance:          0  (esperado 0)
+  hole_clearance:     0  (esperado 0)
+  hole_to_hole:       0  (esperado 0)
+  copper_edge:        0  (esperado 0)
+  courtyards_overlap: 0  (esperado 0)
+  silk_overlap:       0  (esperado 0)
+  silk_over_copper:   0  (esperado 0)
+  silk_edge_clearance: 0  (esperado 0)
+  nonmirrored_text:    0  (esperado 0)
+
+✅ Pronto para export_gerbers.sh
+exit=0
+
+$ bash hardware/export_gerbers.sh
+==> Gerbers
+Plotted to '/workspace/scratch/0ca8e037e49b/pixgate-r21/hardware/fab/pixgate-top_cu.gtl'.
+Plotted to '/workspace/scratch/0ca8e037e49b/pixgate-r21/hardware/fab/pixgate-bottom_cu.gbl'.
+Plotted to '/workspace/scratch/0ca8e037e49b/pixgate-r21/hardware/fab/pixgate-F_Silkscreen.gto'.
+Plotted to '/workspace/scratch/0ca8e037e49b/pixgate-r21/hardware/fab/pixgate-B_Silkscreen.gbo'.
+Plotted to '/workspace/scratch/0ca8e037e49b/pixgate-r21/hardware/fab/pixgate-F_Mask.gts'.
+Plotted to '/workspace/scratch/0ca8e037e49b/pixgate-r21/hardware/fab/pixgate-B_Mask.gbs'.
+Plotted to '/workspace/scratch/0ca8e037e49b/pixgate-r21/hardware/fab/pixgate-Edge_Cuts.gm1'.
+==> Drill
+Created file '/workspace/scratch/0ca8e037e49b/pixgate-r21/hardware/fab/pixgate.drl'
+Created file '/workspace/scratch/0ca8e037e49b/pixgate-r21/hardware/fab/pixgate-drl_map.gbr'.
+Done.
+==> Posição (pick-and-place)
+Wrote position data to '/workspace/scratch/0ca8e037e49b/pixgate-r21/hardware/fab/pixgate-pos.csv'.
+==> BOM
+==> Job file
+==> Zip para o portal do fabricante
+
+OK — arquivos em /workspace/scratch/0ca8e037e49b/pixgate-r21/hardware/fab:
+total 948
+drwxr-xr-x 2 agent agent   4096 Nov 12 12:15 .
+drwxr-xr-x 4 agent agent   4096 Nov 12 12:15 ..
+-rw-r--r-- 1 agent agent   3732 Nov 12 12:15 pixgate-BOM.csv
+-rw-r--r-- 1 agent agent  13106 Nov 12 12:15 pixgate-B_Mask.gbs
+-rw-r--r-- 1 agent agent  34693 Nov 12 12:15 pixgate-B_Silkscreen.gbo
+-rw-r--r-- 1 agent agent    732 Nov 12 12:15 pixgate-Edge_Cuts.gm1
+-rw-r--r-- 1 agent agent   4016 Nov 12 12:15 pixgate-F_Mask.gts
+-rw-r--r-- 1 agent agent  22119 Nov 12 12:15 pixgate-F_Silkscreen.gto
+-rw-r--r-- 1 agent agent 312372 Nov 12 12:15 pixgate-bottom_cu.gbl
+-rw-r--r-- 1 agent agent 173955 Nov 12 12:15 pixgate-drl_map.gbr
+-rw-r--r-- 1 agent agent   2562 Nov 12 12:15 pixgate-job.gbrjob
+-rw-r--r-- 1 agent agent   5751 Nov 12 12:15 pixgate-pos.csv
+-rw-r--r-- 1 agent agent 170906 Nov 12 12:15 pixgate-top_cu.gtl
+-rw-r--r-- 1 agent agent   4153 Nov 12 12:15 pixgate.drl
+-rw-r--r-- 1 agent agent 185157 Nov 12 12:15 pixgate.zip
+
+Checklist pós-export:
+  [ ] DRC final --severity-all: 0 violações (exceto unconnected=0)
+  [ ] inspecionar visualmente os gerbers no gerbv ou KiCad Gerber Viewer
+  [ ] abrir pixgate-BOM.csv e conferir contra o datasheet dos componentes
+  [ ] pixgate-pos.csv: pick-and-place coerente com o layout
+  [ ] se JLCPCB: importar zip de /workspace/scratch/0ca8e037e49b/pixgate-r21/hardware/fab/ no portal, revisar preview 3D
+exit=0
+pixgate-BOM.csv: 79 referências, excluídos R26 e TP1–TP3; saída aprovada.
+pixgate-pos.csv: 79 referências, excluídos R26 e TP1–TP3; saída aprovada.
+Gerber ZIP verificado: pixgate-BOM.csv, pixgate-B_Mask.gbs, pixgate-B_Silkscreen.gbo, pixgate-Edge_Cuts.gm1, pixgate-F_Mask.gts, pixgate-F_Silkscreen.gto, pixgate-bottom_cu.gbl, pixgate-drl_map.gbr, pixgate-job.gbrjob, pixgate-pos.csv, pixgate-top_cu.gtl, pixgate.drl
+GND top_cu: 11 contornos preenchidos.
+GND bottom_cu: 18 contornos preenchidos.
